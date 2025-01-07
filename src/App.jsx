@@ -1,4 +1,5 @@
-import Homepage from './pages/Home/HomePage'
+import Homepage from './pages/HomePage'
+import './index.css'
 import {
   BrowserRouter as Router,
   Routes,
