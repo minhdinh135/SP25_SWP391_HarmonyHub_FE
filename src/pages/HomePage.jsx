@@ -4,6 +4,7 @@ import EnhancedChatButton from "../components/Button/EnhancedChatButton";
 import HomeNavBar from "../components/NavBar/HomeNavBar";
 import homepic from "../assets/homepic.png";
 import "@fontsource/poppins"
+import LandingButton from "../components/Button/LandingButton";
 const HomePage = () => {
   return (
     <ParallaxProvider>
@@ -16,7 +17,7 @@ const HomePage = () => {
             <div className="w-1/2 px-6 md:px-4">
               <Parallax speed={-5}>
                 <motion.h1
-                  className="text-10xl md:text-7xl sm:text-6xl font-bold mb-4 leading-tight text-blue-700 font-poppins"
+                  className="text-10xl md:text-7xl sm:text-6xl font-bold mb-4 leading-tight text-[#142850] font-poppins"
                   initial={{ opacity: 0, x: -60 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -29,7 +30,7 @@ const HomePage = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}
                 >
-                  Simplify and harmonize your life with us.
+                  <LandingButton />
                 </motion.p>
               </Parallax>
             </div>
