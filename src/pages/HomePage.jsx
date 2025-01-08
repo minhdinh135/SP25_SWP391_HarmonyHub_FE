@@ -1,32 +1,43 @@
+import { ParallaxProvider, Parallax } from "react-scroll-parallax";
 import EnhancedChatButton from "../components/Button/EnhancedChatButton";
+import HomeNavBar from "../components/NavBar/HomeNavBar";
 
-const Homepage = () => {
+const HomePage = () => {
   return (
-    <div className="font-sans text-center">
-      {/* Header Section */}
-      <header className="bg-green-500 text-white py-6">
-        <h1 className="text-4xl font-bold">Welcome to Our Website</h1>
-        <p className="mt-2 text-lg">Your go-to place for relationship and marriage advice!</p>
-      </header>
+    <ParallaxProvider>
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-sky-300">
+        {/* Header Section */}
+        <header className="backdrop-filter backdrop-blur-lg shadow-lg fixed top-0 left-0 right-0 z-50">
+          <HomeNavBar />
+        </header>
 
-      {/* Content Section */}
-      <section className="py-8 px-4">
-        <h2 className="text-2xl font-semibold">Get Started</h2>
-        <p className="mt-4 text-gray-700">
-          Explore articles, tips, and resources to help you build a stronger relationship.
-        </p>
-        <button className="mt-6 px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 transition">
-          Start Exploring
-        </button>
-      </section>
+        {/* Main Content */}
+        <main className="flex-grow">
+          {/* Example Parallax Section */}
+          <section className="h-screen flex items-center justify-center">
+            <Parallax speed={-10}>
+              <h1 className="text-5xl font-bold text-blue-700">
+                Harmony Hub
+              </h1>
+            </Parallax>
+          </section>
 
-      {/* Footer Section */}
-      <footer className="bg-gray-100 py-4 mt-8">
-        <p className="text-gray-600">&copy; 2025 Our Website</p>
-        <EnhancedChatButton />
-      </footer>
-    </div>
+          {/* Additional Content */}
+          <section className="h-screen bg-white flex items-center justify-center">
+            <Parallax speed={-5}>
+              <h2 className="text-3xl font-bold text-gray-800">Explore More</h2>
+            </Parallax>
+          </section>
+        </main>
+
+        {/* Footer Section */}
+        <footer className="bg-blue-500 text-white py-4 text-center">
+          <p>&copy; 2025 My Website. All Rights Reserved.</p>
+          <EnhancedChatButton />
+        </footer>
+      </div>
+    </ParallaxProvider>
   );
 };
 
-export default Homepage;
+export default HomePage;
