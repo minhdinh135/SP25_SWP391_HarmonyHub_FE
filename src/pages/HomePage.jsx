@@ -1,3 +1,5 @@
+import EnhancedChatButton from "../components/Button/EnhancedChatButton";
+
 const Homepage = () => {
   return (
     <div className="font-sans text-center">
@@ -21,6 +23,7 @@ const Homepage = () => {
       {/* Footer Section */}
       <footer className="bg-gray-100 py-4 mt-8">
         <p className="text-gray-600">&copy; 2025 Our Website</p>
+        <EnhancedChatButton />
       </footer>
     </div>
   );
