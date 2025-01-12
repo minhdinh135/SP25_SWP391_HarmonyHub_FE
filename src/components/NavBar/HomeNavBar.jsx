@@ -14,7 +14,7 @@ const HomeNavBar = () => {
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6">
           <a
-            href="/home"
+            href="/"
             className="hover:text-gray-200 transition-colors duration-200"
           >
             Home

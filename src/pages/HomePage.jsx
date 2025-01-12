@@ -3,20 +3,21 @@ import { motion } from "framer-motion";
 import EnhancedChatButton from "../components/Button/EnhancedChatButton";
 import HomeNavBar from "../components/NavBar/HomeNavBar";
 import homepic from "../assets/homepic.png";
+import portrait from "../assets/portrait-couple.png"
+import therapist from "../assets/therapist.jpg"
 import "@fontsource/poppins";
 import LandingButton from "../components/Button/LandingButton";
-
 const HomePage = () => {
   return (
     <ParallaxProvider>
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-sky-300">
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-sky-500">
         <header className="backdrop-filter backdrop-blur-lg shadow-lg fixed top-0 left-0 right-0 z-50">
           <HomeNavBar />
         </header>
         <main className="flex-grow">
-          <section className="relative h-screen flex flex-col md:flex-row items-center justify-center px-6 md:px-10">
-            <div className="md:w-1/2 w-full text-center md:text-left mb-8 md:mb-0">
-              <Parallax speed={-5}>
+          <section className="relative h-screen flex flex-col md:flex-row justify-start px-6 md:px-20 md:pt-40 ">
+            <div className="md:w-1/2 w-full md:text-left pt-10">
+              <Parallax >
                 <motion.h1
                   className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight text-[#142850] font-poppins"
                   initial={{ opacity: 0, x: -60 }}
@@ -38,14 +39,14 @@ const HomePage = () => {
                 </div>
               </Parallax>
             </div>
-            <div className="md:w-1/2 w-full flex justify-center">
+            <div className="md:w-3/4 w-full flex justify-center">
               <Parallax speed={10}>
                 <motion.img
-                  src={homepic}
+                  src={portrait}
                   alt="Harmony Hub"
-                  className="w-3/4 md:w-full max-w-xs md:max-w-md lg:max-w-lg"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  className="md:w-full max-w-xs md:max-w-md lg:max-w-lg "
+                  initial={{ opacity: 0, x: 50, scale: 1 }}
+                  animate={{ opacity: 1, x: 0, scale: 2 }}
                   transition={{ duration: 0.5 }}
                 />
               </Parallax>
@@ -76,7 +77,7 @@ const HomePage = () => {
               <div className="md:w-1/2 w-full flex justify-center">
                 <Parallax speed={5}>
                   <motion.img
-                    src={homepic}
+                    src={therapist}
                     alt="Build Strong Foundations"
                     className="w-3/4 md:w-full max-w-sm md:max-w-md"
                     initial={{ opacity: 0, scale: 0.9 }}
