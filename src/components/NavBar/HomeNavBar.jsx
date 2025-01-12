@@ -20,10 +20,16 @@ const HomeNavBar = () => {
             Home
           </a>
           <a
-            href="#about"
+            href="/about"
             className="hover:text-gray-200 transition-colors duration-200"
           >
             About
+          </a>
+          <a
+            href="#service"
+            className="hover:text-gray-200 transition-colors duration-200"
+          >
+            Service
           </a>
           <a
             href="#contact"
