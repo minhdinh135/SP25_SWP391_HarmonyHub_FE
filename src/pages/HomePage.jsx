@@ -7,6 +7,7 @@ import portrait from "../assets/portrait-couple.png"
 import therapist from "../assets/therapist.jpg"
 import "@fontsource/poppins";
 import LandingButton from "../components/Button/LandingButton";
+import Feedback from "../components/Feedback";
 const HomePage = () => {
   const section1Ref = useRef(null);
   return (
@@ -94,6 +95,12 @@ const HomePage = () => {
           </div>
         </section>
         <section className="relative h-screen bg-gradient-to-b from-[#D9EAFD] to-white  ">
+          <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+            <div className="w-full max-w-7xl px-4">
+              <h1 className="text-3xl font-bold text-center mb-8">Customer Feedback</h1>
+              <Feedback />
+            </div>
+          </div>
         </section>
         <footer className="bg-blue-500 text-white py-4 text-center">
           <p className="text-sm md:text-base">&copy; 2025 Harmony Hub. All Rights Reserved.</p>
