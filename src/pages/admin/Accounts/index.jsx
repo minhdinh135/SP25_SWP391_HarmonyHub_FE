@@ -1,4 +1,6 @@
 import { getAllAccounts } from "@/api/accountApi";
+import Spinner from "@/components/Spinner";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -8,22 +10,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/hooks/use-toast";
+import { getStatusColor } from "@/utils/colorUtils";
 import { getRoleText, getStatusText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
 import { useEffect, useState } from "react";
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchAccounts = async () => {
-    const data = await getAllAccounts();
-    setAccounts(data);
+    try {
+      const data = await getAllAccounts();
+      setAccounts(data);
+    } catch (error) {
+      console.log(error);
+      toast({ title: "Error", description: error.message });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchAccounts();
   }, []);
+
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="p-6 space-y-6">
@@ -32,7 +45,7 @@ const Accounts = () => {
         <TableCaption>List of all system accounts.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">No.</TableHead>
+            <TableHead className="w-[50px] text-right">No.</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Name</TableHead>
@@ -43,14 +56,18 @@ const Accounts = () => {
         <TableBody>
           {accounts.map((account, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell className="w-[50px] text-right">{index + 1}</TableCell>
               <TableCell>{account.email}</TableCell>
               <TableCell>{account.phone}</TableCell>
               <TableCell>
                 {getFullName(account.firstName, account.lastName)}
               </TableCell>
               <TableCell>{getRoleText(account.role)}</TableCell>
-              <TableCell>{getStatusText(account.status)}</TableCell>
+              <TableCell>
+                <Badge className={getStatusColor(account.status)}>
+                  {getStatusText(account.status)}
+                </Badge>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

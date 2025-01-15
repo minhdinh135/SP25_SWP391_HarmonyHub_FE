@@ -1,5 +1,4 @@
 import BASE_API_URL from "@/constants/api";
-import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 
 export const getAllAccounts = async () => {
@@ -8,7 +7,6 @@ export const getAllAccounts = async () => {
     return response.data.data;
   } catch (error) {
     console.log(error);
-    toast({ title: "Account Error", description: error.response.data.message });
-    throw error;
+    throw new Error("Error getting accounts");
   }
 };
