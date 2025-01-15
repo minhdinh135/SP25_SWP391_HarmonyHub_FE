@@ -1,11 +1,25 @@
-import 'react-toastify/dist/ReactToastify.css'
-import { MdArrowBack } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import "react-toastify/dist/ReactToastify.css";
+import { MdArrowBack } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
+import { accountLogin } from "@/api/authApi";
 const Login = () => {
-  const navigate = useNavigate()
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
+
+  const handleLogin = async () => {
+    const payload = {
+      email: "harmonyhub135@gmail.com",
+      password: "harmonyhub123!",
+    };
+    const user = await accountLogin(payload);
+    console.log("User response", user);
+    login(user);
+  };
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-white to-[#00A8CC]">
       <button
@@ -19,7 +33,7 @@ const Login = () => {
           <h2 className="text-4xl font-bold text-[#142850] mb-8 text-center">
             Log in to continue your journey
           </h2>
-          <form className="space-y-6" >
+          <form className="space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -53,6 +67,7 @@ const Login = () => {
             <button
               type="submit"
               className="w-full py-4 text-lg bg-[#00A8CC] text-white rounded-lg hover:bg-[#27496D] focus:ring-2 focus:ring-orange-500"
+              onClick={handleLogin}
             >
               Log In
             </button>
@@ -60,8 +75,7 @@ const Login = () => {
           <p className="my-6 text-md text-gray-400 text-center">
             or continue with
           </p>
-          <div className="mt-6 text-center">
-          </div>
+          <div className="mt-6 text-center"></div>
           <div className="mt-6 text-center">
             <a
               href="/forgot-password"
@@ -71,7 +85,7 @@ const Login = () => {
             </a>
           </div>
           <div className="text-lg text-gray-600 mt-6 text-center">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <a href="/sign-up" className="text-[#0C7B93] hover:text-red-500">
               Sign Up
             </a>
@@ -79,6 +93,6 @@ const Login = () => {
         </div>
       </div>
     </section>
-  )
-}
-export default Login
+  );
+};
+export default Login;
