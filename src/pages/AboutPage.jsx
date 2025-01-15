@@ -18,7 +18,10 @@ const AboutUsPage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
         >
-          HarmonyHub is dedicated to providing expert pre-marital counseling to help couples build strong, lasting relationships. We focus on communication, trust-building, and resolving conflicts before marriage to ensure a harmonious future together.
+          HarmonyHub is dedicated to providing expert pre-marital counseling to
+          help couples build strong, lasting relationships. We focus on
+          communication, trust-building, and resolving conflicts before marriage
+          to ensure a harmonious future together.
         </motion.p>
       </section>
 
@@ -39,7 +42,10 @@ const AboutUsPage = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
           >
-            Our mission is to help couples prepare for a lifetime of happiness by offering comprehensive pre-marital counseling that covers everything from effective communication to conflict management and emotional support.
+            Our mission is to help couples prepare for a lifetime of happiness
+            by offering comprehensive pre-marital counseling that covers
+            everything from effective communication to conflict management and
+            emotional support.
           </motion.p>
         </div>
 
@@ -74,7 +80,10 @@ const AboutUsPage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          At HarmonyHub, we use research-backed techniques and real-world strategies to help couples build the necessary tools for a successful marriage. Our counselors guide you through practical exercises in communication, empathy, and conflict resolution.
+          At HarmonyHub, we use research-backed techniques and real-world
+          strategies to help couples build the necessary tools for a successful
+          marriage. Our counselors guide you through practical exercises in
+          communication, empathy, and conflict resolution.
         </motion.p>
       </section>
 
@@ -95,7 +104,9 @@ const AboutUsPage = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            "HarmonyHub's counseling helped us communicate better and prepared us for the challenges of marriage. We are now more confident in our relationship!" – Sarah & John
+            "HarmonyHub's counseling helped us communicate better and prepared
+            us for the challenges of marriage. We are now more confident in our
+            relationship!" – Sarah & John
           </motion.blockquote>
           <motion.blockquote
             className="italic text-gray-700 text-lg sm:text-xl md:text-2xl"
@@ -103,7 +114,9 @@ const AboutUsPage = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.7 }}
           >
-            "We learned so much about each other and the importance of emotional support. The tools we gained from our sessions have been invaluable." – Emily & Mark
+            "We learned so much about each other and the importance of emotional
+            support. The tools we gained from our sessions have been
+            invaluable." – Emily & Mark
           </motion.blockquote>
         </div>
       </section>
