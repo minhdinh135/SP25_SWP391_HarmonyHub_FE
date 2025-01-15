@@ -12,6 +12,7 @@ import NotFound from "./pages/error/NotFound";
 import { Roles } from "./constants/role";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import Accounts from "./pages/admin/Accounts";
 function App() {
   return (
     <Router>
@@ -28,6 +29,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={[Roles.Admin]} />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="accounts" element={<Accounts />} />
           </Route>
         </Route>
 
