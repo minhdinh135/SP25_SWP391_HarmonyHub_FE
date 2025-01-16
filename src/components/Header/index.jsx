@@ -76,10 +76,8 @@ const subMenuItemsTwo = [
 ];
 
 const Header = () => {
-  const navigate = useNavigate();
-
   return (
-    <section className="py-4">
+    <section className="px-4 py-4">
       <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
@@ -189,9 +187,9 @@ const Header = () => {
                     variant: "ghost",
                   }),
                 )}
-                href="#"
+                href="/blogs"
               >
-                Blog
+                Blogs
               </a>
             </div>
           </div>

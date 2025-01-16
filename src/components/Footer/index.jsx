@@ -41,7 +41,7 @@ const sections = [
 
 const Footer = () => {
   return (
-    <section className="py-32 bg-blue-200">
+    <section className="py-12 px-12 bg-blue-200">
       <div className="container">
         <footer>
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
