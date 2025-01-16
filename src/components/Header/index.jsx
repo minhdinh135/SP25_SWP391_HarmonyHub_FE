@@ -1,5 +1,4 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 import {
@@ -73,10 +72,14 @@ const subMenuItemsTwo = [
     icon: <Book className="size-5 shrink-0" />,
   },
 ];
-
 const Header = () => {
   const navigate = useNavigate();
-
+  const handleClickLogin = () => {
+    navigate('/login');
+  };
+  const handleClickSignup = () => {
+    navigate('/sign-up');
+  }
   return (
     <section className="py-4">
       <div className="container">
@@ -195,8 +198,8 @@ const Header = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">Log in</Button>
-            <Button>Sign up</Button>
+            <Button variant="outline" onClick={handleClickLogin}>Login</Button>
+            <Button onClick={handleClickSignup}>Sign up</Button>
           </div>
         </nav>
         <div className="block lg:hidden">
@@ -363,7 +366,7 @@ const Header = () => {
                     </a>
                   </div>
                   <div className="mt-2 flex flex-col gap-3">
-                    <Button variant="outline">Log in</Button>
+                    <Button variant="outline">Login</Button>
                     <Button>Sign up</Button>
                   </div>
                 </div>
