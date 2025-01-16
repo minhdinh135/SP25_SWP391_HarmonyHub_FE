@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 
 const CTA = () => {
   return (
-    <section className="py-32 bg-blue-200">
+    <section className="py-12 px-12 bg-blue-200">
       <div className="container">
         <div className="flex w-full flex-col gap-16 overflow-hidden rounded-lg p-8 md:rounded-xl lg:flex-row lg:items-center lg:p-16">
           <div className="flex-1">

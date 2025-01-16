@@ -14,6 +14,8 @@ import Homepage from "./pages/common/Homepage";
 import AboutUsPage from "./pages/AboutPage";
 import Login from "./pages/common/Login";
 import SignUp from "./pages/common/SignUp";
+import { BlogList } from "./pages/common/Blog";
+import { BlogPost } from "./pages/common/Blog/BlogPost";
 function App() {
   return (
     <Router>
@@ -32,6 +34,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<AboutUsPage />} />
+          <Route path="blogs" element={<BlogList />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Admin]} />}>
