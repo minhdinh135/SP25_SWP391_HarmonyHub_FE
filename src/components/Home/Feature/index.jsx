@@ -2,11 +2,11 @@ import { Timer, Zap, ZoomIn } from "lucide-react";
 
 const Feature = () => {
   return (
-    <section className="py-32">
+    <section className="py-12 px-12">
       <div className="container">
-        <p className="mb-4 text-sm text-muted-foreground lg:text-base">
-          OUR VALUES
-        </p>
+        {/* <p className="mb-4 text-sm text-muted-foreground lg:text-base"> */}
+        {/*   OUR VALUES */}
+        {/* </p> */}
         <h2 className="text-3xl font-medium lg:text-4xl">Why Choose Us?</h2>
         <div className="mt-14 grid gap-6 lg:mt-20 lg:grid-cols-3">
           <div className="rounded-lg bg-accent p-5">
