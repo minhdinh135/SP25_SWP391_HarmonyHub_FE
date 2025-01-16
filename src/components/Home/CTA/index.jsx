@@ -7,16 +7,18 @@ const CTA = () => {
         <div className="flex w-full flex-col gap-16 overflow-hidden rounded-lg p-8 md:rounded-xl lg:flex-row lg:items-center lg:p-16">
           <div className="flex-1">
             <h3 className="mb-3 text-2xl font-semibold md:mb-4 md:text-4xl lg:mb-6">
-              Call to Action
+              Start Your Journey to a Stronger Relationship
             </h3>
             <p className="text-muted-foreground lg:text-lg">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig
-              doloremque mollitia fugiat omnis!
+              Build a solid foundation for your future together. Explore our
+              personalized premarital counseling sessions designed to help
+              couples communicate effectively and prepare for a lasting
+              partnership.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button variant="outline">Learn More</Button>
-            <Button>Get Started</Button>
+            <Button>Find Therapists</Button>
           </div>
         </div>
       </div>

@@ -26,7 +26,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
-import AppButton from "../Button/AppButton";
 
 const subMenuItemsOne = [
   {
@@ -76,18 +75,25 @@ const subMenuItemsTwo = [
 ];
 
 const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="px-4 py-4">
       <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <img
-                src="https://shadcnblocks.com/images/block/block-1.svg"
-                className="w-8"
-                alt="logo"
-              />
-              <span className="text-xl font-bold">Shadcn Blocks</span>
+            <div
+              className="flex items-center gap-2 hover:cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              {/* <img */}
+              {/*   src="https://shadcnblocks.com/images/block/block-1.svg" */}
+              {/*   className="w-8" */}
+              {/*   alt="logo" */}
+              {/* /> */}
+              <span className="text-xl text-blue-600 font-bold">
+                Harmony Hub
+              </span>
             </div>
             <div className="flex items-center">
               <a
@@ -204,13 +210,18 @@ const Header = () => {
         </nav>
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <img
-                src="https://shadcnblocks.com/images/block/block-1.svg"
-                className="w-8"
-                alt="logo"
-              />
-              <span className="text-xl font-bold">Shadcn Blocks</span>
+            <div
+              className="flex items-center gap-2 hover:cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              {/* <img */}
+              {/*   src="https://shadcnblocks.com/images/block/block-1.svg" */}
+              {/*   className="w-8" */}
+              {/*   alt="logo" */}
+              {/* /> */}
+              <span className="text-xl text-blue-600 font-bold">
+                Harmony Hub
+              </span>
             </div>
             <Sheet>
               <SheetTrigger asChild>
@@ -221,13 +232,18 @@ const Header = () => {
               <SheetContent className="overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://shadcnblocks.com/images/block/block-1.svg"
-                        className="w-8"
-                        alt="logo"
-                      />
-                      <span className="text-xl font-bold">Shadcn Blocks</span>
+                    <div
+                      className="flex items-center gap-2 hover:cursor-pointer"
+                      onClick={() => navigate("/")}
+                    >
+                      {/* <img */}
+                      {/*   src="https://shadcnblocks.com/images/block/block-1.svg" */}
+                      {/*   className="w-8" */}
+                      {/*   alt="logo" */}
+                      {/* /> */}
+                      <span className="text-xl text-blue-600 font-bold">
+                        Harmony Hub
+                      </span>
                     </div>
                   </SheetTitle>
                 </SheetHeader>
@@ -292,8 +308,8 @@ const Header = () => {
                   <a href="#" className="font-semibold">
                     Pricing
                   </a>
-                  <a href="#" className="font-semibold">
-                    Blog
+                  <a href="/blogs" className="font-semibold">
+                    Blogs
                   </a>
                 </div>
                 <div className="border-t pt-4">
@@ -366,8 +382,12 @@ const Header = () => {
                     </a>
                   </div>
                   <div className="mt-2 flex flex-col gap-3">
-                    <AppButton text={"Log in"} link={"/login"} />
-                    <Button>Sign up</Button>
+                    <Button variant="outline">
+                      <a href="/login">Login</a>
+                    </Button>
+                    <Button>
+                      <a href="/sign-up">Sign up</a>
+                    </Button>
                   </div>
                 </div>
               </SheetContent>
