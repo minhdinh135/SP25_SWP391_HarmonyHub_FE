@@ -26,6 +26,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
+import AppButton from "../Button/AppButton";
 
 const subMenuItemsOne = [
   {
@@ -195,8 +196,12 @@ const Header = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">Log in</Button>
-            <Button>Sign up</Button>
+            <Button variant="outline">
+              <a href="/login">Login</a>
+            </Button>
+            <Button>
+              <a href="/sign-up">Sign up</a>
+            </Button>
           </div>
         </nav>
         <div className="block lg:hidden">
@@ -363,7 +368,7 @@ const Header = () => {
                     </a>
                   </div>
                   <div className="mt-2 flex flex-col gap-3">
-                    <Button variant="outline">Log in</Button>
+                    <AppButton text={"Log in"} link={"/login"} />
                     <Button>Sign up</Button>
                   </div>
                 </div>
