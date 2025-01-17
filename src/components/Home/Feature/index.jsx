@@ -4,16 +4,13 @@ const Feature = () => {
   return (
     <section className="py-12 px-12">
       <div className="container">
-        {/* <p className="mb-4 text-sm text-muted-foreground lg:text-base"> */}
-        {/*   OUR VALUES */}
-        {/* </p> */}
         <h2 className="text-3xl font-medium lg:text-4xl">
           Why Choose Our Counseling Services?
         </h2>
         <div className="mt-14 grid gap-6 lg:mt-20 lg:grid-cols-3">
-          <div className="rounded-lg bg-accent p-5">
-            <span className="mb-8 flex size-12 items-center justify-center rounded-full bg-background">
-              <Timer className="size-6" />
+          <div className="rounded-lg bg-white p-5 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <span className="mb-8 mx-auto flex size-12 items-center justify-center rounded-full bg-background">
+              <Timer className="size-12 text-blue-600" />
             </span>
             <h3 className="mb-2 text-xl font-medium">Flexible Scheduling</h3>
             <p className="leading-7 text-muted-foreground">
@@ -22,9 +19,9 @@ const Feature = () => {
               easily if needed.
             </p>
           </div>
-          <div className="rounded-lg bg-accent p-5">
-            <span className="mb-8 flex size-12 items-center justify-center rounded-full bg-background">
-              <ZoomIn className="size-6" />
+          <div className="rounded-lg bg-white p-5 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <span className="mb-8 mx-auto flex size-12 items-center justify-center rounded-full bg-background">
+              <ZoomIn className="size-12 text-blue-600" />
             </span>
             <h3 className="mb-2 text-xl font-medium">Certified Counselors</h3>
             <p className="leading-7 text-muted-foreground">
@@ -33,9 +30,9 @@ const Feature = () => {
               stronger bond.
             </p>
           </div>
-          <div className="rounded-lg bg-accent p-5">
-            <span className="mb-8 flex size-12 items-center justify-center rounded-full bg-background">
-              <Zap className="size-6" />
+          <div className="rounded-lg bg-white p-5 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <span className="mb-8 mx-auto flex size-12 items-center justify-center rounded-full bg-background">
+              <Zap className="size-12 text-blue-600" />
             </span>
             <h3 className="mb-2 text-xl font-medium">Innovative Approach</h3>
             <p className="leading-7 text-muted-foreground">

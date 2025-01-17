@@ -78,7 +78,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="px-4 py-4">
+    <section className="w-full border-b-2 px-4 py-4">
       <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
@@ -91,7 +91,7 @@ const Header = () => {
               {/*   className="w-8" */}
               {/*   alt="logo" */}
               {/* /> */}
-              <span className="text-xl text-blue-600 font-bold">
+              <span className="text-xl text-gray-900 font-semibold">
                 Harmony Hub
               </span>
             </div>
@@ -108,6 +108,19 @@ const Header = () => {
               >
                 Home
               </a>
+              <a
+                className={cn(
+                  "text-muted-foreground",
+                  navigationMenuTriggerStyle,
+                  buttonVariants({
+                    variant: "ghost",
+                  }),
+                )}
+                href="/about"
+              >
+                About Us
+              </a>
+
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem className="text-muted-foreground">
@@ -197,14 +210,33 @@ const Header = () => {
               >
                 Blogs
               </a>
+              <a
+                className={cn(
+                  "text-muted-foreground",
+                  navigationMenuTriggerStyle,
+                  buttonVariants({
+                    variant: "ghost",
+                  }),
+                )}
+                href="/therapists"
+              >
+                Therapists
+              </a>
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">
-              <a href="/login">Login</a>
+            <Button variant="outline" className="bg-blue-600 border-2">
+              <a className="text-white" href="/login">
+                Login
+              </a>
             </Button>
-            <Button>
-              <a href="/sign-up">Sign up</a>
+            <Button
+              variant="outline"
+              className="bg-white border-2 border-blue-600"
+            >
+              <a className="text-blue-600" href="/sign-up">
+                Sign up
+              </a>
             </Button>
           </div>
         </nav>
@@ -219,7 +251,7 @@ const Header = () => {
               {/*   className="w-8" */}
               {/*   alt="logo" */}
               {/* /> */}
-              <span className="text-xl text-blue-600 font-bold">
+              <span className="text-xl text-gray-900 font-semibold">
                 Harmony Hub
               </span>
             </div>
@@ -241,7 +273,7 @@ const Header = () => {
                       {/*   className="w-8" */}
                       {/*   alt="logo" */}
                       {/* /> */}
-                      <span className="text-xl text-blue-600 font-bold">
+                      <span className="text-xl text-gray-900 font-semibold">
                         Harmony Hub
                       </span>
                     </div>
