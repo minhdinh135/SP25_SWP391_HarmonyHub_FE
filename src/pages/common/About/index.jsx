@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import teamImage from "@/assets/thinking-guy.jpg";
 const AboutUsPage = () => {
   return (
     <div className="container mx-auto p-6">
@@ -57,7 +58,7 @@ const AboutUsPage = () => {
           transition={{ duration: 1 }}
         >
           <img
-            src="/path-to-your-image.jpg" // Update with the correct path
+            src={teamImage}
             alt="HarmonyHub Team"
             className="max-w-xs md:max-w-lg rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
           />

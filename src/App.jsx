@@ -11,11 +11,13 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import Accounts from "./pages/admin/Accounts";
 import CommonLayout from "./layouts/CommonLayout";
 import Homepage from "./pages/common/Homepage";
-import AboutUsPage from "./pages/AboutPage";
 import Login from "./pages/common/Login";
 import SignUp from "./pages/common/SignUp";
-import { BlogList } from "./pages/common/Blog";
-import { BlogPost } from "./pages/common/Blog/BlogPost";
+import { BlogList } from "./pages/common/BlogList";
+import { BlogPost } from "./pages/common/BlogDetails";
+import TherapistList from "./pages/common/TherapistList";
+import TherapistDetails from "./pages/common/TherapistDetails";
+import AboutUsPage from "./pages/common/About";
 function App() {
   return (
     <Router>
@@ -35,7 +37,9 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="blogs" element={<BlogList />} />
-          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/blogs/:id" element={<BlogPost />} />
+          <Route path="/therapists" element={<TherapistList />} />
+          <Route path="/therapists/:id" element={<TherapistDetails />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Admin]} />}>

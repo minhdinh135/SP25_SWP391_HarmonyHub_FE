@@ -4,7 +4,7 @@ import heroImage from "@/assets/homepic.png";
 
 const Hero = () => {
   return (
-    <section className="py-12 px-12 bg-blue-200">
+    <section className="py-12 px-12 bg-blue-100">
       <div className="container">
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -17,8 +17,13 @@ const Hero = () => {
               resolution, and how to align your values and goals as a couple.
             </p>
             <div className="flex w-full flex-col justify-center gap-2 sm:flex-row lg:justify-start">
-              <Button className="w-full sm:w-auto">Get Started</Button>
-              <Button variant="outline" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-blue-600">
+                Get Started
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto text-blue-600 border-2 border-blue-600"
+              >
                 Learn More
                 <ArrowDownRight className="ml-2 size-4" />
               </Button>

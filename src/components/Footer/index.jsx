@@ -41,17 +41,20 @@ const sections = [
 
 const Footer = () => {
   return (
-    <section className="py-12 px-12 bg-blue-200">
+    <section className="w-full border-t-2 py-12 px-12 bg-blue-100">
       <div className="container">
         <footer>
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
             <div className="col-span-2 mb-8 lg:mb-0">
-              <img
-                src="https://shadcnblocks.com/images/block/logos/shadcn-ui.svg"
-                alt="logo"
-                className="mb-4 h-7"
-              />
-              <p className="font-bold">Components made easy.</p>
+              {/* <img */}
+              {/*   src="https://shadcnblocks.com/images/block/logos/shadcn-ui.svg" */}
+              {/*   alt="logo" */}
+              {/*   className="mb-4 h-7" */}
+              {/* /> */}
+              <span className="mb-4 text-4xl text-black font-semibold">
+                Harmony Hub
+              </span>
+              <p className="font-bold">Counseling made easy.</p>
             </div>
             {sections.map((section, sectionIdx) => (
               <div key={sectionIdx}>
