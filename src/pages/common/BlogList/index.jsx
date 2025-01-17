@@ -79,7 +79,7 @@ export function BlogList() {
                     <Button
                       variant="ghost"
                       className="gap-2"
-                      onClick={() => navigate(`/blog/${post.id}`)}
+                      onClick={() => navigate(`/blogs/${post.id}`)}
                     >
                       Read More
                       <ArrowRight size={16} />
