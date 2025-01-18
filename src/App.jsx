@@ -18,6 +18,10 @@ import { BlogPost } from "./pages/common/BlogDetails";
 import TherapistList from "./pages/common/TherapistList";
 import TherapistDetails from "./pages/common/TherapistDetails";
 import AboutUsPage from "./pages/common/About";
+import QuizList from "./pages/common/QuizList";
+import QuizDetails from "./pages/common/QuizDetails";
+import QuizResults from "./pages/common/QuizResults";
+import TakeQuiz from "./pages/common/TakeQuizPage";
 function App() {
   return (
     <Router>
@@ -38,6 +42,10 @@ function App() {
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="blogs" element={<BlogList />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
+          <Route path="/quizzes" element={<QuizList />} />
+          <Route path="/quizzes/:id" element={<QuizDetails />} />
+          <Route path="/quizzes/:id/questions" element={<TakeQuiz />} />
+          <Route path="/quizzes/:id/result" element={<QuizResults />} />
           <Route path="/therapists" element={<TherapistList />} />
           <Route path="/therapists/:id" element={<TherapistDetails />} />
         </Route>

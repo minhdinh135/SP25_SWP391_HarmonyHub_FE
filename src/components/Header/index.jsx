@@ -194,9 +194,9 @@ const Header = () => {
                     variant: "ghost",
                   }),
                 )}
-                href="#"
+                href="/quizzes"
               >
-                Pricing
+                Quizzes
               </a>
               <a
                 className={cn(
