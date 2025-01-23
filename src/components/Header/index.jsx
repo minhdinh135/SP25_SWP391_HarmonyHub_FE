@@ -91,6 +91,10 @@ const Header = () => {
               {/*   className="w-8" */}
               {/*   alt="logo" */}
               {/* /> */}
+              <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
+                <span className="text-blue-600 font-bold">H</span>
+              </div>
+
               <span className="text-xl text-gray-900 font-semibold">
                 Harmony Hub
               </span>
@@ -222,10 +226,25 @@ const Header = () => {
               >
                 Therapists
               </a>
+              <a
+                className={cn(
+                  "text-muted-foreground",
+                  navigationMenuTriggerStyle,
+                  buttonVariants({
+                    variant: "ghost",
+                  }),
+                )}
+                href="/calendar"
+              >
+                Calendar
+              </a>
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" className="bg-blue-600 border-2">
+            <Button
+              variant="outline"
+              className="bg-blue-600 border-2 hover:bg-blue-300"
+            >
               <a className="text-white" href="/login">
                 Login
               </a>
@@ -414,11 +433,21 @@ const Header = () => {
                     </a>
                   </div>
                   <div className="mt-2 flex flex-col gap-3">
-                    <Button variant="outline">
-                      <a href="/login">Login</a>
+                    <Button
+                      variant="outline"
+                      className="bg-blue-600 border-2 hover:bg-blue-300"
+                    >
+                      <a className="text-white" href="/login">
+                        Login
+                      </a>
                     </Button>
-                    <Button>
-                      <a href="/sign-up">Sign up</a>
+                    <Button
+                      variant="outline"
+                      className="bg-white border-2 border-blue-600"
+                    >
+                      <a className="text-blue-600" href="/sign-up">
+                        Sign up
+                      </a>
                     </Button>
                   </div>
                 </div>

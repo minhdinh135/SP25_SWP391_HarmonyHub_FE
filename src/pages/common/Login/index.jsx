@@ -1,3 +1,4 @@
+import { accountLogin } from "@/api/authApi";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,12 +10,43 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const handleSubmit = (e) => {
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
+
+    const payload = {
+      email: form.email,
+      password: form.password,
+    };
+
+    try {
+      await accountLogin(payload);
+      toast({
+        title: "Success",
+        description: "Login successfully",
+      });
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Error",
+        description: "Login failed",
+      });
+    }
   };
   return (
     <main className="min-h-screen w-full flex flex-col md:flex-row ">
@@ -50,14 +82,22 @@ const Login = () => {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
+                  onChange={handleChange}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  onChange={handleChange}
+                />
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
