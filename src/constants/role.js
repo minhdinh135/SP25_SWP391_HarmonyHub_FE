@@ -4,3 +4,7 @@ export const Roles = {
   System: 3,
   Admin: 0,
 };
+
+export const getRoleKey = (value) => {
+  return Object.keys(Roles).find((key) => Roles[key] === value);
+};
