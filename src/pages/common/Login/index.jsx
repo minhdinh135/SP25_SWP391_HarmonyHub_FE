@@ -11,10 +11,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import useAuth from "@/hooks/useAuth";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const { login } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -34,7 +36,8 @@ const Login = () => {
     };
 
     try {
-      await accountLogin(payload);
+      const user = await accountLogin(payload);
+      login(user);
       toast({
         title: "Success",
         description: "Login successfully",

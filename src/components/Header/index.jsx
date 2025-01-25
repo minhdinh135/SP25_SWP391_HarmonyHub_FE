@@ -26,6 +26,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
 
 const subMenuItemsOne = [
   {
@@ -75,6 +76,7 @@ const subMenuItemsTwo = [
 ];
 
 const Header = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   return (
