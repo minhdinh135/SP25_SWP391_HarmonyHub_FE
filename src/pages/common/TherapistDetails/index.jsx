@@ -4,6 +4,8 @@ import { Star, Mail, Phone, MapPin } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useParams } from "react-router-dom";
+import BookAppointmentForm from "../BookAppointmentForm";
+import { Link } from "react-router-dom";
 
 const TherapistDetails = () => {
   const id = useParams();
@@ -44,7 +46,9 @@ const TherapistDetails = () => {
             </div>
 
             <div className="flex flex-col items-end gap-2">
-              <Button className="w-36">Book Appointment</Button>
+              <Link to="/bookappointment">
+                <Button className="w-36">Book Appointment</Button>
+              </Link>
               <Button variant="outline" className="w-36">
                 View Profile
               </Button>
@@ -121,11 +125,10 @@ const TherapistDetails = () => {
                   (day, index) => (
                     <div
                       key={index}
-                      className={`p-4 text-center rounded-lg ${
-                        day === "Sun"
-                          ? "bg-muted text-muted-foreground"
-                          : "bg-primary text-primary-foreground"
-                      }`}
+                      className={`p-4 text-center rounded-lg ${day === "Sun"
+                        ? "bg-muted text-muted-foreground"
+                        : "bg-primary text-primary-foreground"
+                        }`}
                     >
                       <span className="block text-sm font-semibold">{day}</span>
                       <span className="block text-xs mt-1">

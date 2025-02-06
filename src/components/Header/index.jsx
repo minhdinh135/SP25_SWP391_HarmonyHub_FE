@@ -1,5 +1,4 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 import {
@@ -74,11 +73,15 @@ const subMenuItemsTwo = [
     icon: <Book className="size-5 shrink-0" />,
   },
 ];
-
 const Header = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
+  const handleClickLogin = () => {
+    navigate('/login');
+  };
+  const handleClickSignup = () => {
+    navigate('/sign-up');
+  }
   return (
     <section className="w-full border-b-2 px-4 py-4">
       <div className="container">
@@ -243,6 +246,7 @@ const Header = () => {
             </div>
           </div>
           <div className="flex gap-2">
+<<<<<<< HEAD
             <Button
               variant="outline"
               className="bg-blue-600 border-2 hover:bg-blue-300"
@@ -259,6 +263,10 @@ const Header = () => {
                 Sign up
               </a>
             </Button>
+=======
+            <Button variant="outline" onClick={handleClickLogin}>Login</Button>
+            <Button onClick={handleClickSignup}>Sign up</Button>
+>>>>>>> 8104e270b466cabe5af48a4af1726d56418f4edd
           </div>
         </nav>
         <div className="block lg:hidden">
@@ -435,6 +443,7 @@ const Header = () => {
                     </a>
                   </div>
                   <div className="mt-2 flex flex-col gap-3">
+<<<<<<< HEAD
                     <Button
                       variant="outline"
                       className="bg-blue-600 border-2 hover:bg-blue-300"
@@ -451,6 +460,10 @@ const Header = () => {
                         Sign up
                       </a>
                     </Button>
+=======
+                    <Button variant="outline">Login</Button>
+                    <Button>Sign up</Button>
+>>>>>>> 8104e270b466cabe5af48a4af1726d56418f4edd
                   </div>
                 </div>
               </SheetContent>
