@@ -23,6 +23,7 @@ import QuizDetails from "./pages/common/QuizDetails";
 import QuizResults from "./pages/common/QuizResults";
 import TakeQuiz from "./pages/common/TakeQuizPage";
 import Schedule from "./pages/common/Schedule";
+import BookAppointmentForm from "./pages/common/BookAppointmentForm";
 function App() {
   return (
     <Router>
@@ -50,6 +51,7 @@ function App() {
           <Route path="/therapists" element={<TherapistList />} />
           <Route path="/therapists/:id" element={<TherapistDetails />} />
           <Route path="/calendar" element={<Schedule />} />
+          <Route path="/bookappointment" element={<BookAppointmentForm />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Admin]} />}>
