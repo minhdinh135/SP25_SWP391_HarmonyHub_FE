@@ -2,28 +2,70 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Clock, Calendar } from "lucide-react";
+
 export function BlogPost() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const post = {
-    title: "5 Communication Techniques for a Stronger Marriage",
-    content: `
-      <p class="mb-4">Effective communication is the cornerstone of a healthy marriage. When couples can openly and honestly share their thoughts, feelings, and concerns, they build a stronger foundation for their relationship.</p>
-      <h2 class="text-2xl font-semibold mt-8 mb-4">1. Active Listening</h2>
-      <p class="mb-4">Active listening involves fully concentrating on what your partner is saying, rather than simply waiting for your turn to speak. This means maintaining eye contact, providing verbal and non-verbal feedback, and avoiding interruptions.</p>
-      <h2 class="text-2xl font-semibold mt-8 mb-4">2. Use "I" Statements</h2>
-      <p class="mb-4">Instead of making accusatory statements, express your feelings using "I" statements. For example, say "I feel frustrated when..." rather than "You always..."</p>
-      <h2 class="text-2xl font-semibold mt-8 mb-4">3. Practice Empathy</h2>
-      <p class="mb-4">Try to understand your partner's perspective, even if you disagree. This doesn't mean you have to agree with everything they say, but rather that you're making an effort to see things from their point of view.</p>
-    `,
-    image:
-      "https://images.unsplash.com/photo-1516585427167-9f4af9627e6c?w=800&auto=format&fit=crop&q=60",
-    category: "Communication",
-    readTime: "5 min read",
-    date: "Mar 15, 2024",
-    author: "Dr. Sarah Johnson",
-    authorRole: "Licensed Marriage Counselor",
+
+  const posts = {
+    1: {
+      title: "5 Communication Techniques for a Stronger Marriage",
+      content: `
+        <p class="mb-4">Effective communication is the cornerstone of a healthy marriage...</p>
+        <h2 class="text-2xl font-semibold mt-8 mb-4">1. Active Listening</h2>
+        <p class="mb-4">Active listening involves fully concentrating on what your partner is saying...</p>
+      `,
+      image:
+        "https://images.unsplash.com/photo-1516585427167-9f4af9627e6c?w=800&auto=format&fit=crop&q=60",
+      category: "Communication",
+      readTime: "5 min read",
+      date: "Mar 15, 2024",
+      author: "Dr. Sarah Johnson",
+      authorRole: "Licensed Marriage Counselor",
+    },
+    2: {
+      title: "Rebuilding Trust After Conflict",
+      content: `
+        <p class="mb-4">Conflict is inevitable in any relationship, but how you handle it makes all the difference.</p>
+        <h2 class="text-2xl font-semibold mt-8 mb-4">1. Stay Calm</h2>
+        <p class="mb-4">Avoid escalating the situation. Take a deep breath and approach the conversation rationally.</p>
+      `,
+      image:
+        "https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=800&auto=format&fit=crop&q=60",
+      category: "Trust & Healing",
+      readTime: "8 min read",
+      date: "Mar 12, 2024",
+      author: "Emily Carter",
+      authorRole: "Relationship Coach",
+    },
+    3: {
+      title: "The Role of Empathy in Marriage",
+      content: `
+        <p class="mb-4">Trust is the foundation of any strong relationship. Without it, everything crumbles.</p>
+        <h2 class="text-2xl font-semibold mt-8 mb-4">1. Be Honest</h2>
+        <p class="mb-4">Transparency and honesty help build a safe and secure connection between partners.</p>
+      `,
+      image:
+        "https://images.unsplash.com/photo-1621252179027-94459d278660?w=800&auto=format&fit=crop&q=60",
+      category: "Emotional Support",
+      readTime: "6 min read",
+      date: "Mar 10, 2024",
+      author: "Michael Reynolds",
+      authorRole: "Certified Therapist",
+    },
   };
+
+  const post = posts[id] || {
+    title: "Post Not Found",
+    content: `<p class="text-gray-600">Sorry, the requested blog post does not exist.</p>`,
+    image: "https://via.placeholder.com/800x400?text=Post+Not+Found",
+    category: "Unknown",
+    readTime: "--",
+    date: "--",
+    author: "Unknown",
+    authorRole: "--",
+  };
+
   return (
     <main className="min-h-screen w-full bg-gray-50">
       <div className="relative h-[400px]">
