@@ -17,7 +17,6 @@ import { getRoleText, getStatusText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
 import {
   Search,
-  Filter,
   MoreVertical,
   Download,
   UserPlus,
@@ -39,7 +38,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

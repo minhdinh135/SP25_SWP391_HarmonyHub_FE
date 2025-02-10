@@ -25,3 +25,16 @@ export const getRoleText = (roleEnum) => {
       return "Member";
   }
 };
+
+export const getGenderText = (genderEnum) => {
+  switch (genderEnum) {
+    case 1:
+      return "Male";
+    case 2:
+      return "Female";
+    case 0:
+      return "Prefer not to say";
+    default:
+      return "Prefer not to say";
+  }
+};
