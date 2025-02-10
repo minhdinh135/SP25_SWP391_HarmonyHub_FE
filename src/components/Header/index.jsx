@@ -25,53 +25,343 @@ import {
 } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const subMenuItemsOne = [
-  { title: "Blog", description: "The latest industry news, updates, and info", icon: <Book className="size-5 shrink-0" /> },
-  { title: "Company", description: "Our mission is to innovate and empower the world", icon: <Trees className="size-5 shrink-0" /> },
-  { title: "Careers", description: "Browse job listing and discover our workspace", icon: <Sunset className="size-5 shrink-0" /> },
-  { title: "Support", description: "Get in touch with our support team or visit our community forums", icon: <Zap className="size-5 shrink-0" /> },
+  {
+    title: "Blog",
+    description: "The latest industry news, updates, and info",
+    icon: <Book className="size-5 shrink-0" />,
+  },
+  {
+    title: "Company",
+    description: "Our mission is to innovate and empower the world",
+    icon: <Trees className="size-5 shrink-0" />,
+  },
+  {
+    title: "Careers",
+    description: "Browse job listing and discover our workspace",
+    icon: <Sunset className="size-5 shrink-0" />,
+  },
+  {
+    title: "Support",
+    description:
+      "Get in touch with our support team or visit our community forums",
+    icon: <Zap className="size-5 shrink-0" />,
+  },
 ];
 
 const subMenuItemsTwo = [
-  { title: "Help Center", description: "Get all the answers you need right here", icon: <Zap className="size-5 shrink-0" /> },
-  { title: "Contact Us", description: "We are here to help you with any questions you have", icon: <Sunset className="size-5 shrink-0" /> },
-  { title: "Status", description: "Check the current status of our services and APIs", icon: <Trees className="size-5 shrink-0" /> },
-  { title: "Terms of Service", description: "Our terms and conditions for using our services", icon: <Book className="size-5 shrink-0" /> },
+  {
+    title: "Help Center",
+    description: "Get all the answers you need right here",
+    icon: <Zap className="size-5 shrink-0" />,
+  },
+  {
+    title: "Contact Us",
+    description: "We are here to help you with any questions you have",
+    icon: <Sunset className="size-5 shrink-0" />,
+  },
+  {
+    title: "Status",
+    description: "Check the current status of our services and APIs",
+    icon: <Trees className="size-5 shrink-0" />,
+  },
+  {
+    title: "Terms of Service",
+    description: "Our terms and conditions for using our services",
+    icon: <Book className="size-5 shrink-0" />,
+  },
+];
+
+const avatarItems = [
+  {
+    title: "Profile",
+    icon: <Zap className="size-5 shrink-0" />,
+  },
+  {
+    title: "Logout",
+    icon: <Book className="size-5 shrink-0" />,
+  },
 ];
 
 const Header = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleClickLogin = () => navigate('/login');
-  const handleClickSignup = () => navigate('/sign-up');
+  const handleClickLogin = () => navigate("/login");
+  const handleClickSignup = () => navigate("/sign-up");
 
   return (
     <section className="w-full border-b-2 px-4 py-4">
       <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 hover:cursor-pointer" onClick={() => navigate("/")}>
+            <div
+              className="flex items-center gap-2 hover:cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
                 <span className="text-blue-600 font-bold">H</span>
               </div>
-              <span className="text-xl text-gray-900 font-semibold">Harmony Hub</span>
+              <span className="text-xl text-gray-900 font-semibold">
+                Harmony Hub
+              </span>
             </div>
             <div className="flex items-center space-x-4">
-              <a className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))} href="/">Home</a>
-              <a className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))} href="/about">About Us</a>
-              <a className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))} href="/quizzes">Quizzes</a>
-              <a className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))} href="/blogs">Blogs</a>
-              <a className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))} href="/therapists">Therapists</a>
-              <a className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))} href="/calendar">Calendar</a>
+              <a
+                className={cn(
+                  navigationMenuTriggerStyle,
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                href="/"
+              >
+                Home
+              </a>
+              <a
+                className={cn(
+                  navigationMenuTriggerStyle,
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                href="/about"
+              >
+                About Us
+              </a>
+              <a
+                className={cn(
+                  navigationMenuTriggerStyle,
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                href="/quizzes"
+              >
+                Quizzes
+              </a>
+              <a
+                className={cn(
+                  navigationMenuTriggerStyle,
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                href="/blogs"
+              >
+                Blogs
+              </a>
+              <a
+                className={cn(
+                  navigationMenuTriggerStyle,
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                href="/therapists"
+              >
+                Therapists
+              </a>
+              <a
+                className={cn(
+                  navigationMenuTriggerStyle,
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                href="/calendar"
+              >
+                Calendar
+              </a>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleClickLogin}>Login</Button>
-            <Button onClick={handleClickSignup}>Sign up</Button>
-          </div>
+
+          {user ? (
+            <NavigationMenu className="mx-3 relative">
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="overflow-hidden rounded-md border bg-white shadow-md">
+                    <ul>
+                      <NavigationMenuLink>
+                        {avatarItems.map((item, idx) => (
+                          <li key={idx}>
+                            <a
+                              className={cn(
+                                "flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                              )}
+                              href="#"
+                            >
+                              {item.icon}
+                              <div>
+                                <div className="text-sm font-semibold">
+                                  {item.title}
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                        ))}
+                      </NavigationMenuLink>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                className="bg-blue-600 border-2 hover:bg-blue-300"
+                onClick={handleClickLogin}
+              >
+                Login
+              </Button>
+              <Button
+                className="bg-white border-2 border-blue-600"
+                onClick={handleClickSignup}
+              >
+                Sign up
+              </Button>
+            </div>
+          )}
         </nav>
+
+        <div className="block lg:hidden">
+          <div className="flex items-center justify-between">
+            <div
+              className="flex items-center gap-2 hover:cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              <span className="text-xl text-gray-900 font-semibold">
+                Harmony Hub
+              </span>
+            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="size-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>
+                    <div
+                      className="flex items-center gap-2 hover:cursor-pointer"
+                      onClick={() => navigate("/")}
+                    >
+                      <span className="text-xl text-gray-900 font-semibold">
+                        Harmony Hub
+                      </span>
+                    </div>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="mb-8 mt-8 flex flex-col gap-4">
+                  <a href="#" className="font-semibold">
+                    Home
+                  </a>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="products" className="border-b-0">
+                      <AccordionTrigger className="mb-4 py-0 font-semibold hover:no-underline">
+                        Products
+                      </AccordionTrigger>
+                      <AccordionContent className="mt-2">
+                        {subMenuItemsOne.map((item, idx) => (
+                          <a
+                            key={idx}
+                            className={cn(
+                              "flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            )}
+                            href="#"
+                          >
+                            {item.icon}
+                            <div>
+                              <div className="text-sm font-semibold">
+                                {item.title}
+                              </div>
+                              <p className="text-sm leading-snug text-muted-foreground">
+                                {item.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="resources" className="border-b-0">
+                      <AccordionTrigger className="py-0 font-semibold hover:no-underline">
+                        Resources
+                      </AccordionTrigger>
+                      <AccordionContent className="mt-2">
+                        {subMenuItemsTwo.map((item, idx) => (
+                          <a
+                            key={idx}
+                            className={cn(
+                              "flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            )}
+                            href="#"
+                          >
+                            {item.icon}
+                            <div>
+                              <div className="text-sm font-semibold">
+                                {item.title}
+                              </div>
+                              <p className="text-sm leading-snug text-muted-foreground">
+                                {item.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                  <a href="#" className="font-semibold">
+                    Pricing
+                  </a>
+                  <a href="/blogs" className="font-semibold">
+                    Blogs
+                  </a>
+                </div>
+                <div className="border-t pt-4">
+                  <div className="grid grid-cols-2 justify-start">
+                    <a
+                      className={cn(
+                        buttonVariants({
+                          variant: "ghost",
+                        }),
+                        "justify-start text-muted-foreground",
+                      )}
+                      href="#"
+                    >
+                      Terms & Services
+                    </a>
+                    <a
+                      className={cn(
+                        buttonVariants({
+                          variant: "ghost",
+                        }),
+                        "justify-start text-muted-foreground",
+                      )}
+                      href="#"
+                    >
+                      Contact
+                    </a>
+                  </div>
+                  <div className="mt-2 flex flex-col gap-3">
+                    <Button
+                      variant="outline"
+                      className="bg-blue-600 border-2 hover:bg-blue-300"
+                    >
+                      <a className="text-white" href="/login">
+                        Login
+                      </a>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="bg-white border-2 border-blue-600"
+                    >
+                      <a className="text-blue-600" href="/sign-up">
+                        Sign up
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
       </div>
     </section>
   );
