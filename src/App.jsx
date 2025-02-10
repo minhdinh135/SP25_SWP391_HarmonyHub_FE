@@ -1,7 +1,5 @@
-import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner"; // Import Toaster from sonner
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/error/Unauthorized";
 import NotFound from "./pages/error/NotFound";
@@ -24,25 +22,20 @@ import QuizResults from "./pages/common/QuizResults";
 import TakeQuiz from "./pages/common/TakeQuizPage";
 import Schedule from "./pages/common/Schedule";
 import BookAppointmentForm from "./pages/common/BookAppointmentForm";
+
 function App() {
   return (
     <Router>
-      <div>
-        <ToastContainer />
-        <Toaster position="top-right" />
-      </div>
-      <Routes>
-        {/* <Route index path="/" element={<Homepage />} /> */}
-        {/* <Route path="/login" element={<Login />} /> */}
-        {/* <Route path="/sign-up" element={<SignUpPage />} /> */}
-        {/* <Route path="/about" element={<AboutPage />} /> */}
+      {/* Toaster should be inside Router to be available in all components */}
+      <Toaster position="top-right" richColors />
 
+      <Routes>
         <Route element={<CommonLayout />}>
           <Route index path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<AboutUsPage />} />
-          <Route path="blogs" element={<BlogList />} />
+          <Route path="/blogs" element={<BlogList />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
           <Route path="/quizzes" element={<QuizList />} />
           <Route path="/quizzes/:id" element={<QuizDetails />} />

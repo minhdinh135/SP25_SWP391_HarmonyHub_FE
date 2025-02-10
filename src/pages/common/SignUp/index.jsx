@@ -28,7 +28,7 @@ const SignUp = () => {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">Create an Account</h1>
             <p className="text-gray-400">
-              Join our community and start your journey with us today.
+              Join our session and start your journey with us today.
             </p>
           </div>
         </div>
