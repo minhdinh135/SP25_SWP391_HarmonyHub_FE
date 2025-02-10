@@ -61,9 +61,9 @@ const Login = () => {
             className="rounded-lg shadow-xl w-full object-cover aspect-video"
           />
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Welcome Back!</h1>
+            <h1 className="text-3xl font-bold">Welcome To HarmonyHub!</h1>
             <p className="text-gray-400">
-              We're excited to have you back. Login to access your account and
+              Login to access your account and
               continue your journey.
             </p>
           </div>
