@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner"; // Import toast
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,9 @@ const BookAppointmentForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
+
+    // Show success toast
+    toast.success("Your request has been sent to the therapist!");
   };
 
   return (

@@ -49,9 +49,6 @@ const TherapistDetails = () => {
               <Link to="/bookappointment">
                 <Button className="w-36">Book Appointment</Button>
               </Link>
-              <Button variant="outline" className="w-36">
-                View Profile
-              </Button>
             </div>
           </div>
 
