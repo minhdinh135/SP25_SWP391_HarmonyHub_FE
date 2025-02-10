@@ -18,7 +18,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
 
 const navigationItems = [
   { title: "Overview", path: "/admin", icon: Home },
@@ -30,8 +31,13 @@ const navigationItems = [
 ];
 
 const AppSidebar = ({ onCloseMobileMenu }) => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const handleLogout = () => {
     console.log("Logout clicked");
+    logout();
+    navigate("/");
   };
 
   return (

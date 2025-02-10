@@ -17,7 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { login } = useAuth();
-  const toast = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const [form, setForm] = useState(null);
