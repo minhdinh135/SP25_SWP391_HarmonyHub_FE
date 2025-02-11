@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner"; // Import Toaster from sonner
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/error/Unauthorized";
 import NotFound from "./pages/error/NotFound";
@@ -22,13 +21,14 @@ import QuizResults from "./pages/common/QuizResults";
 import TakeQuiz from "./pages/common/TakeQuizPage";
 import Schedule from "./pages/common/Schedule";
 import BookAppointmentForm from "./pages/common/BookAppointmentForm";
+import MemberProfile from "./pages/member/MemberProfile";
+import TherapistProfile from "./pages/therapist/TherapistProfile";
+import MemberDashboard from "./pages/member/MemberDashboard";
+import TherapistDashboard from "./pages/therapist/TherapistDashboard";
 
 function App() {
   return (
     <Router>
-      {/* Toaster should be inside Router to be available in all components */}
-      <Toaster position="top-right" richColors />
-
       <Routes>
         <Route element={<CommonLayout />}>
           <Route index path="/" element={<Homepage />} />
@@ -51,6 +51,20 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="accounts" element={<Accounts />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={[Roles.Member]} />}>
+          <Route path="/member" element={<CommonLayout />}>
+            <Route path="dashboard" element={<MemberDashboard />} />
+            <Route path="profile" element={<MemberProfile />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={[Roles.Therapist]} />}>
+          <Route path="/therapist" element={<CommonLayout />}>
+            <Route path="dashboard" element={<TherapistDashboard />} />
+            <Route path="profile" element={<TherapistProfile />} />
           </Route>
         </Route>
 

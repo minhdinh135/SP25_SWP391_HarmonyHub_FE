@@ -10,3 +10,29 @@ export const getAllAccounts = async () => {
     throw new Error("Error getting accounts");
   }
 };
+
+export const registerMember = async (payload) => {
+  try {
+    const response = await axios.post(
+      `${BASE_API_URL}/register/member`,
+      payload,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error registering member");
+  }
+};
+
+export const registerTherapist = async (payload) => {
+  try {
+    const response = await axios.post(
+      `${BASE_API_URL}/register/therapist`,
+      payload,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error registering therapist");
+  }
+};
