@@ -1,4 +1,5 @@
 import { accountLogin } from "@/api/authApi";
+import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,16 +11,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
+import useToggleState from "@/hooks/useToggleState";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = () => {
   const { login } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
 
+  const [isLoading, toggleIsLoading] = useToggleState(false);
   const [form, setForm] = useState(null);
 
   const handleChange = (e) => {
@@ -30,6 +32,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    toggleIsLoading();
+
     const payload = {
       email: form.email,
       password: form.password,
@@ -38,19 +42,18 @@ const Login = () => {
     try {
       const user = await accountLogin(payload);
       login(user);
-      toast({
-        title: "Success",
-        description: "Login successfully",
-      });
+      toast.success("Login successfully");
       navigate("/");
     } catch (error) {
       console.log(error);
-      toast({
-        title: "Error",
-        description: "Login failed",
-      });
+      toast.error("Login failed");
+    } finally {
+      toggleIsLoading();
     }
   };
+
+  if (isLoading) return <Spinner />;
+
   return (
     <main className="min-h-screen w-full flex flex-col md:flex-row ">
       <div className="w-full md:w-1/2 bg-gray-900 text-white p-8 flex flex-col justify-center items-center">
@@ -63,8 +66,7 @@ const Login = () => {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">Welcome To HarmonyHub!</h1>
             <p className="text-gray-400">
-              Login to access your account and
-              continue your journey.
+              Login to access your account and continue your journey.
             </p>
           </div>
         </div>

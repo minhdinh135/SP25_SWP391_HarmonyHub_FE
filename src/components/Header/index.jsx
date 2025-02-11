@@ -1,11 +1,3 @@
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -23,77 +15,58 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
+import { getRoleText } from "@/utils/enumUtils";
+import { ArrowLeftSquare, Menu, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
-const subMenuItemsOne = [
-  {
-    title: "Blog",
-    description: "The latest industry news, updates, and info",
-    icon: <Book className="size-5 shrink-0" />,
-  },
-  {
-    title: "Company",
-    description: "Our mission is to innovate and empower the world",
-    icon: <Trees className="size-5 shrink-0" />,
-  },
-  {
-    title: "Careers",
-    description: "Browse job listing and discover our workspace",
-    icon: <Sunset className="size-5 shrink-0" />,
-  },
-  {
-    title: "Support",
-    description:
-      "Get in touch with our support team or visit our community forums",
-    icon: <Zap className="size-5 shrink-0" />,
-  },
-];
-
-const subMenuItemsTwo = [
-  {
-    title: "Help Center",
-    description: "Get all the answers you need right here",
-    icon: <Zap className="size-5 shrink-0" />,
-  },
-  {
-    title: "Contact Us",
-    description: "We are here to help you with any questions you have",
-    icon: <Sunset className="size-5 shrink-0" />,
-  },
-  {
-    title: "Status",
-    description: "Check the current status of our services and APIs",
-    icon: <Trees className="size-5 shrink-0" />,
-  },
-  {
-    title: "Terms of Service",
-    description: "Our terms and conditions for using our services",
-    icon: <Book className="size-5 shrink-0" />,
-  },
-];
+import { getFullName } from "@/utils/nameFormat";
 
 const avatarItems = [
   {
-    title: "Profile",
-    icon: <Zap className="size-5 shrink-0" />,
+    title: "Dashboard",
+    icon: <User className="size-5 shrink-0" />,
   },
   {
     title: "Logout",
-    icon: <Book className="size-5 shrink-0" />,
+    icon: <ArrowLeftSquare className="size-5 shrink-0" />,
   },
 ];
 
 const Header = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleClickLogin = () => navigate("/login");
   const handleClickSignup = () => navigate("/sign-up");
 
+  const handleAvatarItemClick = (title) => {
+    switch (title) {
+      case "Dashboard":
+        if (getRoleText(user.role) === "Admin") {
+          navigate("/admin");
+          break;
+        }
+        if (getRoleText(user.role) === "Member") {
+          navigate("/member/dashboard");
+          break;
+        }
+        if (getRoleText(user.role) === "Therapist") {
+          navigate("/therapist/dashboard");
+          break;
+        }
+        break;
+      case "Logout":
+        logout();
+        break;
+      default:
+        console.log("No title found");
+    }
+  };
+
   return (
-    <section className="w-full border-b-2 px-4 py-4">
+    <section className="w-full border-b-2 px-8 py-2">
       <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
@@ -167,41 +140,55 @@ const Header = () => {
           </div>
 
           {user ? (
-            <NavigationMenu className="mx-3 relative">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
-                    <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="overflow-hidden rounded-md border bg-white shadow-md">
-                    <ul>
-                      <NavigationMenuLink>
-                        {avatarItems.map((item, idx) => (
-                          <li key={idx}>
-                            <a
-                              className={cn(
-                                "flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                              )}
-                              href="#"
+            <div className="flex">
+              <NavigationMenu className="mx-auto relative">
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>
+                      <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="overflow-hidden rounded-md border bg-white shadow-md">
+                      <ul>
+                        <NavigationMenuLink>
+                          {avatarItems.map((item, idx) => (
+                            <li
+                              key={idx}
+                              onClick={() => handleAvatarItemClick(item.title)}
                             >
-                              {item.icon}
-                              <div>
-                                <div className="text-sm font-semibold">
-                                  {item.title}
+                              <a
+                                className={cn(
+                                  "flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                                )}
+                                href="#"
+                              >
+                                {item.icon}
+                                <div>
+                                  <div className="text-sm font-semibold">
+                                    {item.title}
+                                  </div>
                                 </div>
-                              </div>
-                            </a>
-                          </li>
-                        ))}
-                      </NavigationMenuLink>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+                              </a>
+                            </li>
+                          ))}
+                        </NavigationMenuLink>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+
+              <div className="flex flex-col">
+                <span className="text-sm">
+                  {getFullName(user.firstName, user.lastName)}
+                </span>
+                <span className="text-xs font-semibold">
+                  {getRoleText(user.role)}
+                </span>
+              </div>
+            </div>
           ) : (
             <div className="flex gap-2">
               <Button
@@ -211,7 +198,7 @@ const Header = () => {
                 Login
               </Button>
               <Button
-                className="bg-white border-2 border-blue-600"
+                className="bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-300"
                 onClick={handleClickSignup}
               >
                 Sign up
@@ -253,65 +240,17 @@ const Header = () => {
                   <a href="#" className="font-semibold">
                     Home
                   </a>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="products" className="border-b-0">
-                      <AccordionTrigger className="mb-4 py-0 font-semibold hover:no-underline">
-                        Products
-                      </AccordionTrigger>
-                      <AccordionContent className="mt-2">
-                        {subMenuItemsOne.map((item, idx) => (
-                          <a
-                            key={idx}
-                            className={cn(
-                              "flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            )}
-                            href="#"
-                          >
-                            {item.icon}
-                            <div>
-                              <div className="text-sm font-semibold">
-                                {item.title}
-                              </div>
-                              <p className="text-sm leading-snug text-muted-foreground">
-                                {item.description}
-                              </p>
-                            </div>
-                          </a>
-                        ))}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="resources" className="border-b-0">
-                      <AccordionTrigger className="py-0 font-semibold hover:no-underline">
-                        Resources
-                      </AccordionTrigger>
-                      <AccordionContent className="mt-2">
-                        {subMenuItemsTwo.map((item, idx) => (
-                          <a
-                            key={idx}
-                            className={cn(
-                              "flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            )}
-                            href="#"
-                          >
-                            {item.icon}
-                            <div>
-                              <div className="text-sm font-semibold">
-                                {item.title}
-                              </div>
-                              <p className="text-sm leading-snug text-muted-foreground">
-                                {item.description}
-                              </p>
-                            </div>
-                          </a>
-                        ))}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                  <a href="#" className="font-semibold">
-                    Pricing
+                  <a href="/about" className="font-semibold">
+                    About Us
+                  </a>
+                  <a href="/quizzes" className="font-semibold">
+                    Quizzes
                   </a>
                   <a href="/blogs" className="font-semibold">
                     Blogs
+                  </a>
+                  <a href="/therapists" className="font-semibold">
+                    Therapists
                   </a>
                 </div>
                 <div className="border-t pt-4">
