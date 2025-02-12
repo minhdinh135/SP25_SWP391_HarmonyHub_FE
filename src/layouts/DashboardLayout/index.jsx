@@ -1,58 +1,77 @@
-// src/components/DashboardLayout.jsx
-import { useState } from "react";
-import { Home, User, Calendar, MessageSquare, Briefcase } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, Calendar, Clock, MenuIcon } from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import useToggleState from "@/hooks/useToggleState";
+import AppSidebar from "@/components/AppSidebar";
 
-const tabsConfig = {
+const roleNavigationItems = {
   member: [
-    { name: "Dashboard", icon: <Home />, key: "dashboard" },
-    { name: "Bookings", icon: <Calendar />, key: "bookings" },
-    { name: "Services", icon: <Briefcase />, key: "services" },
-    { name: "Messages", icon: <MessageSquare />, key: "messages" },
-    { name: "Profile", icon: <User />, key: "profile" },
+    { title: "Profile", path: "/member/profile", icon: User },
+    { title: "Appointments", path: "/member/appointments", icon: Calendar },
+    { title: "Calendar", path: "/member/calendar", icon: Clock },
   ],
   therapist: [
-    { name: "Dashboard", icon: <Home />, key: "dashboard" },
-    { name: "Appointments", icon: <Calendar />, key: "appointments" },
-    { name: "Availability", icon: <Briefcase />, key: "availability" },
-    { name: "Messages", icon: <MessageSquare />, key: "messages" },
-    { name: "Profile", icon: <User />, key: "profile" },
+    { title: "Profile", path: "/member/profile", icon: User },
+    { title: "Appointments", path: "/member/appointments", icon: Calendar },
+    { title: "Calendar", path: "/member/calendar", icon: Clock },
   ],
 };
 
-export default function DashboardLayout({ role = "member" }) {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const tabs = tabsConfig[role];
+const DashboardLayout = ({ role = "member", children }) => {
+  const [isMobileMenuOpen, toggleIsMobileMenuOpen] = useToggleState(false);
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-800 text-white p-4 space-y-4">
-        <h1 className="text-2xl font-bold mb-4">
-          {role === "member" ? "Member" : "Therapist"} Dashboard
-        </h1>
-        {tabs.map((tab) => (
-          <Button
-            key={tab.key}
-            variant={activeTab === tab.key ? "default" : "ghost"}
-            onClick={() => setActiveTab(tab.key)}
-            className="flex items-center w-full justify-start space-x-2"
-          >
-            {tab.icon}
-            <span>{tab.name}</span>
-          </Button>
-        ))}
-      </div>
+    <SidebarProvider>
+      <div className="flex w-full h-screen bg-white">
+        {/* Sidebar */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform lg:relative lg:translate-x-0 transition-all duration-300 ease-in-out ${
+            isMobileMenuOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }`}
+        >
+          <AppSidebar
+            navigationItems={roleNavigationItems[role]}
+            onCloseMobileMenu={() => toggleIsMobileMenuOpen()}
+          />
+        </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-100">
-        <h2 className="text-xl font-semibold mb-4">
-          {tabs.find((tab) => tab.key === activeTab)?.name}
-        </h2>
-        <div className="bg-white p-4 rounded shadow">
-          Content for {activeTab}
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
+          {/* Header */}
+          <header className="sticky top-0 bg-white h-8 flex items-center justify-between p-2 my-2">
+            <button
+              onClick={toggleIsMobileMenuOpen}
+              className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+              aria-label="Toggle Sidebar"
+              aria-expanded={isMobileMenuOpen}
+            >
+              <MenuIcon className="h-5 w-5" />
+            </button>
+          </header>
+
+          {/* Main Content Area */}
+          <main className="flex-1 overflow-auto px-6 bg-white">{children}</main>
+
+          {/* Footer */}
+          <footer className="bg-white border-t py-4 px-6 text-center text-sm text-gray-600">
+            <p>
+              © {new Date().getFullYear()} Harmony Hub. All rights reserved.
+            </p>
+          </footer>
         </div>
+
+        {/* Mobile menu backdrop */}
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={toggleIsMobileMenuOpen}
+            aria-hidden="true"
+          />
+        )}
       </div>
-    </div>
+    </SidebarProvider>
   );
-}
+};
+
+export default DashboardLayout;
