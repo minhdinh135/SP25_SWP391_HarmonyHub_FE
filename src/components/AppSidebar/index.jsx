@@ -21,16 +21,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 
-const navigationItems = [
-  { title: "Overview", path: "/admin", icon: Home },
-  { title: "Accounts", path: "/admin/accounts", icon: User },
-  { title: "Inbox", path: "/admin/inbox", icon: Inbox, badge: 3 },
-  { title: "Calendar", path: "/admin/calendar", icon: Calendar },
-  { title: "Search", path: "/admin/search", icon: Search },
-  { title: "Settings", path: "/admin/settings", icon: Settings },
-];
-
-const AppSidebar = ({ onCloseMobileMenu }) => {
+const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -42,17 +33,9 @@ const AppSidebar = ({ onCloseMobileMenu }) => {
 
   return (
     <Sidebar className="flex flex-col h-full">
-      {/* Logo */}
-      <div className="flex items-center gap-2 p-4 border-b">
-        <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
-          <span className="text-blue-600 font-bold">H</span>
-        </div>
-        <h1 className="text-xl font-bold">Harmony Hub</h1>
-      </div>
-
       <SidebarContent className="flex-1">
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Dashboard Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (

@@ -11,6 +11,26 @@ export const getAllAccounts = async () => {
   }
 };
 
+export const getMemberDetails = async (memberId) => {
+  try {
+    const response = await axios.get(`${BASE_API_URL}/members/${memberId}`);
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting member details");
+  }
+};
+
+export const getTherapistDetails = async (therapistId) => {
+  try {
+    const response = await axios.get(`${BASE_API_URL}/members/${therapistId}`);
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting therapist details");
+  }
+};
+
 export const registerMember = async (payload) => {
   try {
     const response = await axios.post(

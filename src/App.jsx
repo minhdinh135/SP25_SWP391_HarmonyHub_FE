@@ -56,14 +56,12 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Member]} />}>
           <Route path="/member" element={<CommonLayout />}>
-            <Route path="dashboard" element={<MemberDashboard />} />
             <Route path="profile" element={<MemberProfile />} />
           </Route>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Therapist]} />}>
           <Route path="/therapist" element={<CommonLayout />}>
-            <Route path="dashboard" element={<TherapistDashboard />} />
             <Route path="profile" element={<TherapistProfile />} />
           </Route>
         </Route>

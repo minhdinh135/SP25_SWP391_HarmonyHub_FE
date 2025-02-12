@@ -63,7 +63,7 @@ const Accounts = () => {
   const fetchAccounts = async () => {
     try {
       const data = await getAllAccounts();
-      setAccounts(data);
+      setAccounts(data.filter((x) => getRoleText(x.role) !== "System"));
     } catch (error) {
       console.log(error);
       toast({
