@@ -49,11 +49,11 @@ const Header = () => {
           break;
         }
         if (getRoleText(user.role) === "Member") {
-          navigate("/member/dashboard");
+          navigate("/member/profile");
           break;
         }
         if (getRoleText(user.role) === "Therapist") {
-          navigate("/therapist/dashboard");
+          navigate("/therapist/profile");
           break;
         }
         break;
@@ -180,7 +180,7 @@ const Header = () => {
                 </NavigationMenuList>
               </NavigationMenu>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center">
                 <span className="text-sm">
                   {getFullName(user.firstName, user.lastName)}
                 </span>

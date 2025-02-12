@@ -56,7 +56,7 @@ const Login = () => {
 
   return (
     <main className="min-h-screen w-full flex flex-col md:flex-row ">
-      <div className="w-full md:w-1/2 bg-gray-900 text-white p-8 flex flex-col justify-center items-center">
+      <div className="w-full md:w-1/3 bg-gray-900 text-white p-8 flex flex-col justify-center items-center">
         <div className="max-w-md space-y-6">
           <img
             src="https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?q=80&w=2574&auto=format&fit=crop"
@@ -71,7 +71,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+      <div className="w-full md:w-2/3 flex items-center justify-center p-8">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
