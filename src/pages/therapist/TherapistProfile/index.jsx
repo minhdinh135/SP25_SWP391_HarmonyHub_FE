@@ -26,8 +26,10 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import { getStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import useAuth from "@/hooks/useAuth";
 
 const MemberProfile = ({ userData }) => {
+  const { user } = useAuth();
   const [isEditing, toggleIsEditing] = useToggleState(false);
   const [isLoading, toggleIsLoading] = useToggleState(false);
   const [therapistDetails, setTherapistDetails] = useState(null);
@@ -37,7 +39,7 @@ const MemberProfile = ({ userData }) => {
     const fetchData = async () => {
       toggleIsLoading();
       try {
-        const data = getTherapistDetails();
+        const data = getTherapistDetails(user.accountId);
         setTherapistDetails(data);
       } catch (error) {
         console.log(error);
