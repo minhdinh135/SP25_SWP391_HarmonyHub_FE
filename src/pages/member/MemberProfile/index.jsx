@@ -23,11 +23,14 @@ import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getStatusText } from "@/utils/enumUtils";
+import { getGenderText, getStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import useAuth from "@/hooks/useAuth";
 
 const MemberProfile = ({ userData }) => {
+  const { user } = useAuth();
+
   const [isEditing, toggleIsEditing] = useToggleState(false);
   const [isLoading, toggleIsLoading] = useToggleState(false);
   const [memberDetails, setMemberDetails] = useState(null);
@@ -37,7 +40,8 @@ const MemberProfile = ({ userData }) => {
     const fetchData = async () => {
       toggleIsLoading();
       try {
-        const data = getMemberDetails();
+        const data = await getMemberDetails(user.accountId);
+        console.log(data);
         setMemberDetails(data);
       } catch (error) {
         console.log(error);
@@ -48,7 +52,7 @@ const MemberProfile = ({ userData }) => {
     };
 
     fetchData();
-  }, []);
+  }, [toggleIsLoading, user.accountId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -117,6 +121,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="firstName"
                       name="firstName"
+                      value={memberDetails?.firstName}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
@@ -126,6 +131,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="lastName"
                       name="lastName"
+                      value={memberDetails?.lastName}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
@@ -138,6 +144,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="email"
                       name="email"
+                      value={memberDetails?.email}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                       type="email"
@@ -148,6 +155,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="phone"
                       name="phone"
+                      value={memberDetails?.phone}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
@@ -160,6 +168,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="birthdate"
                       name="birthdate"
+                      value={memberDetails?.birthdate}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                       type="date"
@@ -188,25 +197,27 @@ const MemberProfile = ({ userData }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="relationshipGoal">Relationship Goal</Label>
+                  <Label htmlFor="bio">Bio</Label>
                   <Textarea
-                    id="relationshipGoal"
-                    name="relationshipGoal"
+                    id="bio"
+                    name="bio"
+                    value={memberDetails?.bio}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    placeholder="What are your relationship goals?"
+                    placeholder="Tell us about yourself"
                     className="resize-none"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label htmlFor="relationshipGoal">Relationship Goal</Label>
                   <Textarea
-                    id="bio"
-                    name="bio"
+                    id="relationshipGoal"
+                    name="relationshipGoal"
+                    value={memberDetails?.relationshipGoal}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    placeholder="Tell us about yourself"
+                    placeholder="What are your relationship goals?"
                     className="resize-none"
                   />
                 </div>
