@@ -23,8 +23,7 @@ import Schedule from "./pages/common/Schedule";
 import BookAppointmentForm from "./pages/common/BookAppointmentForm";
 import MemberProfile from "./pages/member/MemberProfile";
 import TherapistProfile from "./pages/therapist/TherapistProfile";
-import MemberDashboard from "./pages/member/MemberDashboard";
-import TherapistDashboard from "./pages/therapist/TherapistDashboard";
+import MemberAppointmentList from "./pages/member/MemberAppointmentList";
 
 function App() {
   return (
@@ -57,6 +56,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={[Roles.Member]} />}>
           <Route path="/member" element={<CommonLayout />}>
             <Route path="profile" element={<MemberProfile />} />
+            <Route path="appointments" element={<MemberAppointmentList />} />
           </Route>
         </Route>
 
