@@ -127,15 +127,6 @@ const Header = () => {
               >
                 Therapists
               </a>
-              <a
-                className={cn(
-                  navigationMenuTriggerStyle,
-                  buttonVariants({ variant: "ghost" }),
-                )}
-                href="/calendar"
-              >
-                Calendar
-              </a>
             </div>
           </div>
 
