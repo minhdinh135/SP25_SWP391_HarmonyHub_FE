@@ -23,7 +23,9 @@ export const getMemberDetails = async (memberId) => {
 
 export const getTherapistDetails = async (therapistId) => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/members/${therapistId}`);
+    const response = await axios.get(
+      `${BASE_API_URL}/therapists/${therapistId}`,
+    );
     return response.data.data;
   } catch (error) {
     console.log(error);
