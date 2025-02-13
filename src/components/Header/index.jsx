@@ -1,3 +1,13 @@
+<<<<<<< Updated upstream
+=======
+import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+>>>>>>> Stashed changes
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -15,6 +25,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+<<<<<<< Updated upstream
 import useAuth from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { getRoleText } from "@/utils/enumUtils";

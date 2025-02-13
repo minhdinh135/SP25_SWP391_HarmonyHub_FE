@@ -32,6 +32,7 @@
     "@schedule-x/react": "^2.13.3",
     "@schedule-x/theme-default": "^2.15.0",
     "@shadcn/ui": "^0.0.4",
+    "@tailwindcss/vite": "^4.0.6",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -57,7 +58,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.13.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
