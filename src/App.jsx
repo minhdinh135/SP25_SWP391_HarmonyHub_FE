@@ -19,7 +19,6 @@ import QuizList from "./pages/common/QuizList";
 import QuizDetails from "./pages/common/QuizDetails";
 import QuizResults from "./pages/common/QuizResults";
 import TakeQuiz from "./pages/common/TakeQuizPage";
-import Schedule from "./pages/common/Schedule";
 import BookAppointmentForm from "./pages/common/BookAppointmentForm";
 import MemberProfile from "./pages/member/MemberProfile";
 import TherapistProfile from "./pages/therapist/TherapistProfile";
