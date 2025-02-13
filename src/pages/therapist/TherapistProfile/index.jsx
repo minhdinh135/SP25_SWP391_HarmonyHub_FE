@@ -30,6 +30,7 @@ import useAuth from "@/hooks/useAuth";
 
 const MemberProfile = ({ userData }) => {
   const { user } = useAuth();
+
   const [isEditing, toggleIsEditing] = useToggleState(false);
   const [isLoading, toggleIsLoading] = useToggleState(false);
   const [therapistDetails, setTherapistDetails] = useState(null);
@@ -39,7 +40,7 @@ const MemberProfile = ({ userData }) => {
     const fetchData = async () => {
       toggleIsLoading();
       try {
-        const data = getTherapistDetails(user.accountId);
+        const data = await getTherapistDetails(user.accountId);
         setTherapistDetails(data);
       } catch (error) {
         console.log(error);
@@ -50,7 +51,7 @@ const MemberProfile = ({ userData }) => {
     };
 
     fetchData();
-  }, []);
+  }, [toggleIsLoading, user.accountId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -119,6 +120,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="firstName"
                       name="firstName"
+                      value={therapistDetails?.firstName}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
@@ -128,6 +130,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="lastName"
                       name="lastName"
+                      value={therapistDetails?.lastName}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
@@ -140,6 +143,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="email"
                       name="email"
+                      value={therapistDetails?.email}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                       type="email"
@@ -150,6 +154,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="phone"
                       name="phone"
+                      value={therapistDetails?.phone}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
@@ -162,6 +167,7 @@ const MemberProfile = ({ userData }) => {
                     <Input
                       id="birthdate"
                       name="birthdate"
+                      value={therapistDetails?.birthdate}
                       onChange={handleInputChange}
                       disabled={!isEditing}
                       type="date"
@@ -194,6 +200,7 @@ const MemberProfile = ({ userData }) => {
                   <Textarea
                     id="relationshipGoal"
                     name="relationshipGoal"
+                    value={therapistDetails?.relationshipGoal}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     placeholder="What are your relationship goals?"
@@ -206,6 +213,7 @@ const MemberProfile = ({ userData }) => {
                   <Textarea
                     id="bio"
                     name="bio"
+                    value={therapistDetails?.bio}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     placeholder="Tell us about yourself"

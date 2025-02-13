@@ -24,6 +24,9 @@ import BookAppointmentForm from "./pages/common/BookAppointmentForm";
 import MemberProfile from "./pages/member/MemberProfile";
 import TherapistProfile from "./pages/therapist/TherapistProfile";
 import MemberAppointmentList from "./pages/member/MemberAppointmentList";
+import MemberSchedule from "./pages/member/MemberSchedule";
+import TherapistAppointmentList from "./pages/therapist/TherapistAppointmentList";
+import TherapistSchedule from "./pages/therapist/TherapistSchedule";
 
 function App() {
   return (
@@ -42,7 +45,6 @@ function App() {
           <Route path="/quizzes/:id/result" element={<QuizResults />} />
           <Route path="/therapists" element={<TherapistList />} />
           <Route path="/therapists/:id" element={<TherapistDetails />} />
-          <Route path="/calendar" element={<Schedule />} />
           <Route path="/bookappointment" element={<BookAppointmentForm />} />
         </Route>
 
@@ -57,12 +59,15 @@ function App() {
           <Route path="/member" element={<CommonLayout />}>
             <Route path="profile" element={<MemberProfile />} />
             <Route path="appointments" element={<MemberAppointmentList />} />
+            <Route path="schedule" element={<MemberSchedule />} />
           </Route>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Therapist]} />}>
           <Route path="/therapist" element={<CommonLayout />}>
             <Route path="profile" element={<TherapistProfile />} />
+            <Route path="appointments" element={<TherapistAppointmentList />} />
+            <Route path="schedule" element={<TherapistSchedule />} />
           </Route>
         </Route>
 

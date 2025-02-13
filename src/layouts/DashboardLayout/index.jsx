@@ -7,12 +7,12 @@ const roleNavigationItems = {
   member: [
     { title: "Profile", path: "/member/profile", icon: User },
     { title: "Appointments", path: "/member/appointments", icon: Calendar },
-    { title: "Calendar", path: "/member/calendar", icon: Clock },
+    { title: "Schedule", path: "/member/schedule", icon: Clock },
   ],
   therapist: [
-    { title: "Profile", path: "/member/profile", icon: User },
-    { title: "Appointments", path: "/member/appointments", icon: Calendar },
-    { title: "Calendar", path: "/member/calendar", icon: Clock },
+    { title: "Profile", path: "/therapist/profile", icon: User },
+    { title: "Appointments", path: "/therapist/appointments", icon: Calendar },
+    { title: "Schedule", path: "/therapist/schedule", icon: Clock },
   ],
 };
 
