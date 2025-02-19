@@ -26,6 +26,7 @@ import MemberAppointmentList from "./pages/member/MemberAppointmentList";
 import MemberSchedule from "./pages/member/MemberSchedule";
 import TherapistAppointmentList from "./pages/therapist/TherapistAppointmentList";
 import TherapistSchedule from "./pages/therapist/TherapistSchedule";
+import AppointmentDetailsPage from "./pages/member/MemberAppointmentDetails";
 
 function App() {
   return (
@@ -58,6 +59,10 @@ function App() {
           <Route path="/member" element={<CommonLayout />}>
             <Route path="profile" element={<MemberProfile />} />
             <Route path="appointments" element={<MemberAppointmentList />} />
+            <Route
+              path="appointments/:id"
+              element={<AppointmentDetailsPage />}
+            />
             <Route path="schedule" element={<MemberSchedule />} />
           </Route>
         </Route>
