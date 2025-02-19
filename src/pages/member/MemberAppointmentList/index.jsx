@@ -36,13 +36,16 @@ const MemberAppointmentList = () => {
 
   return (
     <DashboardLayout role="member">
-      <ItemList
-        className="p-4"
-        data={appointments}
-        renderItem={(appointment) => (
-          <AppointmentCard appointment={appointment} />
-        )}
-      />
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <h1 className="text-4xl font-bold mb-6">Appointment History</h1>
+        <ItemList
+          className="p-4"
+          data={appointments}
+          renderItem={(appointment) => (
+            <AppointmentCard appointment={appointment} />
+          )}
+        />
+      </div>
     </DashboardLayout>
   );
 };
