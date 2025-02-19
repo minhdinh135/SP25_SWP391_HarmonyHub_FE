@@ -1,8 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Video, MessageSquare, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AppointmentCard = ({ appointment }) => {
+  const navigate = useNavigate();
+
   // Format date and time
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -28,8 +31,16 @@ const AppointmentCard = ({ appointment }) => {
 
   const statusBadge = getStatusBadge(appointment.status);
 
+  const handleClick = () => {
+    console.log("AppointmentID:", appointment.id);
+    navigate(`/member/appointments/${appointment.id}`);
+  };
+
   return (
-    <Card className="w-full max-w-2xl mb-4">
+    <Card
+      className="w-full max-w-2xl mb-4 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-semibold">
           Marital Counseling Session
@@ -111,6 +122,26 @@ const AppointmentCard = ({ appointment }) => {
           </div>
         )}
       </CardContent>
+
+      {appointment.feedbackRating && (
+        <div className="mt-4 border-t pt-4">
+          <div className="flex items-center space-x-2 mb-2">
+            <Star className="h-4 w-4 text-yellow-500" />
+            <span className="font-medium">Feedback:</span>
+            <span className="text-sm">{appointment.feedbackRating}/5</span>
+          </div>
+          {appointment.feedbackContent && (
+            <p className="text-sm text-gray-600 pl-6">
+              {appointment.feedbackContent}
+            </p>
+          )}
+          {appointment.feedbackDate && (
+            <p className="text-xs text-gray-400 pl-6 mt-1">
+              Submitted on {formatDateTime(appointment.feedbackDate)}
+            </p>
+          )}
+        </div>
+      )}
     </Card>
   );
 };
