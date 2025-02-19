@@ -52,13 +52,6 @@ const DashboardLayout = ({ role = "member", children }) => {
 
           {/* Main Content Area */}
           <main className="flex-1 overflow-auto px-6 bg-white">{children}</main>
-
-          {/* Footer */}
-          <footer className="bg-white border-t py-4 px-6 text-center text-sm text-gray-600">
-            <p>
-              © {new Date().getFullYear()} Harmony Hub. All rights reserved.
-            </p>
-          </footer>
         </div>
 
         {/* Mobile menu backdrop */}
