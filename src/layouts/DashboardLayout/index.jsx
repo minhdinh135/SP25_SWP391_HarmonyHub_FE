@@ -1,4 +1,4 @@
-import { User, Calendar, Clock, MenuIcon } from "lucide-react";
+import { User, Calendar, Clock, MenuIcon, Wallet } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import useToggleState from "@/hooks/useToggleState";
 import AppSidebar from "@/components/AppSidebar";
@@ -6,11 +6,21 @@ import AppSidebar from "@/components/AppSidebar";
 const roleNavigationItems = {
   member: [
     { title: "Profile", path: "/member/profile", icon: User },
+    {
+      title: "Transactions",
+      path: "/member/transactions",
+      icon: Wallet,
+    },
     { title: "Appointments", path: "/member/appointments", icon: Calendar },
     { title: "Schedule", path: "/member/schedule", icon: Clock },
   ],
   therapist: [
     { title: "Profile", path: "/therapist/profile", icon: User },
+    {
+      title: "Transactions",
+      path: "/therapist/transactions",
+      icon: Wallet,
+    },
     { title: "Appointments", path: "/therapist/appointments", icon: Calendar },
     { title: "Schedule", path: "/therapist/schedule", icon: Clock },
   ],

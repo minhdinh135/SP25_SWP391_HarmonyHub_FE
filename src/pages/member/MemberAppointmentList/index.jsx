@@ -1,7 +1,6 @@
 import { getMemberAppointments } from "@/api/appointmentApi";
 import ItemList from "@/components/ItemList";
 import useAuth from "@/hooks/useAuth";
-import useToggleState from "@/hooks/useToggleState";
 import { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -12,12 +11,11 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 const MemberAppointmentList = () => {
   const { user } = useAuth();
 
-  const [isLoading, toggleIsLoading] = useToggleState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      toggleIsLoading();
       try {
         const data = await getMemberAppointments(user.accountId);
         setAppointments(data);
@@ -25,12 +23,12 @@ const MemberAppointmentList = () => {
         console.log(error);
         toast.error(error);
       } finally {
-        toggleIsLoading();
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [toggleIsLoading, user.accountId]);
+  }, [user.accountId]);
 
   if (isLoading) return <Spinner />;
 

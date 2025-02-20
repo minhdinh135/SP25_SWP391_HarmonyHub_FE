@@ -1,16 +1,9 @@
 import { memo } from "react";
-import {
-  Calendar,
-  Home,
-  Inbox,
-  LogOut,
-  Search,
-  Settings,
-  User,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -33,9 +26,11 @@ const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
 
   return (
     <Sidebar className="flex flex-col h-full">
-      <SidebarContent className="flex-1">
+      <SidebarContent className="flex-1 bg-blue-200 text-black">
         <SidebarGroup>
-          <SidebarGroupLabel>Dashboard Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-black">
+            Dashboard Menu
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -71,16 +66,15 @@ const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Logout Button */}
-      <div className="p-4 border-t">
+      <SidebarFooter className="bg-blue-200">
         <button
-          className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+          className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-400 rounded-md transition-colors duration-200"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
           <span>Logout</span>
         </button>
-      </div>
+      </SidebarFooter>
     </Sidebar>
   );
 };
