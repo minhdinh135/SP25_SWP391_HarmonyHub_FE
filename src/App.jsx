@@ -27,6 +27,7 @@ import MemberSchedule from "./pages/member/MemberSchedule";
 import TherapistAppointmentList from "./pages/therapist/TherapistAppointmentList";
 import TherapistSchedule from "./pages/therapist/TherapistSchedule";
 import AppointmentDetailsPage from "./pages/member/MemberAppointmentDetails";
+import MemberTransactionManagement from "./pages/member/MemberTransactionManagement";
 
 function App() {
   return (
@@ -58,6 +59,10 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={[Roles.Member]} />}>
           <Route path="/member" element={<CommonLayout />}>
             <Route path="profile" element={<MemberProfile />} />
+            <Route
+              path="transactions"
+              element={<MemberTransactionManagement />}
+            />
             <Route path="appointments" element={<MemberAppointmentList />} />
             <Route
               path="appointments/:id"

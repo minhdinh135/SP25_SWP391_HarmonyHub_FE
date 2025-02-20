@@ -2,7 +2,6 @@ import { getTherapistAppointments } from "@/api/appointmentApi";
 import ItemList from "@/components/ItemList";
 import Spinner from "@/components/Spinner";
 import useAuth from "@/hooks/useAuth";
-import useToggleState from "@/hooks/useToggleState";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import AppointmentCard from "@/pages/member/MemberAppointmentList/components/AppointmentCard";
 import { useEffect, useState } from "react";
@@ -11,12 +10,11 @@ import { toast } from "sonner";
 const TherapistAppointmentList = () => {
   const { user } = useAuth();
 
-  const [isLoading, toggleIsLoading] = useToggleState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      toggleIsLoading();
       try {
         const data = await getTherapistAppointments(user.accountId);
         setAppointments(data);
@@ -24,12 +22,12 @@ const TherapistAppointmentList = () => {
         console.log(error);
         toast.error(error);
       } finally {
-        toggleIsLoading();
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [toggleIsLoading, user.accountId]);
+  }, [user.accountId]);
 
   if (isLoading) return <Spinner />;
 

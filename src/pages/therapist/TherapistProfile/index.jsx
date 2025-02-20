@@ -32,13 +32,12 @@ const MemberProfile = ({ userData }) => {
   const { user } = useAuth();
 
   const [isEditing, toggleIsEditing] = useToggleState(false);
-  const [isLoading, toggleIsLoading] = useToggleState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [therapistDetails, setTherapistDetails] = useState(null);
   const [formData, setFormData] = useState(userData);
 
   useEffect(() => {
     const fetchData = async () => {
-      toggleIsLoading();
       try {
         const data = await getTherapistDetails(user.accountId);
         setTherapistDetails(data);
@@ -46,12 +45,12 @@ const MemberProfile = ({ userData }) => {
         console.log(error);
         toast.error("Error getting profile");
       } finally {
-        toggleIsLoading();
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [toggleIsLoading, user.accountId]);
+  }, [user.accountId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
