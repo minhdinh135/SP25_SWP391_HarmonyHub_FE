@@ -23,7 +23,7 @@ import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getGenderText, getStatusText } from "@/utils/enumUtils";
+import { getStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
@@ -32,13 +32,12 @@ const MemberProfile = ({ userData }) => {
   const { user } = useAuth();
 
   const [isEditing, toggleIsEditing] = useToggleState(false);
-  const [isLoading, toggleIsLoading] = useToggleState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [memberDetails, setMemberDetails] = useState(null);
   const [formData, setFormData] = useState(userData);
 
   useEffect(() => {
     const fetchData = async () => {
-      toggleIsLoading();
       try {
         const data = await getMemberDetails(user.accountId);
         console.log(data);
@@ -47,12 +46,12 @@ const MemberProfile = ({ userData }) => {
         console.log(error);
         toast.error("Error getting profile");
       } finally {
-        toggleIsLoading();
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [toggleIsLoading, user.accountId]);
+  }, [user.accountId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

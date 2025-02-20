@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useAuth from "@/hooks/useAuth";
-import useToggleState from "@/hooks/useToggleState";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -21,7 +20,7 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [isLoading, toggleIsLoading] = useToggleState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState(null);
 
   const handleChange = (e) => {
@@ -32,7 +31,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    toggleIsLoading();
+    setIsLoading(true);
 
     const payload = {
       email: form.email,
@@ -48,7 +47,7 @@ const Login = () => {
       console.log(error);
       toast.error("Login failed");
     } finally {
-      toggleIsLoading();
+      setIsLoading(false);
     }
   };
 
