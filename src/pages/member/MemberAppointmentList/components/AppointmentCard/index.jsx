@@ -60,9 +60,9 @@ const AppointmentCard = ({ appointment }) => {
               <Clock className="h-4 w-4 text-gray-500" />
               <span className="text-sm">Duration: 1 hour</span>
             </div>
-            {appointment.meetUrl && (
-              <div className="flex items-center space-x-2">
-                <Video className="h-4 w-4 text-gray-500" />
+            <div className="flex items-center space-x-2">
+              <Video className="h-4 w-4 text-gray-500" />
+              {appointment.meetUrl ? (
                 <a
                   href={appointment.meetUrl}
                   className="text-sm text-blue-600 hover:text-blue-800"
@@ -71,8 +71,10 @@ const AppointmentCard = ({ appointment }) => {
                 >
                   Join Meeting
                 </a>
-              </div>
-            )}
+              ) : (
+                <span>N/A</span>
+              )}
+            </div>
           </div>
           <div className="space-y-2">
             <div className="text-sm">
