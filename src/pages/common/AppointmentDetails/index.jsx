@@ -21,7 +21,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 
-const AppointmentDetailsPage = () => {
+const AppointmentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -283,4 +283,4 @@ const AppointmentDetailsPage = () => {
   );
 };
 
-export default AppointmentDetailsPage;
+export default AppointmentDetails;

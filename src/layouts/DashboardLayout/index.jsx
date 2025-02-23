@@ -1,4 +1,12 @@
-import { User, Calendar, Clock, MenuIcon, Wallet } from "lucide-react";
+import {
+  User,
+  Calendar,
+  Clock,
+  MenuIcon,
+  Wallet,
+  Newspaper,
+  ClipboardList,
+} from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import useToggleState from "@/hooks/useToggleState";
 import AppSidebar from "@/components/AppSidebar";
@@ -23,6 +31,8 @@ const roleNavigationItems = {
     },
     { title: "Appointments", path: "/therapist/appointments", icon: Calendar },
     { title: "Schedule", path: "/therapist/schedule", icon: Clock },
+    { title: "Quizzes", path: "/therapist/quizzes", icon: ClipboardList },
+    { title: "Blogs", path: "/therapist/blogs", icon: Newspaper },
   ],
 };
 

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 
 const SignUp = () => {
-  const steps = ["Role Selection", "Basic Information", "Other"];
+  const steps = ["Role Selection", "Basic Information", "Review"];
 
   const handleStepChange = (step) => {
     console.log(`Current step: ${step}`);
@@ -72,17 +72,27 @@ const SignUp = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="Enter Email"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter Password"
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" required />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm password"
+                    required
+                  />
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">

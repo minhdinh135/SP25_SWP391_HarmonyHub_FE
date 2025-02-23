@@ -26,8 +26,11 @@ import MemberAppointmentList from "./pages/member/MemberAppointmentList";
 import MemberSchedule from "./pages/member/MemberSchedule";
 import TherapistAppointmentList from "./pages/therapist/TherapistAppointmentList";
 import TherapistSchedule from "./pages/therapist/TherapistSchedule";
-import AppointmentDetailsPage from "./pages/member/MemberAppointmentDetails";
 import MemberTransactionManagement from "./pages/member/MemberTransactionManagement";
+import TherapistTransactionManagement from "./pages/therapist/TherapistTransactionManagement";
+import AppointmentDetails from "./pages/common/AppointmentDetails";
+import TherapistBlogManagement from "./pages/therapist/TherapistBlogManagement";
+import TherapistQuizManagement from "./pages/therapist/TherapistQuizManagement";
 
 function App() {
   return (
@@ -64,10 +67,7 @@ function App() {
               element={<MemberTransactionManagement />}
             />
             <Route path="appointments" element={<MemberAppointmentList />} />
-            <Route
-              path="appointments/:id"
-              element={<AppointmentDetailsPage />}
-            />
+            <Route path="appointments/:id" element={<AppointmentDetails />} />
             <Route path="schedule" element={<MemberSchedule />} />
           </Route>
         </Route>
@@ -75,8 +75,17 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={[Roles.Therapist]} />}>
           <Route path="/therapist" element={<CommonLayout />}>
             <Route path="profile" element={<TherapistProfile />} />
+            <Route
+              path="transactions"
+              element={<TherapistTransactionManagement />}
+            />
+
             <Route path="appointments" element={<TherapistAppointmentList />} />
+            <Route path="appointments/:id" element={<AppointmentDetails />} />
+
             <Route path="schedule" element={<TherapistSchedule />} />
+            <Route path="blogs" element={<TherapistBlogManagement />} />
+            <Route path="quizzes" element={<TherapistQuizManagement />} />
           </Route>
         </Route>
 

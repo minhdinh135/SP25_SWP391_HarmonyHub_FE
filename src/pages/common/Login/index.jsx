@@ -88,7 +88,7 @@ const Login = () => {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="Your Email"
                   required
                   onChange={handleChange}
                 />
@@ -99,6 +99,7 @@ const Login = () => {
                   id="password"
                   name="password"
                   type="password"
+                  placeholder="Your Password"
                   required
                   onChange={handleChange}
                 />
