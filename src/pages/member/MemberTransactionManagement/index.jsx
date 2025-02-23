@@ -2,11 +2,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import { formatCurrencyInVND } from "@/utils/currencyFormat";
 import { ArrowDownRight, ArrowUpRight, DollarSign } from "lucide-react";
 import { useState } from "react";
 
 const MemberTransactionManagement = () => {
-  const [balance, setBalance] = useState(5840.5);
+  const [balance, setBalance] = useState(5840);
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -38,13 +39,6 @@ const MemberTransactionManagement = () => {
     return status === "completed" ? "bg-green-500" : "bg-yellow-500";
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
   return (
     <DashboardLayout role="member">
       <div className="w-full max-w-4xl mx-auto p-4 space-y-6">
@@ -59,7 +53,7 @@ const MemberTransactionManagement = () => {
             <div className="flex items-center space-x-2">
               <DollarSign className="h-8 w-8 text-green-500" />
               <span className="text-3xl font-bold">
-                {formatCurrency(balance)}
+                {formatCurrencyInVND(balance)}
               </span>
             </div>
           </CardContent>
@@ -105,7 +99,7 @@ const MemberTransactionManagement = () => {
                         }`}
                       >
                         {transaction.type === "credit" ? "+" : "-"}
-                        {formatCurrency(transaction.amount)}
+                        {formatCurrencyInVND(transaction.amount)}
                       </span>
                     </div>
                   </div>

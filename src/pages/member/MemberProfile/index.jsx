@@ -23,7 +23,7 @@ import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getStatusText } from "@/utils/enumUtils";
+import { getGenderText, getStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
@@ -177,11 +177,8 @@ const MemberProfile = ({ userData }) => {
                     <Label htmlFor="gender">Gender</Label>
                     <Select
                       disabled={!isEditing}
-                      onValueChange={(value) =>
-                        handleInputChange({
-                          target: { name: "gender", value: parseInt(value) },
-                        })
-                      }
+                      value={memberDetails?.gender.toString()}
+                      onValueChange={handleInputChange}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select gender" />
@@ -189,7 +186,7 @@ const MemberProfile = ({ userData }) => {
                       <SelectContent>
                         <SelectItem value="1">Male</SelectItem>
                         <SelectItem value="2">Female</SelectItem>
-                        <SelectItem value="3">Other</SelectItem>
+                        <SelectItem value="0">Prefer not to say</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
