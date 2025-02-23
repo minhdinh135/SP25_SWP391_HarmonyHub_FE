@@ -1,4 +1,5 @@
 import DashboardLayout from "@/layouts/DashboardLayout";
+
 import TransactionManagement from "@/pages/common/TransactionManagement";
 
 const transactions = [
@@ -28,12 +29,12 @@ const transactions = [
   },
 ];
 
-const MemberTransactionManagement = () => {
+const TherapistTransactionManagement = () => {
   return (
-    <DashboardLayout role="member">
-      <TransactionManagement role="member" transactions={transactions} />
+    <DashboardLayout role="therapist">
+      <TransactionManagement role="therapist" transactions={transactions} />
     </DashboardLayout>
   );
 };
 
-export default MemberTransactionManagement;
+export default TherapistTransactionManagement;
