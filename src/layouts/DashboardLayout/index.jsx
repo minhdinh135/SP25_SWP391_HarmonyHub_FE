@@ -6,6 +6,7 @@ import {
   Wallet,
   Newspaper,
   ClipboardList,
+  Package,
 } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import useToggleState from "@/hooks/useToggleState";
@@ -31,6 +32,7 @@ const roleNavigationItems = {
     },
     { title: "Appointments", path: "/therapist/appointments", icon: Calendar },
     { title: "Schedule", path: "/therapist/schedule", icon: Clock },
+    { title: "Packages", path: "/therapist/packages", icon: Package },
     { title: "Quizzes", path: "/therapist/quizzes", icon: ClipboardList },
     { title: "Blogs", path: "/therapist/blogs", icon: Newspaper },
   ],
@@ -71,7 +73,9 @@ const DashboardLayout = ({ role = "member", children }) => {
           </header>
 
           {/* Main Content Area */}
-          <main className="flex-1 overflow-auto px-6 bg-white">{children}</main>
+          <main className="flex-1 overflow-y-auto px-6 bg-white">
+            {children}
+          </main>
         </div>
 
         {/* Mobile menu backdrop */}

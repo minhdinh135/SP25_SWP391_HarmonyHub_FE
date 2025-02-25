@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 const QualificationSection = ({ therapistDetails }) => {
   return (
     <div className="space-y-4">
-      <Label className="text-sm font-medium">Qualifications</Label>
+      <Label className="text-xl font-medium">Qualifications</Label>
       {therapistDetails?.qualifications?.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {therapistDetails.qualifications.map((qualification) => (
