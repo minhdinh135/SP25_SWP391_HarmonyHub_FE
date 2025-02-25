@@ -2,8 +2,12 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Video, MessageSquare, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
+import { getRoleText } from "@/utils/enumUtils";
 
 const AppointmentCard = ({ appointment }) => {
+  const { user } = useAuth();
+
   const navigate = useNavigate();
 
   // Format date and time
@@ -33,7 +37,9 @@ const AppointmentCard = ({ appointment }) => {
 
   const handleClick = () => {
     console.log("AppointmentID:", appointment.id);
-    navigate(`/member/appointments/${appointment.id}`);
+
+    // navigate(`/member/appointments/${appointment.id}`);
+    navigate(`/appointments/${appointment.id}`);
   };
 
   return (
