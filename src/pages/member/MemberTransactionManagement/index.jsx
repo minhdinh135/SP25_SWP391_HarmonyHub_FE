@@ -4,27 +4,27 @@ import TransactionManagement from "@/pages/common/TransactionManagement";
 const transactions = [
   {
     id: 1,
-    type: "credit",
-    amount: 1200,
-    description: "Client Payment",
-    date: "2025-02-20",
-    status: "completed",
+    transactionId: "TX123456",
+    description: "Session Payment",
+    date: "2023-10-01",
+    status: "Completed",
+    paymentMethod: "Credit Card",
+    senderFullName: "John Doe",
+    appointmentReference: "APT789",
+    type: "debit",
+    amount: 500000, // Amount in VND
   },
   {
     id: 2,
-    type: "debit",
-    amount: 450,
-    description: "Office Supplies",
-    date: "2025-02-19",
-    status: "completed",
-  },
-  {
-    id: 3,
+    transactionId: "TX654321",
+    description: "Refund",
+    date: "2023-10-02",
+    status: "Pending",
+    paymentMethod: "PayPal",
+    senderFullName: "Jane Smith",
+    appointmentReference: null, // No associated appointment
     type: "credit",
-    amount: 3000,
-    description: "Project Revenue",
-    date: "2025-02-18",
-    status: "pending",
+    amount: 200000, // Amount in VND
   },
 ];
 

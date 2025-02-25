@@ -14,7 +14,7 @@ import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getDayOfWeek, getStatusText } from "@/utils/enumUtils";
+import { getStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
@@ -103,10 +103,10 @@ const MemberProfile = ({ userData }) => {
   return (
     <DashboardLayout role="therapist">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <h1 className="text-2xl font-bold">Your Profile</h1>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold">Profile Information</h1>
-            <p className="text-gray-500">Manage your personal information</p>
+            <h1 className="text-xl font-bold">Personal Information</h1>
           </div>
           <Button
             className="hover:bg-gray-600"
@@ -157,7 +157,6 @@ const MemberProfile = ({ userData }) => {
 
           {/* Profile Information */}
           <div className="flex-1 space-y-6">
-            <h1 className="text-xl font-semibold">Basic Info</h1>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label className="text-sm font-medium">First Name</Label>

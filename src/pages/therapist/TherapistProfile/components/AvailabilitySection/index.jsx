@@ -4,7 +4,7 @@ import { getDayOfWeek } from "@/utils/enumUtils";
 const AvailabilitySection = ({ therapistDetails }) => {
   return (
     <div className="space-y-4">
-      <Label className="text-sm font-medium">Availability</Label>
+      <Label className="text-xl font-medium">Availability</Label>
       {therapistDetails?.availabilities?.length > 0 ? (
         <div className="space-y-2">
           {therapistDetails.availabilities.map((availability) => (
