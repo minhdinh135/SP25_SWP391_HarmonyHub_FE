@@ -78,10 +78,14 @@ const TransactionManagement = ({ role = "member", transactions }) => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10"></TableHead> {/* For Icon */}
+                  <TableHead>Transaction ID</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>Payment Method</TableHead>
+                  <TableHead>Sender</TableHead>
+                  <TableHead>Appointment</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>{" "}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -95,16 +99,42 @@ const TransactionManagement = ({ role = "member", transactions }) => {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">
+                      {transaction.transactionId}
+                    </TableCell>
+
+                    {/* Description */}
+                    <TableCell className="font-medium">
                       {transaction.description}
                     </TableCell>
+
+                    {/* Date */}
                     <TableCell className="text-gray-500">
                       {transaction.date}
                     </TableCell>
+
+                    {/* Status */}
                     <TableCell>
                       <Badge className={getStatusColor(transaction.status)}>
                         {transaction.status}
                       </Badge>
                     </TableCell>
+
+                    {/* Payment Method */}
+                    <TableCell className="text-gray-500">
+                      {transaction.paymentMethod}
+                    </TableCell>
+
+                    {/* Sender Full Name */}
+                    <TableCell className="text-gray-500">
+                      {transaction.senderFullName || "N/A"}
+                    </TableCell>
+
+                    {/* Associated Appointment Reference */}
+                    <TableCell className="text-gray-500">
+                      {transaction.appointmentReference || "N/A"}
+                    </TableCell>
+
+                    {/* Amount */}
                     <TableCell className="text-right font-semibold">
                       <span
                         className={
