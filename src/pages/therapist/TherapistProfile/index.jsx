@@ -14,7 +14,7 @@ import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getStatusText } from "@/utils/enumUtils";
+import { getDayOfWeek, getStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
@@ -29,6 +29,8 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Mail, Phone, UploadCloud } from "lucide-react";
 import { formatBirthdate } from "@/utils/dateUtils";
+import QualificationSection from "./components/QualificationSection";
+import AvailabilitySection from "./components/AvailabilitySection";
 
 const MemberProfile = ({ userData }) => {
   const { user } = useAuth();
@@ -155,6 +157,7 @@ const MemberProfile = ({ userData }) => {
 
           {/* Profile Information */}
           <div className="flex-1 space-y-6">
+            <h1 className="text-xl font-semibold">Basic Info</h1>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label className="text-sm font-medium">First Name</Label>
@@ -234,6 +237,23 @@ const MemberProfile = ({ userData }) => {
             </div>
 
             <div className="space-y-2">
+              <Label className="text-sm font-medium">Years of Experience</Label>
+              {isEditing ? (
+                <input
+                  type="number"
+                  name="yearsOfExperience"
+                  value={therapistDetails?.yearsOfExperience}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-md"
+                />
+              ) : (
+                <p className="text-gray-700">
+                  {therapistDetails?.yearsOfExperience} years
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
               <Label className="text-sm font-medium">Bio</Label>
               {isEditing ? (
                 <textarea
@@ -251,6 +271,12 @@ const MemberProfile = ({ userData }) => {
             </div>
           </div>
         </div>
+
+        {/* Qualifications */}
+        <QualificationSection therapistDetails={therapistDetails} />
+
+        {/* Availability */}
+        <AvailabilitySection therapistDetails={therapistDetails} />
 
         <Dialog open={isDropZoneOpen} onOpenChange={setIsDropZoneOpen}>
           <DialogContent>
