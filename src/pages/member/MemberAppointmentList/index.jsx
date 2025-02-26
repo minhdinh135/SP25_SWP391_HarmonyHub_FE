@@ -4,9 +4,9 @@ import useAuth from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import AppointmentCard from "./components/AppointmentCard";
 import Spinner from "@/components/Spinner";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import AppointmentCard from "@/components/AppointmentCard";
 
 const MemberAppointmentList = () => {
   const { user } = useAuth();

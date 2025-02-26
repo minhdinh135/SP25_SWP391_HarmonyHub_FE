@@ -1,9 +1,9 @@
 import { getTherapistAppointments } from "@/api/appointmentApi";
+import AppointmentCard from "@/components/AppointmentCard";
 import ItemList from "@/components/ItemList";
 import Spinner from "@/components/Spinner";
 import useAuth from "@/hooks/useAuth";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import AppointmentCard from "@/pages/member/MemberAppointmentList/components/AppointmentCard";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
