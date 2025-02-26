@@ -12,8 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { getStatusColor } from "@/utils/colorUtils";
-import { getRoleText, getStatusText } from "@/utils/enumUtils";
+import { getAccountStatusColor } from "@/utils/colorUtils";
+import { getAccountStatusText, getRoleText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
 import {
   Search,
@@ -227,8 +227,8 @@ const Accounts = () => {
                 </TableCell>
                 <TableCell>{getRoleText(account.role)}</TableCell>
                 <TableCell>
-                  <Badge className={getStatusColor(account.status)}>
-                    {getStatusText(account.status)}
+                  <Badge className={getAccountStatusColor(account.status)}>
+                    {getAccountStatusText(account.status)}
                   </Badge>
                 </TableCell>
                 <TableCell>

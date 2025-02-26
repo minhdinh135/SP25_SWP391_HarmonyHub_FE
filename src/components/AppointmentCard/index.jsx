@@ -2,12 +2,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Video, MessageSquare, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import useAuth from "@/hooks/useAuth";
-import { getRoleText } from "@/utils/enumUtils";
+import { getAppointmentStatusText } from "@/utils/enumUtils";
+import { getAppointmentStatusColor } from "@/utils/colorUtils";
 
 const AppointmentCard = ({ appointment }) => {
-  const { user } = useAuth();
-
   const navigate = useNavigate();
 
   // Format date and time
@@ -21,19 +19,6 @@ const AppointmentCard = ({ appointment }) => {
       minute: "2-digit",
     });
   };
-
-  // Get status badge color and text
-  const getStatusBadge = (status) => {
-    const statusMap = {
-      0: { label: "Pending", className: "bg-yellow-500" },
-      1: { label: "Confirmed", className: "bg-green-500" },
-      2: { label: "Completed", className: "bg-blue-500" },
-      3: { label: "Cancelled", className: "bg-red-500" },
-    };
-    return statusMap[status] || { label: "Unknown", className: "bg-gray-500" };
-  };
-
-  const statusBadge = getStatusBadge(appointment.status);
 
   const handleClick = () => {
     console.log("AppointmentID:", appointment.id);
@@ -51,7 +36,9 @@ const AppointmentCard = ({ appointment }) => {
         <CardTitle className="text-xl font-semibold">
           Marital Counseling Session
         </CardTitle>
-        <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
+        <Badge className={getAppointmentStatusColor(appointment.status)}>
+          {getAppointmentStatusText(appointment.status)}
+        </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
