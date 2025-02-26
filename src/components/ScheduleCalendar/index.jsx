@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
 import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
 
-const ScheduleCalendar = () => {
+const ScheduleCalendar = ({ appointments }) => {
   const eventsService = useState(() => createEventsServicePlugin())[0];
   const eventModal = createEventModalPlugin();
   const eventRecurrence = createEventRecurrencePlugin();
@@ -79,20 +79,37 @@ const ScheduleCalendar = () => {
       createViewMonthGrid(),
       createViewMonthAgenda(),
     ],
-    events: [
-      {
-        id: 1,
-        title: "Event 1",
-        description: "Meeting with Dr.Strange about the meaning of life",
-        start: "2025-01-23 00:00",
-        end: "2025-01-23 02:00",
-        location: "Google Meet - https://meet.google.com/eby-anvo-mnj",
-        calendarId: "school",
-        rrule: "FREQ=WEEKLY",
-      },
-    ],
+    // events: [
+    //   {
+    //     id: 1,
+    //     title: "Event 1",
+    //     description: "Meeting with Dr.Strange about the meaning of life",
+    //     start: "2025-01-23 00:00",
+    //     end: "2025-01-23 02:00",
+    //     location: "Google Meet - https://meet.google.com/eby-anvo-mnj",
+    //     calendarId: "school",
+    //     rrule: "FREQ=WEEKLY",
+    //   },
+    // ],
     plugins: [eventsService, eventModal, eventRecurrence],
   });
+
+  useEffect(() => {
+    if (appointments.length > 0) {
+      const transformedEvents = appointments.map((appointment) => ({
+        id: appointment.id.toString(),
+        title: `Appointment with ${appointment.memberFullName}`,
+        start: appointment.startTime.replace("T", " ").slice(0, 16), // Format: "YYYY-MM-DD HH:mm"
+        end: appointment.endTime.replace("T", " ").slice(0, 16), // Format: "YYYY-MM-DD HH:mm"
+        description: `Package: ${appointment.packageName}\nClient Note: ${appointment.clientNote}`,
+        location: appointment.meetUrl,
+        calendarId: "personal", // Assign to a calendar (e.g., "personal" or "work")
+      }));
+
+      // Update calendar events
+      eventsService.set(transformedEvents);
+    }
+  }, [appointments, eventsService]);
 
   useEffect(() => {
     // get all events

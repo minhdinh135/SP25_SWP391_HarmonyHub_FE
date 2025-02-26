@@ -20,6 +20,8 @@ import {
   Package,
   ChevronLeft,
 } from "lucide-react";
+import { getAppointmentStatusText } from "@/utils/enumUtils";
+import { getAppointmentStatusColor } from "@/utils/colorUtils";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
@@ -69,19 +71,6 @@ const AppointmentDetails = () => {
     });
   };
 
-  // Get status badge color and text
-  const getStatusBadge = (status) => {
-    const statusMap = {
-      0: { label: "Pending", className: "bg-yellow-500" },
-      1: { label: "Confirmed", className: "bg-green-500" },
-      2: { label: "Completed", className: "bg-blue-500" },
-      3: { label: "Cancelled", className: "bg-red-500" },
-    };
-    return statusMap[status] || { label: "Unknown", className: "bg-gray-500" };
-  };
-
-  const statusBadge = getStatusBadge(appointment.status);
-
   return (
     <div className="min-h-screen container mx-auto max-w-4xl py-8">
       <Button
@@ -103,8 +92,10 @@ const AppointmentDetails = () => {
               Marital Counseling Session
             </CardTitle>
           </div>
-          <Badge className={`${statusBadge.className} px-3 py-1.5 text-base`}>
-            {statusBadge.label}
+          <Badge
+            className={`${getAppointmentStatusColor(appointment.status)} px-3 py-1.5 text-base`}
+          >
+            {getAppointmentStatusText(appointment.status)}
           </Badge>
         </CardHeader>
 

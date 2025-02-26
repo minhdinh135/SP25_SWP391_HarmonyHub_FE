@@ -1,4 +1,6 @@
-export const getStatusText = (statusEnum) => {
+import { AppointmentStatus } from "@/constants/status";
+
+export const getAccountStatusText = (statusEnum) => {
   switch (statusEnum) {
     case 1:
       return "Active";
@@ -8,6 +10,25 @@ export const getStatusText = (statusEnum) => {
       return "Inactive";
     default:
       return "Active";
+  }
+};
+
+export const getAppointmentStatusText = (statusEnum) => {
+  switch (statusEnum) {
+    case AppointmentStatus.Cancelled:
+      return "Cancelled";
+    case AppointmentStatus.Booked:
+      return "Booked";
+    case AppointmentStatus.Pending:
+      return "Pending";
+    case AppointmentStatus.Accepted:
+      return "Accepted";
+    case AppointmentStatus.Rejected:
+      return "Rejected";
+    case AppointmentStatus.Completed:
+      return "Completed";
+    default:
+      return "Completed";
   }
 };
 

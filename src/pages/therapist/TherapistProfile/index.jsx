@@ -14,7 +14,7 @@ import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { getStatusText } from "@/utils/enumUtils";
+import { getAccountStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
@@ -138,7 +138,7 @@ const MemberProfile = ({ userData }) => {
             <Badge
               variant={therapistDetails?.status === 1 ? "default" : "secondary"}
             >
-              {getStatusText(therapistDetails?.status)}
+              {getAccountStatusText(therapistDetails?.status)}
             </Badge>
             {/* Contact Information */}
             <div className="w-full space-y-3 pt-4 border-t">
