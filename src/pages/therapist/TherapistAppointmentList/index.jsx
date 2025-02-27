@@ -29,6 +29,41 @@ const TherapistAppointmentList = () => {
     fetchData();
   }, [user.accountId]);
 
+  // Handle appointment acceptance
+  const handleAccept = async (appointmentId) => {
+    try {
+      // await updateAppointmentStatus(appointmentId, 2); // Assuming 2 is "Accepted"
+      console.log("Accepted");
+      refreshAppointments();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to accept appointment");
+    }
+  };
+
+  // Handle appointment rejection
+  const handleReject = async (appointmentId) => {
+    try {
+      // await updateAppointmentStatus(appointmentId, 3); // Assuming 3 is "Rejected"
+      console.log("Rejected");
+      refreshAppointments();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to reject appointment");
+    }
+  };
+
+  // Refresh appointments after status update
+  const refreshAppointments = async () => {
+    try {
+      const data = await getTherapistAppointments(user.accountId);
+      setAppointments(data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to refresh appointments");
+    }
+  };
+
   if (isLoading) return <Spinner />;
 
   return (
@@ -37,7 +72,11 @@ const TherapistAppointmentList = () => {
         className="p-4"
         data={appointments}
         renderItem={(appointment) => (
-          <AppointmentCard appointment={appointment} />
+          <AppointmentCard
+            onAccept={handleAccept}
+            onReject={handleReject}
+            appointment={appointment}
+          />
         )}
       />
     </DashboardLayout>

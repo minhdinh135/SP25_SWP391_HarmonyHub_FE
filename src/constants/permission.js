@@ -6,7 +6,7 @@ const RolePermissions = {
     "delete:accounts",
   ],
   Member: ["read:ownProfile"],
-  Therapist: ["read:ownProfile"],
+  Therapist: ["read:ownProfile", "update:appointmentStatus"],
 };
 
 export const hasPermission = (role, permission) => {
