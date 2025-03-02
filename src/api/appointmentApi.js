@@ -24,3 +24,15 @@ export const getTherapistAppointments = async (therapistId) => {
     throw new Error("Error getting therapist appointments");
   }
 };
+
+export const updateAppointmentStatus = async (appointmentId, payload) => {
+  try {
+    await axios.put(
+      `${BASE_API_URL}/appointments/${appointmentId}/status`,
+      payload,
+    );
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting appointmentDetails");
+  }
+};
