@@ -103,7 +103,7 @@ const ScheduleCalendar = ({ appointments }) => {
         end: appointment.endTime.replace("T", " ").slice(0, 16), // Format: "YYYY-MM-DD HH:mm"
         description: `Package: ${appointment.packageName}\nClient Note: ${appointment.clientNote}`,
         location: appointment.meetUrl,
-        calendarId: "personal", // Assign to a calendar (e.g., "personal" or "work")
+        calendarId: "school",
       }));
 
       // Update calendar events

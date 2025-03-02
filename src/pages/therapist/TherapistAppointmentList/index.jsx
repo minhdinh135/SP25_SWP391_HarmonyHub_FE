@@ -1,7 +1,11 @@
-import { getTherapistAppointments } from "@/api/appointmentApi";
+import {
+  getTherapistAppointments,
+  updateAppointmentStatus,
+} from "@/api/appointmentApi";
 import AppointmentCard from "@/components/AppointmentCard";
 import ItemList from "@/components/ItemList";
 import Spinner from "@/components/Spinner";
+import { AppointmentStatus } from "@/constants/status";
 import useAuth from "@/hooks/useAuth";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useEffect, useState } from "react";
@@ -10,57 +14,57 @@ import { toast } from "sonner";
 const TherapistAppointmentList = () => {
   const { user } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [appointments, setAppointments] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getTherapistAppointments(user.accountId);
-        setAppointments(data);
-      } catch (error) {
-        console.log(error);
-        toast.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user.accountId]);
-
-  // Handle appointment acceptance
-  const handleAccept = async (appointmentId) => {
+  const fetchData = async () => {
     try {
-      // await updateAppointmentStatus(appointmentId, 2); // Assuming 2 is "Accepted"
-      console.log("Accepted");
-      refreshAppointments();
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to accept appointment");
-    }
-  };
-
-  // Handle appointment rejection
-  const handleReject = async (appointmentId) => {
-    try {
-      // await updateAppointmentStatus(appointmentId, 3); // Assuming 3 is "Rejected"
-      console.log("Rejected");
-      refreshAppointments();
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to reject appointment");
-    }
-  };
-
-  // Refresh appointments after status update
-  const refreshAppointments = async () => {
-    try {
+      setIsLoading(true);
       const data = await getTherapistAppointments(user.accountId);
       setAppointments(data);
     } catch (error) {
       console.log(error);
-      toast.error("Failed to refresh appointments");
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [user.accountId]);
+
+  const handleAccept = async (appointmentId) => {
+    try {
+      setIsLoading(true);
+      const payload = {
+        status: AppointmentStatus.Accepted,
+      };
+      await updateAppointmentStatus(appointmentId, payload);
+      await fetchData();
+      console.log("Accepted");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to accept appointment");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReject = async (appointmentId) => {
+    try {
+      setIsLoading(true);
+      const payload = {
+        status: AppointmentStatus.Rejected,
+      };
+      await updateAppointmentStatus(appointmentId, payload);
+      await fetchData();
+      console.log("Rejected");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to reject appointment");
+    } finally {
+      setIsLoading(false);
     }
   };
 
