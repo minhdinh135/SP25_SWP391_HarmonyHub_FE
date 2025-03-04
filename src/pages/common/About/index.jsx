@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import teamImage from "@/assets/thinking-guy.jpg";
+import { useNavigate } from "react-router-dom";
 
 const AboutUsPage = () => {
+  const navigate = useNavigate();
   // Animation variants for consistent effects
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -229,8 +231,9 @@ const AboutUsPage = () => {
           className="bg-[#79D7BE] hover:bg-[#4DA1A9] text-white font-bold py-3 px-8 rounded-full text-lg transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => navigate("/quizzes")}
         >
-          Book a Session
+          Take Quizz
         </motion.button>
       </motion.section>
     </div>
