@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
 
 const CTA = () => {
   return (
-    <section className="py-12 px-12 bg-blue-100">
+    <section className="py-12 px-12 bg-[#F6F4F0]">
       <div className="container">
         <div className="flex w-full flex-col gap-16 overflow-hidden rounded-lg p-8 md:rounded-xl lg:flex-row lg:items-center lg:p-16">
           <div className="flex-1">
@@ -18,12 +20,18 @@ const CTA = () => {
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button
-              variant="outline"
-              className="text-blue-600 border-2 border-blue-600"
+              className="w-full sm:w-auto bg-[#2E5077] hover:bg-[#79D7BE]"
+              onClick={() => navigate("/sign-up")}
             >
               Learn More
             </Button>
-            <Button className="bg-blue-600">Find Therapists</Button>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto text-[#2E5077] border-2 border-[#2E5077]"
+              onClick={() => navigate("/therapists")}
+            >
+              Find Therapists
+            </Button>
           </div>
         </div>
       </div>

@@ -181,7 +181,7 @@ const Login = () => {
             <CardFooter className="flex flex-col space-y-4 pt-2">
               <Button
                 type="submit"
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
+                className="w-full h-11 bg-[#4DA1A9] hover:bg-[#2E5077] transition-colors flex items-center justify-center"
                 disabled={isLoading}
               >
                 {isLoading ? (

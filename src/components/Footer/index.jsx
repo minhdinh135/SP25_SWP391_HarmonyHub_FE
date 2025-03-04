@@ -41,7 +41,7 @@ const sections = [
 
 const Footer = () => {
   return (
-    <section className="w-full border-t-2 py-12 px-12 bg-blue-100">
+    <section className="w-full border-t-2 py-12 px-12 bg-[#F6F4F0]">
       <div className="container">
         <footer>
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
