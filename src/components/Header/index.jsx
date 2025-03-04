@@ -1,5 +1,4 @@
 import { Button, buttonVariants } from "@/components/ui/button";
-import logo from "@/assets/HarmonyLogo.png"
 import {
   NavigationMenu,
   NavigationMenuContent,
