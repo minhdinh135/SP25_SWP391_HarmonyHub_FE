@@ -62,7 +62,7 @@ const Header = () => {
             <img
               src="https://images-platform.99static.com//MDVqrTbdUmben2nTrA2mj8DHycw=/168x11:883x726/fit-in/500x500/99designs-contests-attachments/14/14940/attachment_14940716"
               alt="Logo"
-              className="w-12 h-12 rounded object-cover"
+              className="w-13 h-13 rounded object-cover"
             />
           </div>
           <span className="text-2xl font-bold text-gray-900">Harmony Hub</span>
@@ -136,7 +136,7 @@ const Header = () => {
             </nav>
             {!user && (
               <div className="mt-6 space-y-3">
-                <Button className="w-full bg-[#80CBC4] text-white hover:bg-[#B4EBE6] focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/login")}>Login</Button>
+                <Button className="w-full bg-[#80CBC4] text-white hover:bg-[#4DA1A9] focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/login")}>Login</Button>
                 <Button className="w-full border border-blue-500 text-blue-500 hover:bg-blue-400 hover:text-white focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/sign-up")}>Sign Up</Button>
               </div>
             )}

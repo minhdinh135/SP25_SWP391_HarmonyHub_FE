@@ -8,7 +8,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-12 px-12 bg-[#F6F4F0]">
+    <section className=" py-12 px-12 bg-[#F6F4F0]">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -51,7 +51,7 @@ const Hero = () => {
             </motion.div>
           </motion.div>
           <motion.img
-            src={heroImage}
+            src="https://www.debt.com/wp-content/uploads/2019/12/6-Ways-Pre-Marriage-Financial-Counseling-May-Head-Off-Divorce-1.jpg"
             alt="Hero section image"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
