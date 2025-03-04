@@ -1,4 +1,5 @@
 import { Button, buttonVariants } from "@/components/ui/button";
+import logo from "@/assets/HarmonyLogo.png"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -75,7 +76,7 @@ const Header = () => {
               onClick={() => navigate("/")}
             >
               <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 font-bold">H</span>
+                <img src="https://images-platform.99static.com//MDVqrTbdUmben2nTrA2mj8DHycw=/168x11:883x726/fit-in/500x500/99designs-contests-attachments/14/14940/attachment_14940716" alt="Logo" className="w-8 h-8 rounded" />
               </div>
               <span className="text-xl text-gray-900 font-semibold">
                 Harmony Hub
