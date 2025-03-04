@@ -23,6 +23,14 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getFullName } from "@/utils/nameFormat";
 
+const navLinks = {
+  "Home": "/",
+  "About Us": "/about",
+  "Quizzes": "/quizzes",
+  "Blogs": "/blogs",
+  "Therapists": "/therapists",
+};
+
 const avatarItems = [
   { title: "Dashboard", icon: <User className="size-5 shrink-0" /> },
   { title: "Logout", icon: <ArrowLeftSquare className="size-5 shrink-0" /> },
@@ -36,7 +44,9 @@ const Header = () => {
     switch (title) {
       case "Dashboard":
         const role = getRoleText(user.role);
-        navigate(role === "Admin" ? "/admin" : role === "Member" ? "/member/profile" : "/therapist/profile");
+        navigate(
+          role === "Admin" ? "/admin" : role === "Member" ? "/member/profile" : "/therapist/profile"
+        );
         break;
       case "Logout":
         logout();
@@ -59,13 +69,13 @@ const Header = () => {
         </div>
 
         <nav className="hidden lg:flex space-x-6">
-          {["Home", "About Us", "Quizzes", "Blogs", "Therapists"].map((item) => (
+          {Object.entries(navLinks).map(([label, path]) => (
             <a
-              key={item}
-              href={`/${item.toLowerCase().replace(" ", "")}`}
+              key={label}
+              href={path}
               className={cn(navigationMenuTriggerStyle, buttonVariants({ variant: "ghost" }))}
             >
-              {item}
+              {label}
             </a>
           ))}
         </nav>
@@ -120,18 +130,14 @@ const Header = () => {
               <SheetTitle>Harmony Hub</SheetTitle>
             </SheetHeader>
             <nav className="mt-4 space-y-4">
-              {["Home", "About Us", "Quizzes", "Blogs", "Therapists"].map((item) => (
-                <a key={item} href={`/${item.toLowerCase()}`} className="block text-lg font-medium text-gray-900">{item}</a>
+              {Object.entries(navLinks).map(([label, path]) => (
+                <a key={label} href={path} className="block text-lg font-medium text-gray-900">{label}</a>
               ))}
             </nav>
             {!user && (
               <div className="mt-6 space-y-3">
-                <Button className="w-full bg-[#80CBC4] text-white hover:bg-[#B4EBE6] focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/login")}>
-                  Login
-                </Button>
-                <Button className="w-full border border-blue-500 text-blue-500 hover:bg-blue-400 hover:text-white focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/sign-up")}>
-                  Sign Up
-                </Button>
+                <Button className="w-full bg-[#80CBC4] text-white hover:bg-[#B4EBE6] focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/login")}>Login</Button>
+                <Button className="w-full border border-blue-500 text-blue-500 hover:bg-blue-400 hover:text-white focus:ring-2 focus:ring-blue-300" onClick={() => navigate("/sign-up")}>Sign Up</Button>
               </div>
             )}
           </SheetContent>
