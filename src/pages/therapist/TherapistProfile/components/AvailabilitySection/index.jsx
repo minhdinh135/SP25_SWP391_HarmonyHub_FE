@@ -1,5 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { getDayOfWeek } from "@/utils/enumUtils";
+import { formatTime } from "@/utils/timeUtils";
 
 const AvailabilitySection = ({ therapistDetails }) => {
   return (
@@ -13,8 +14,9 @@ const AvailabilitySection = ({ therapistDetails }) => {
               className="bg-gray-50 p-4 rounded-lg shadow-sm"
             >
               <p className="font-medium">
-                {getDayOfWeek(availability.dayOfWeek)}: {availability.fromTime}{" "}
-                - {availability.toTime}
+                {getDayOfWeek(availability.dayOfWeek)}:{" "}
+                {formatTime(availability.fromTime)} -{" "}
+                {formatTime(availability.toTime)}
               </p>
             </div>
           ))}
