@@ -59,7 +59,7 @@ const TransactionManagement = ({ role = "member", transactions }) => {
           <div className="flex items-center space-x-2">
             <DollarSign className="h-8 w-8 text-green-500" />
             <span className="text-3xl font-bold">
-              {formatCurrencyInVND(details?.balance)}
+              {formatCurrencyInVND(details?.balance)} VND
             </span>
           </div>
         </CardContent>

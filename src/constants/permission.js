@@ -5,10 +5,10 @@ const RolePermissions = {
     "update:accounts",
     "delete:accounts",
   ],
-  Member: ["read:ownProfile"],
+  Member: ["read:ownProfile", "create:appointment"],
   Therapist: ["read:ownProfile", "update:appointmentStatus"],
 };
 
 export const hasPermission = (role, permission) => {
-  return RolePermissions[role].includes(permission);
+  return RolePermissions[role]?.includes(permission);
 };

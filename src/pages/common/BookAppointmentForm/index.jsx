@@ -1,91 +1,268 @@
-import { useState } from "react";
-import { toast } from "sonner"; // Import toast
-import { Card, CardContent } from "@/components/ui/card";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const servicePackages = [
-  {
-    title: "Initial Consultation",
-    description: "A 45-minute session to explore your relationship dynamics and goals.",
-    price: "$150",
-    value: "initial-consultation"
-  },
-  {
-    title: "Couples Therapy",
-    description: "Weekly 1-hour sessions focusing on communication and conflict resolution.",
-    price: "$600/month",
-    value: "couples-therapy"
-  },
-  {
-    title: "Intensive Weekend Retreat",
-    description: "A focused two-day program for couples in crisis.",
-    price: "$2,500",
-    value: "intensive-retreat"
-  }
-];
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Spinner from "@/components/Spinner";
+import { getTherapistDetails } from "@/api/accountApi";
+import { createAppointment } from "@/api/appointmentApi";
+import useAuth from "@/hooks/useAuth";
+import { Calendar, Check, Clock, MessageSquare, Package } from "lucide-react";
+import { calculateEndTime, formatTimeString } from "@/utils/timeUtils";
 
 const BookAppointmentForm = () => {
+  const { user } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     startDate: "",
     startTime: "",
-    service: "",
-    customerNote: ""
+    packageId: "",
+    clientNote: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [therapistDetails, setTherapistDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getTherapistDetails(id);
+        setTherapistDetails(data);
+      } catch (error) {
+        console.log(error);
+        toast.error("Error getting profile");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (value) => {
-    setFormData({ ...formData, service: value });
+    setFormData((prev) => ({ ...prev, packageId: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
 
-    // Show success toast
-    toast.success("Your request has been sent to the therapist!");
+    const selectedPackage = therapistDetails?.packages.find(
+      (pkg) => pkg.id.toString() === formData.packageId,
+    );
+
+    const combinedDateTime = new Date(
+      `${formData.startDate}T${formData.startTime}:00`,
+    );
+
+    const appointmentPayload = {
+      startTime: combinedDateTime.toISOString(),
+      endTime: new Date(
+        combinedDateTime.getTime() +
+          selectedPackage.minutesPerAppointment * 60000,
+      ).toISOString(),
+      meetUrl: "string",
+      clientNote: formData.clientNote,
+      therapistId: parseInt(id),
+      packageId: parseInt(formData.packageId),
+    };
+
+    try {
+      setIsLoading(true);
+      await createAppointment(user?.accountId, appointmentPayload);
+      toast.success("Appointment booked successfully!");
+      navigate("/member/appointments");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Failed to book appointment");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // Memoized calculation of selected package details
+  const selectedPackageDetails = useMemo(() => {
+    if (!formData.packageId || !therapistDetails) return null;
+
+    const pkg = therapistDetails.packages.find(
+      (p) => p.id.toString() === formData.packageId,
+    );
+
+    return pkg
+      ? {
+          ...pkg,
+          endTime: formData.startTime
+            ? calculateEndTime(formData.startTime, pkg.minutesPerAppointment)
+            : null,
+        }
+      : null;
+  }, [formData.packageId, formData.startTime, therapistDetails]);
+
+  if (isLoading) return <Spinner />;
 
   return (
-    <Card className="max-w-md mx-auto p-6 shadow-lg rounded-2xl">
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          <div>
-            <Label htmlFor="startDate">Start Date</Label>
-            <Input type="date" id="startDate" name="startDate" value={formData.startDate} onChange={handleChange} required />
-          </div>
-          <div>
-            <Label htmlFor="startTime">Start Time</Label>
-            <Input type="time" id="startTime" name="startTime" value={formData.startTime} onChange={handleChange} required />
-          </div>
-          <div>
-            <Label htmlFor="service">Select Service</Label>
-            <Select onValueChange={handleSelectChange}>
-              <SelectTrigger id="service">
-                <SelectValue placeholder="Choose a service" />
-              </SelectTrigger>
-              <SelectContent>
-                {servicePackages.map((service) => (
-                  <SelectItem key={service.value} value={service.value}>
-                    {service.title} - {service.price}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="customerNote">Customer Note</Label>
-            <textarea id="customerNote" name="customerNote" value={formData.customerNote} onChange={handleChange} placeholder="Any special requests or notes" className="w-full h-24 p-2 border rounded-md" />
-          </div>
-          <Button type="submit" className="w-full">Book Appointment</Button>
-        </form>
-      </CardContent>
-    </Card>
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
+      <Card className="w-full max-w-md shadow-xl border-none">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-center gap-2">
+            <Calendar className="h-6 w-6 text-blue-600" />
+            Book Appointment
+          </CardTitle>
+          <CardDescription className="text-gray-600">
+            Schedule a session with {therapistDetails?.firstName}{" "}
+            {therapistDetails?.lastName}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <Label
+                htmlFor="startDate"
+                className="flex items-center gap-2 mb-2"
+              >
+                <Calendar className="h-4 w-4 text-blue-600" />
+                Appointment Date
+              </Label>
+              <Input
+                type="date"
+                id="startDate"
+                name="startDate"
+                onChange={handleChange}
+                className="w-full"
+                required
+                min={new Date().toISOString().split("T")[0]}
+              />
+            </div>
+
+            <div>
+              <Label
+                htmlFor="startTime"
+                className="flex items-center gap-2 mb-2"
+              >
+                <Clock className="h-4 w-4 text-blue-600" />
+                Start Time
+              </Label>
+              <Input
+                type="time"
+                id="startTime"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleChange}
+                className="w-full"
+                required
+              />
+            </div>
+
+            <div>
+              <Label
+                htmlFor="packageId"
+                className="flex items-center gap-2 mb-2"
+              >
+                <Package className="h-4 w-4 text-blue-600" />
+                Select Service Package
+              </Label>
+              <Select
+                onValueChange={handleSelectChange}
+                value={formData.packageId}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose a service package" />
+                </SelectTrigger>
+                <SelectContent>
+                  {therapistDetails?.packages.map((pkg) => (
+                    <SelectItem key={pkg.id} value={pkg.id.toString()}>
+                      <div className="flex flex-col">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold">{pkg.name}</span>
+                          <span className="text-muted-foreground text-sm">
+                            {pkg.price} VND
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Duration: {pkg.minutesPerAppointment} minutes
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedPackageDetails && (
+              <div className="bg-blue-50 p-3 rounded-lg flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-blue-800">
+                    {selectedPackageDetails.name}
+                  </p>
+                  <div className="text-xs text-blue-600 flex items-center gap-2">
+                    <Clock className="h-3 w-3" />
+                    <span>
+                      {formatTimeString(formData.startTime)} -{" "}
+                      {selectedPackageDetails.endTime}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-sm font-bold text-blue-700">
+                  {selectedPackageDetails.price} VND
+                </div>
+              </div>
+            )}
+
+            <div>
+              <Label
+                htmlFor="clientNote"
+                className="flex items-center gap-2 mb-2"
+              >
+                <MessageSquare className="h-4 w-4 text-blue-600" />
+                Additional Notes
+              </Label>
+              <textarea
+                id="clientNote"
+                name="clientNote"
+                value={formData.clientNote}
+                onChange={handleChange}
+                placeholder="Any special requests or notes"
+                className="w-full p-3 border rounded-md min-h-[100px] resize-y"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
+              disabled={
+                !formData.startDate ||
+                !formData.startTime ||
+                !formData.packageId
+              }
+            >
+              <Check className="mr-2 h-4 w-4" /> Book Appointment
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
