@@ -25,6 +25,30 @@ export const getTherapistAppointments = async (therapistId) => {
   }
 };
 
+export const getAppointmentDetails = async (appointmentId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_API_URL}/appointments/${appointmentId}`,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting appointment details");
+  }
+};
+
+export const createAppointment = async (memberId, payload) => {
+  try {
+    await axios.post(
+      `${BASE_API_URL}/members/${memberId}/appointments`,
+      payload,
+    );
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error creating appointment");
+  }
+};
+
 export const updateAppointmentStatus = async (appointmentId, payload) => {
   try {
     await axios.put(

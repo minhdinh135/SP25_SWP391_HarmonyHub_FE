@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Mail, Phone } from "lucide-react";
+import { Star, Mail, Phone, UserCheck } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useParams } from "react-router-dom";
@@ -10,8 +10,12 @@ import { getTherapistDetails } from "@/api/accountApi";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 import { formatTime } from "@/utils/timeUtils";
+import { hasPermission } from "@/constants/permission";
+import { getRoleKey } from "@/constants/role";
+import useAuth from "@/hooks/useAuth";
 
 const TherapistDetails = () => {
+  const { user } = useAuth();
   const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -40,55 +44,79 @@ const TherapistDetails = () => {
     <div className="flex justify-center p-6">
       <div className="w-full max-w-4xl bg-white">
         <div className="p-6">
-          <div className="flex gap-6 items-center">
-            <Avatar className="h-36 w-36">
+          <div className="flex gap-6 items-center relative">
+            <Avatar className="h-36 w-36 ring-4 ring-blue-50 hover:ring-blue-100 transition-all">
               <AvatarImage src={therapistDetails?.avatarUrl} alt="Therapist" />
-              <AvatarFallback>EH</AvatarFallback>
+              <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                EH
+              </AvatarFallback>
             </Avatar>
 
             <div className="flex flex-col justify-between flex-grow">
               <div>
-                <h1 className="text-2xl font-semibold">Dr. Emily Harper</h1>
-                <p className="text-muted-foreground">Pre-marital Counselor</p>
-                <p className="text-sm text-muted-foreground mt-1">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-bold text-gray-800">
+                    Dr. Emily Harper
+                  </h1>
+                  <UserCheck className="h-5 w-5 text-green-500" />
+                </div>
+                <p className="text-blue-600 font-medium">
+                  Pre-marital Counselor
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
                   {therapistDetails?.yearsOfExperience} years experience
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 mt-2">
-                <Star className="h-4 w-4 fill-primary text-primary" />
-                <span className="font-bold">4.9</span>
-                <span className="text-sm text-muted-foreground">
-                  (9999 reviews)
-                </span>
-                <Badge variant="success" className="ml-2">
+              <div className="flex items-center gap-3 mt-2">
+                <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-full">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                  <span className="font-bold text-yellow-600">4.9</span>
+                </div>
+                <span className="text-sm text-gray-500">(9999 reviews)</span>
+                <Badge
+                  variant="success"
+                  className="ml-2 bg-green-100 text-green-700"
+                >
                   Available
                 </Badge>
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-2">
-              <Link to="/bookappointment">
-                <Button className="w-36">Book Appointment</Button>
-              </Link>
-            </div>
+            {hasPermission(getRoleKey(user?.role), "create:appointment") && (
+              <div className="absolute top-0 right-0">
+                <Link to="appointment-booking">
+                  <Button className="w-40 bg-blue-600 hover:bg-blue-700 transition-colors">
+                    Book Appointment
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
 
-          <Separator className="my-6" />
+          <Separator className="my-6 bg-gray-200" />
 
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold mb-2">About me</h2>
+              <h2 className="text-xl font-semibold mb-3 text-gray-800">
+                About me
+              </h2>
 
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 {therapistDetails?.bio ?? "N/A"}
               </p>
 
-              <div className="flex flex-col">
-                <h3 className="text-sm font-semibold">I can help you with:</h3>
-                <div className="flex gap-2 mt-3">
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                  I can help you with:
+                </h3>
+                <div className="flex gap-2 flex-wrap">
                   {therapistDetails?.qualifications.map((q, index) => (
-                    <Badge key={index} variant="secondary">
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="bg-blue-50 text-blue-700 px-3 py-1"
+                    >
                       {q.specialty.name}
                     </Badge>
                   ))}
@@ -97,20 +125,20 @@ const TherapistDetails = () => {
             </div>
 
             <div>
-              <h2 className="text-lg font-semibold mb-4">Service Packages</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Service Packages
+              </h2>
               <div className="space-y-4">
                 {therapistDetails?.packages.map((pkg, index) => (
                   <div
                     key={index}
-                    className="flex justify-between items-center p-4 bg-muted rounded-lg"
+                    className="flex justify-between items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     <div>
-                      <h3 className="font-bold">{pkg.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {pkg.description}
-                      </p>
+                      <h3 className="font-bold text-gray-800">{pkg.name}</h3>
+                      <p className="text-sm text-gray-600">{pkg.description}</p>
                     </div>
-                    <span className="text-primary font-bold">
+                    <span className="text-blue-600 font-bold">
                       {pkg.minutesPerAppointment} minutes - {pkg.price} VND
                     </span>
                   </div>
@@ -119,7 +147,9 @@ const TherapistDetails = () => {
             </div>
 
             <div>
-              <h2 className="text-lg font-semibold mb-4">Availability</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Availability
+              </h2>
 
               <div className="grid grid-cols-7 gap-2">
                 {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
@@ -131,10 +161,10 @@ const TherapistDetails = () => {
                     return (
                       <div
                         key={index}
-                        className={`p-4 text-center rounded-lg ${
+                        className={`p-4 text-center rounded-lg transition-all ${
                           availability
-                            ? "bg-primary text-white"
-                            : "bg-muted text-muted-foreground"
+                            ? "bg-blue-600 text-white hover:bg-blue-700"
+                            : "bg-gray-200 text-gray-500 opacity-50"
                         }`}
                       >
                         <span className="block text-sm font-semibold">
@@ -153,19 +183,19 @@ const TherapistDetails = () => {
             </div>
 
             <div>
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
                 Contact Information
               </h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">
+              <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3 text-sm">
+                  <Mail className="h-5 w-5 text-blue-600" />
+                  <span className="text-gray-700">
                     {therapistDetails?.email}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">
+                <div className="flex items-center gap-3 text-sm">
+                  <Phone className="h-5 w-5 text-green-600" />
+                  <span className="text-gray-700">
                     {therapistDetails?.phone}
                   </span>
                 </div>

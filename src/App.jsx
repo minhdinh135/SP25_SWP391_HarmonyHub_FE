@@ -50,7 +50,10 @@ function App() {
           <Route path="/quizzes/:id/result" element={<QuizResults />} />
           <Route path="/therapists" element={<TherapistList />} />
           <Route path="/therapists/:id" element={<TherapistDetails />} />
-          <Route path="/bookappointment" element={<BookAppointmentForm />} />
+          <Route
+            path="/therapists/:id/appointment-booking"
+            element={<BookAppointmentForm />}
+          />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Admin]} />}>
