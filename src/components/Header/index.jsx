@@ -22,6 +22,7 @@ import { ArrowLeftSquare, Menu, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getFullName } from "@/utils/nameFormat";
+import appLogo from "@/assets/harmony-logo.png";
 
 const navLinks = {
   "Home": "/",

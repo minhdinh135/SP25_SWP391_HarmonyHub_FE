@@ -11,6 +11,16 @@ export const getAllAccounts = async () => {
   }
 };
 
+export const getAllTherapists = async () => {
+  try {
+    const response = await axios.get(`${BASE_API_URL}/therapists`);
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting therapists");
+  }
+};
+
 export const getMemberDetails = async (memberId) => {
   try {
     const response = await axios.get(`${BASE_API_URL}/members/${memberId}`);
