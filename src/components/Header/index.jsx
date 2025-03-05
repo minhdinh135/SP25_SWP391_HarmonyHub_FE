@@ -22,6 +22,7 @@ import { ArrowLeftSquare, Menu, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getFullName } from "@/utils/nameFormat";
+import appLogo from "@/assets/harmony-logo.png";
 
 const avatarItems = [
   {
@@ -75,7 +76,7 @@ const Header = () => {
               onClick={() => navigate("/")}
             >
               <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
-                <img src="https://images-platform.99static.com//MDVqrTbdUmben2nTrA2mj8DHycw=/168x11:883x726/fit-in/500x500/99designs-contests-attachments/14/14940/attachment_14940716" alt="Logo" className="w-8 h-8 rounded" />
+                <img src={appLogo} alt="Logo" className="w-8 h-8 rounded" />
               </div>
               <span className="text-xl text-gray-900 font-semibold">
                 Harmony Hub
@@ -131,7 +132,7 @@ const Header = () => {
           </div>
 
           {user ? (
-            <div className="flex">
+            <div className="flex self-end">
               <NavigationMenu className="mx-auto relative">
                 <NavigationMenuList>
                   <NavigationMenuItem>

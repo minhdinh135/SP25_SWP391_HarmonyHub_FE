@@ -1,65 +1,35 @@
-import { Search, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ItemList from "@/components/ItemList";
+import { Search } from "lucide-react";
+import { useState } from "react";
 import TherapistCard from "./components/TherapistCard";
-const therapists = [
-  {
-    id: 1,
-    name: "Dr. Sarah Johnson",
-    image:
-      "https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
-    credentials: "Ph.D. in Marriage Counseling",
-    specializations: [
-      "Marriage Counseling",
-      "Relationship Therapy",
-      "Pre-marriage Counseling",
-    ],
-    experience: "15 years",
-    rating: 4.9,
-    reviewCount: 127,
-    available: true,
-    bio: "Specializing in helping couples build stronger relationships through evidence-based therapy approaches.",
-  },
-  {
-    id: 2,
-    name: "Dr. Michael Chen",
-    image:
-      "https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
-    credentials: "Psy.D. Clinical Psychology",
-    specializations: [
-      "Couples Therapy",
-      "Family Counseling",
-      "Conflict Resolution",
-    ],
-    experience: "12 years",
-    rating: 4.8,
-    reviewCount: 98,
-    available: true,
-    bio: "Dedicated to creating a safe space for couples to grow and heal together.",
-  },
-  {
-    id: 3,
-    name: "Dr. Emily Rodriguez",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
-    credentials: "Ph.D. in Family Therapy",
-    specializations: [
-      "Marriage Counseling",
-      "Relationship Recovery",
-      "Communication",
-    ],
-    experience: "10 years",
-    rating: 4.9,
-    reviewCount: 156,
-    available: false,
-    bio: "Helping couples discover new ways to connect and communicate effectively.",
-  },
-];
+import { useEffect } from "react";
+import Spinner from "@/components/Spinner";
+import { toast } from "sonner";
+import { getAllTherapists } from "@/api/accountApi";
+
 const TherapistList = () => {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [therapists, setTherapists] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getAllTherapists();
+        setTherapists(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="w-full min-h-screen bg-white">
@@ -88,18 +58,12 @@ const TherapistList = () => {
           </div>
         </div>
         <ItemList
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="flex flex-col space-y-10"
           data={therapists}
-          renderItem={(therapist) => <TherapistCard therapist={therapist} />}
+          renderItem={(therapist) => (
+            <TherapistCard key={therapist.id} therapist={therapist} />
+          )}
         />
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">
-            Don't see the right therapist for you?
-          </p>
-          <Button className="bg-[#2563EB] hover:bg-[#3B82F6] text-white font-semibold px-8">
-            Request Therapist Match
-          </Button>
-        </div>
       </div>
     </div>
   );
