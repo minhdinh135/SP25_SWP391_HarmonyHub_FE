@@ -36,7 +36,7 @@ const MemberProfile = ({ userData }) => {
   const { user } = useAuth();
 
   const [isEditing, toggleIsEditing] = useToggleState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [therapistDetails, setTherapistDetails] = useState(null);
   const [formData, setFormData] = useState(userData);
   const [preview, setPreview] = useState(null);
@@ -46,6 +46,7 @@ const MemberProfile = ({ userData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const data = await getTherapistDetails(user.accountId);
         setTherapistDetails(data);
       } catch (error) {
