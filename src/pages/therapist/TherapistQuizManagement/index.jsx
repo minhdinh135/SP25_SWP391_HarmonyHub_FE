@@ -37,9 +37,18 @@ const TherapistQuizManagement = () => {
 
   const handleAddQuiz = async () => {
     try {
+      // Transform the questions structure to match the API expectations
+      const formattedQuestions = newQuiz.questions.map(question => ({
+        content: question.content,
+        options: question.options
+      }));
+
       const requestBody = {
-        ...newQuiz,
+        title: newQuiz.title,
+        description: newQuiz.description,
+        imageUrl: newQuiz.imageUrl,
         therapistId: 3, // Fixed therapist ID as specified
+        questions: formattedQuestions
       };
 
       await axios.post("https://harmony-backend.runasp.net/api/quizzes", requestBody);
@@ -271,9 +280,45 @@ const TherapistQuizManagement = () => {
         ) : (
           <div className="bg-white p-6 rounded-lg shadow-md">
             <button className="text-indigo-600 mb-4" onClick={() => setSelectedQuiz(null)}>← Back to Quizzes</button>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">{selectedQuiz.title}</h3>
-            <img src={selectedQuiz.imageUrl} alt={selectedQuiz.title} className="w-full h-60 object-cover rounded-md mb-4" />
-            <p className="text-gray-600 mb-4">{selectedQuiz.description}</p>
+
+            {/* Quiz Info Section */}
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">{selectedQuiz.title}</h3>
+              <img src={selectedQuiz.imageUrl} alt={selectedQuiz.title} className="w-full h-60 object-cover rounded-md mb-4" />
+              <p className="text-gray-600 mb-4">{selectedQuiz.description}</p>
+              <div className="flex items-center mb-6">
+                <span className={`px-4 py-2 text-sm font-medium rounded-full ${selectedQuiz.status === 1 ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                  {selectedQuiz.status === 1 ? "Active" : "Inactive"}
+                </span>
+                <span className="ml-4 text-gray-500">Quiz ID: {selectedQuiz.id}</span>
+              </div>
+            </div>
+
+            {/* Questions Section */}
+            <div>
+              <h4 className="text-xl font-semibold text-gray-700 mb-4">Questions</h4>
+
+              {selectedQuiz.questionResponse && selectedQuiz.questionResponse.length > 0 ? (
+                <div className="space-y-6">
+                  {selectedQuiz.questionResponse.map((question, qIndex) => (
+                    <div key={qIndex} className="border border-gray-200 p-4 rounded-lg">
+                      <h5 className="font-medium text-lg mb-3">Question {qIndex + 1}: {question.content}</h5>
+
+                      <div className="ml-4">
+                        <h6 className="font-medium text-sm text-gray-600 mb-2">Answer Options:</h6>
+                        <ul className="list-disc ml-6 space-y-2">
+                          {question.optionResponse && question.optionResponse.map((option, oIndex) => (
+                            <li key={oIndex} className="text-gray-700">{option.content}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4 text-gray-500">No questions available for this quiz.</div>
+              )}
+            </div>
           </div>
         )}
       </div>
