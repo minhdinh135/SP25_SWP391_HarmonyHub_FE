@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import axios from "axios";
 
@@ -9,6 +9,8 @@ const TherapistQuizManagement = () => {
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddQuizModal, setShowAddQuizModal] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
   const [newQuiz, setNewQuiz] = useState({
     title: "",
     description: "",
@@ -115,6 +117,59 @@ const TherapistQuizManagement = () => {
       updatedQuestions.splice(questionIndex, 1);
       setNewQuiz({ ...newQuiz, questions: updatedQuestions });
     }
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setUploadingImage(true);
+
+      // Use the ID of the selected quiz
+      const quizId = selectedQuiz.id;
+
+      // Create FormData object to send the file
+      const formData = new FormData();
+      formData.append('image', file);
+
+      // Send the file to the API with the current quiz's ID
+      const response = await axios.post(
+        `https://harmony-backend.runasp.net/api/quiz/imgUrl?Id=${quizId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      // If successful, update the selected quiz's image URL
+      if (response.data && response.data.imageUrl) {
+        setSelectedQuiz({
+          ...selectedQuiz,
+          imageUrl: response.data.imageUrl
+        });
+
+        // Also update the quiz in the quizzes array
+        const updatedQuizzes = quizzes.map(quiz =>
+          quiz.id === selectedQuiz.id ? { ...quiz, imageUrl: response.data.imageUrl } : quiz
+        );
+        setQuizzes(updatedQuizzes);
+
+        // Show success message
+        alert(`Image for Quiz ID: ${quizId} uploaded successfully!`);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
   };
 
   const indexOfLastQuiz = currentPage * quizzesPerPage;
@@ -284,7 +339,28 @@ const TherapistQuizManagement = () => {
             {/* Quiz Info Section */}
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-4">{selectedQuiz.title}</h3>
-              <img src={selectedQuiz.imageUrl} alt={selectedQuiz.title} className="w-full h-60 object-cover rounded-md mb-4" />
+
+              {/* Image section with upload button */}
+              <div className="relative mb-4">
+                <img src={selectedQuiz.imageUrl} alt={selectedQuiz.title} className="w-full h-60 object-cover rounded-md" />
+                <div className="absolute bottom-4 right-4">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={triggerFileInput}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+                    disabled={uploadingImage}
+                  >
+                    {uploadingImage ? "Uploading..." : "Upload New Image"}
+                  </button>
+                </div>
+              </div>
+
               <p className="text-gray-600 mb-4">{selectedQuiz.description}</p>
               <div className="flex items-center mb-6">
                 <span className={`px-4 py-2 text-sm font-medium rounded-full ${selectedQuiz.status === 1 ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
