@@ -50,7 +50,19 @@ export const updateAppointmentStatus = async (appointmentId, payload) => {
 
 export const updateAppointmentFeedback = async (appointmentId, payload) => {
   try {
-    await api.put(`appointments/${appointmentId}/update-feedback`, payload);
+    await api.put(`/appointments/update-feedback/${appointmentId}`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating appointment feedback");
+  }
+};
+
+export const updateAppointmentNote = async (appointmentId, payload) => {
+  try {
+    await api.put(
+      `/therapists/appointments/update-appointment-note/${appointmentId}`,
+      payload,
+    );
   } catch (error) {
     console.log(error);
     throw new Error("Error updating appointment feedback");
