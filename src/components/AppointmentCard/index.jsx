@@ -110,75 +110,7 @@ const AppointmentCard = ({ appointment, onAccept, onReject }) => {
             </p>
           </div>
         )}
-
-        {appointment.feedbackRating && (
-          <div className="mt-4 border-t pt-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Star className="h-4 w-4 text-yellow-500" />
-              <span className="font-medium">Feedback:</span>
-              <span className="text-sm">{appointment.feedbackRating}/5</span>
-            </div>
-            {appointment.feedbackContent && (
-              <p className="text-sm text-gray-600 pl-6">
-                {appointment.feedbackContent}
-              </p>
-            )}
-            {appointment.feedbackDate && (
-              <p className="text-xs text-gray-400 pl-6 mt-1">
-                Submitted on {formatDateTime(appointment.feedbackDate)}
-              </p>
-            )}
-          </div>
-        )}
-
-        {appointment.status === AppointmentStatus.Pending &&
-          hasPermission(getRoleKey(user.role), "update:appointmentStatus") && (
-            <div className="mt-4 border-t pt-4">
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click event
-                    onAccept(appointment.id);
-                  }}
-                >
-                  <Check className="h-4 w-4 mr-2" /> Accept
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click event
-                    onReject(appointment.id);
-                  }}
-                >
-                  <X className="h-4 w-4 mr-2" /> Reject
-                </Button>
-              </div>
-            </div>
-          )}
       </CardContent>
-
-      {appointment.feedbackRating && (
-        <div className="mt-4 border-t pt-4">
-          <div className="flex items-center space-x-2 mb-2">
-            <Star className="h-4 w-4 text-yellow-500" />
-            <span className="font-medium">Feedback:</span>
-            <span className="text-sm">{appointment.feedbackRating}/5</span>
-          </div>
-          {appointment.feedbackContent && (
-            <p className="text-sm text-gray-600 pl-6">
-              {appointment.feedbackContent}
-            </p>
-          )}
-          {appointment.feedbackDate && (
-            <p className="text-xs text-gray-400 pl-6 mt-1">
-              Submitted on {formatDateTime(appointment.feedbackDate)}
-            </p>
-          )}
-        </div>
-      )}
     </Card>
   );
 };

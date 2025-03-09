@@ -49,21 +49,21 @@ const TransactionManagement = ({ role = "member", transactions }) => {
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6">
       {/* Balance Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold">
-            Account Balance
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center space-x-2">
-            <DollarSign className="h-8 w-8 text-green-500" />
-            <span className="text-3xl font-bold">
-              {formatCurrencyInVND(details?.balance)} VND
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+      {/* <Card> */}
+      {/*   <CardHeader> */}
+      {/*     <CardTitle className="text-xl font-semibold"> */}
+      {/*       Account Balance */}
+      {/*     </CardTitle> */}
+      {/*   </CardHeader> */}
+      {/*   <CardContent> */}
+      {/*     <div className="flex items-center space-x-2"> */}
+      {/*       <DollarSign className="h-8 w-8 text-green-500" /> */}
+      {/*       <span className="text-3xl font-bold"> */}
+      {/*         {formatCurrencyInVND(details?.balance)} VND */}
+      {/*       </span> */}
+      {/*     </div> */}
+      {/*   </CardContent> */}
+      {/* </Card> */}
 
       {/* Transactions Card */}
       <Card>
