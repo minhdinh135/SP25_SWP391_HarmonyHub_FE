@@ -131,10 +131,10 @@ const TherapistQuizManagement = () => {
 
       // Create FormData object to send the file
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('imgUrl', file);  // Changed from 'image' to 'imgUrl'
 
       // Send the file to the API with the current quiz's ID
-      const response = await axios.post(
+      const response = await axios.put(
         `https://sp25-swp391-harmonyhub-be.onrender.com/api/quiz/imgUrl?Id=${quizId}`,
         formData,
         {
@@ -144,25 +144,44 @@ const TherapistQuizManagement = () => {
         }
       );
 
-      // If successful, update the selected quiz's image URL
-      if (response.data && response.data.imageUrl) {
-        setSelectedQuiz({
-          ...selectedQuiz,
-          imageUrl: response.data.imageUrl
-        });
+      console.log('API Response:', response.data);  // Log the response for debugging
+
+      // If successful, update the selected quiz's image URL with the returned data
+      if (response.data && response.data.data && response.data.data.imageUrl) {
+        // Update the selected quiz state with the new image URL
+        const updatedQuiz = { ...selectedQuiz, imageUrl: response.data.data.imageUrl };
+        setSelectedQuiz(updatedQuiz);
 
         // Also update the quiz in the quizzes array
         const updatedQuizzes = quizzes.map(quiz =>
-          quiz.id === selectedQuiz.id ? { ...quiz, imageUrl: response.data.imageUrl } : quiz
+          quiz.id === quizId ? { ...quiz, imageUrl: response.data.data.imageUrl } : quiz
         );
         setQuizzes(updatedQuizzes);
 
         // Show success message
         alert(`Image for Quiz ID: ${quizId} uploaded successfully!`);
+      } else if (response.data && response.data.imageUrl) {
+        // Alternative response format
+        const updatedQuiz = { ...selectedQuiz, imageUrl: response.data.imageUrl };
+        setSelectedQuiz(updatedQuiz);
+
+        const updatedQuizzes = quizzes.map(quiz =>
+          quiz.id === quizId ? { ...quiz, imageUrl: response.data.imageUrl } : quiz
+        );
+        setQuizzes(updatedQuizzes);
+
+        alert(`Image for Quiz ID: ${quizId} uploaded successfully!`);
+      } else {
+        throw new Error("Invalid response format");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+        alert(`Failed to upload image: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert("Failed to upload image. Please try again.");
+      }
     } finally {
       setUploadingImage(false);
     }
