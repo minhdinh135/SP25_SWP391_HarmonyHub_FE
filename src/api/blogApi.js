@@ -10,6 +10,16 @@ export const getAllBlogs = async () => {
   }
 };
 
+export const getBlogDetails = async (blogId) => {
+  try {
+    const response = await api.get(`/blogs/${blogId}`);
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting blog details");
+  }
+};
+
 export const getTherapistBlogs = async (therapistId) => {
   try {
     const response = await api.get(`/therapists/${therapistId}/blogs`);
