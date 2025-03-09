@@ -5,59 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, ArrowRight } from "lucide-react";
 export function BlogList() {
   const navigate = useNavigate();
-  const therapists = [
-    {
-      id: 1,
-      name: "Dr. Sarah Johnson",
-      image:
-        "https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
-      credentials: "Ph.D. in Marriage Counseling",
-      specializations: [
-        "Marriage Counseling",
-        "Relationship Therapy",
-        "Pre-marriage Counseling",
-      ],
-      experience: "15 years",
-      rating: 4.9,
-      reviewCount: 127,
-      available: true,
-      bio: "Specializing in helping couples build stronger relationships through evidence-based therapy approaches.",
-    },
-    {
-      id: 2,
-      name: "Dr. Michael Chen",
-      image:
-        "https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
-      credentials: "Psy.D. Clinical Psychology",
-      specializations: [
-        "Couples Therapy",
-        "Family Counseling",
-        "Conflict Resolution",
-      ],
-      experience: "12 years",
-      rating: 4.8,
-      reviewCount: 98,
-      available: true,
-      bio: "Dedicated to creating a safe space for couples to grow and heal together.",
-    },
-    {
-      id: 3,
-      name: "Dr. Emily Rodriguez",
-      image:
-        "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
-      credentials: "Ph.D. in Family Therapy",
-      specializations: [
-        "Marriage Counseling",
-        "Relationship Recovery",
-        "Communication",
-      ],
-      experience: "10 years",
-      rating: 4.9,
-      reviewCount: 156,
-      available: false,
-      bio: "Helping couples discover new ways to connect and communicate effectively.",
-    },
-  ];
   const blogPosts = [
     {
       id: 1,

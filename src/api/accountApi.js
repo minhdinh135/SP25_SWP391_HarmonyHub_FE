@@ -1,9 +1,8 @@
-import BASE_API_URL from "@/constants/api";
-import axios from "axios";
+import api from "./apiConfig";
 
 export const getAllAccounts = async () => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/accounts`);
+    const response = await api.get("/accounts");
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -13,7 +12,7 @@ export const getAllAccounts = async () => {
 
 export const getAllTherapists = async () => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/therapists`);
+    const response = await api.get("/therapists");
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -23,7 +22,7 @@ export const getAllTherapists = async () => {
 
 export const getMemberDetails = async (memberId) => {
   try {
-    const response = await axios.get(`${BASE_API_URL}/members/${memberId}`);
+    const response = await api.get(`/members/${memberId}`);
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -33,9 +32,7 @@ export const getMemberDetails = async (memberId) => {
 
 export const getTherapistDetails = async (therapistId) => {
   try {
-    const response = await axios.get(
-      `${BASE_API_URL}/therapists/${therapistId}`,
-    );
+    const response = await api.get(`/therapists/${therapistId}`);
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -45,10 +42,7 @@ export const getTherapistDetails = async (therapistId) => {
 
 export const registerMember = async (payload) => {
   try {
-    const response = await axios.post(
-      `${BASE_API_URL}/register/member`,
-      payload,
-    );
+    const response = await api.post("/register/member", payload);
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -58,10 +52,7 @@ export const registerMember = async (payload) => {
 
 export const registerTherapist = async (payload) => {
   try {
-    const response = await axios.post(
-      `${BASE_API_URL}/register/therapist`,
-      payload,
-    );
+    const response = await api.post("/register/therapist", payload);
     return response.data.data;
   } catch (error) {
     console.log(error);
