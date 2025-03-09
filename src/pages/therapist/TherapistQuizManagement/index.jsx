@@ -25,7 +25,7 @@ const TherapistQuizManagement = () => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await axios.get("https://harmony-backend.runasp.net/api/quizzes");
+        const response = await axios.get("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
         setQuizzes(response.data.data);
       } catch (err) {
         setError("Failed to fetch quizzes");
@@ -53,10 +53,10 @@ const TherapistQuizManagement = () => {
         questions: formattedQuestions
       };
 
-      await axios.post("https://harmony-backend.runasp.net/api/quizzes", requestBody);
+      await axios.post("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes", requestBody);
 
       // Refresh quiz list after adding
-      const response = await axios.get("https://harmony-backend.runasp.net/api/quizzes");
+      const response = await axios.get("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
       setQuizzes(response.data.data);
 
       // Reset form and close modal
@@ -135,7 +135,7 @@ const TherapistQuizManagement = () => {
 
       // Send the file to the API with the current quiz's ID
       const response = await axios.post(
-        `https://harmony-backend.runasp.net/api/quiz/imgUrl?Id=${quizId}`,
+        `https://sp25-swp391-harmonyhub-be.onrender.com/api/quiz/imgUrl?Id=${quizId}`,
         formData,
         {
           headers: {
