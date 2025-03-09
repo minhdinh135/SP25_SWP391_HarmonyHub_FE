@@ -19,6 +19,8 @@ import {
   UserCheck,
   Package,
   ChevronLeft,
+  Pencil,
+  Plus,
 } from "lucide-react";
 import { getAppointmentStatusText } from "@/utils/enumUtils";
 import { getAppointmentStatusColor } from "@/utils/colorUtils";
@@ -28,6 +30,7 @@ import { toast } from "sonner";
 import {
   getAppointmentDetails,
   updateAppointmentFeedback,
+  updateAppointmentNote,
 } from "@/api/appointmentApi";
 import { AppointmentStatus } from "@/constants/status";
 import {
@@ -39,22 +42,6 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
-// Assuming you'll create this function in your API file
-const submitFeedback = async (appointmentId, feedbackData) => {
-  // Implementation of API call would go here
-  console.log(
-    "Submitting feedback for appointment:",
-    appointmentId,
-    feedbackData,
-  );
-  // Return a promise that would typically be your API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
 const AppointmentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -65,6 +52,11 @@ const AppointmentDetails = () => {
   const [rating, setRating] = useState(0);
   const [feedbackContent, setFeedbackContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // New state for therapist note dialog
+  const [therapistNoteOpen, setTherapistNoteOpen] = useState(false);
+  const [therapistNoteContent, setTherapistNoteContent] = useState("");
+  const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -82,6 +74,26 @@ const AppointmentDetails = () => {
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  const openFeedbackDialog = (edit = false) => {
+    // If in edit mode, pre-populate with existing values
+    if (edit && appointmentDetails?.feedbackRating) {
+      setRating(appointmentDetails.feedbackRating);
+      setFeedbackContent(appointmentDetails.feedbackContent || "");
+    } else {
+      // Reset values for new feedback
+      setRating(0);
+      setFeedbackContent("");
+    }
+
+    setFeedbackOpen(true);
+  };
+
+  // New function to open therapist note dialog
+  const openTherapistNoteDialog = () => {
+    setTherapistNoteContent(appointmentDetails?.therapistNote || "");
+    setTherapistNoteOpen(true);
+  };
 
   const handleFeedbackSubmit = async () => {
     if (rating === 0) {
@@ -106,6 +118,25 @@ const AppointmentDetails = () => {
       toast.error("Failed to submit feedback. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // New function to handle therapist note submission
+  const handleTherapistNoteSubmit = async () => {
+    try {
+      setIsSubmittingNote(true);
+      const payload = {
+        therapistNote: therapistNoteContent,
+      };
+      await updateAppointmentNote(id, payload);
+      toast.success("Therapist note saved successfully");
+      setTherapistNoteOpen(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error submitting therapist note:", error);
+      toast.error("Failed to save therapist note. Please try again.");
+    } finally {
+      setIsSubmittingNote(false);
     }
   };
 
@@ -283,7 +314,31 @@ const AppointmentDetails = () => {
 
           {/* Notes section */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Notes</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Notes</h3>
+
+              {/* Show Add/Edit Note button for therapists */}
+              {appointmentDetails?.status === AppointmentStatus.Completed && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1"
+                  onClick={openTherapistNoteDialog}
+                >
+                  {appointmentDetails?.therapistNote ? (
+                    <>
+                      <Pencil className="h-3 w-3" />
+                      Edit Note
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-3 w-3" />
+                      Add Note
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
 
             {appointmentDetails?.clientNote && (
               <div className="rounded-lg bg-slate-50 p-4">
@@ -297,15 +352,32 @@ const AppointmentDetails = () => {
               </div>
             )}
 
-            {appointmentDetails?.therapistNote && (
+            {appointmentDetails?.therapistNote ? (
               <div className="rounded-lg bg-slate-50 p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <MessageSquare className="h-4 w-4 text-slate-500" />
-                  <span className="font-medium">Therapist Note:</span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <MessageSquare className="h-4 w-4 text-slate-500" />
+                    <span className="font-medium">Therapist Note:</span>
+                  </div>
                 </div>
                 <p className="text-slate-700">
-                  {appointmentDetails?.therapistNote ?? "N/A"}
+                  {appointmentDetails?.therapistNote}
                 </p>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed border-slate-200 p-4 text-center">
+                <p className="text-slate-500 mb-3">No therapist notes yet</p>
+                {appointmentDetails?.status === AppointmentStatus.Completed && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-1 mx-auto"
+                    onClick={openTherapistNoteDialog}
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add Session Notes
+                  </Button>
+                )}
               </div>
             )}
 
@@ -323,7 +395,22 @@ const AppointmentDetails = () => {
               <Separator />
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Feedback</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Feedback</h3>
+
+                  {appointmentDetails?.status ===
+                    AppointmentStatus.Completed && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1"
+                      onClick={() => openFeedbackDialog(true)}
+                    >
+                      <Pencil className="h-3 w-3" />
+                      Edit Feedback
+                    </Button>
+                  )}
+                </div>
 
                 <div className="rounded-lg bg-blue-50 p-4">
                   <div className="flex items-center justify-between mb-2">
@@ -412,6 +499,58 @@ const AppointmentDetails = () => {
               disabled={isSubmitting || rating === 0}
             >
               {isSubmitting ? "Submitting..." : "Submit Feedback"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Therapist Note Dialog */}
+      <Dialog open={therapistNoteOpen} onOpenChange={setTherapistNoteOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {appointmentDetails?.therapistNote
+                ? "Edit Session Notes"
+                : "Add Session Notes"}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="py-4">
+            <div className="mb-2">
+              <p className="text-sm text-gray-500 mb-2">
+                {appointmentDetails?.therapistNote
+                  ? "Update your notes for this session"
+                  : "Add your notes for this session with"}
+              </p>
+              {!appointmentDetails?.therapistNote && (
+                <p className="font-medium">
+                  {appointmentDetails?.memberFullName}
+                </p>
+              )}
+            </div>
+
+            <Textarea
+              placeholder="Enter your session notes here..."
+              value={therapistNoteContent}
+              onChange={(e) => setTherapistNoteContent(e.target.value)}
+              className="min-h-40"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setTherapistNoteOpen(false)}
+              disabled={isSubmittingNote}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleTherapistNoteSubmit}
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={isSubmittingNote || !therapistNoteContent.trim()}
+            >
+              {isSubmittingNote ? "Saving..." : "Save Notes"}
             </Button>
           </DialogFooter>
         </DialogContent>
