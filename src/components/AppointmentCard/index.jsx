@@ -1,25 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Calendar,
-  Clock,
-  Video,
-  MessageSquare,
-  Star,
-  Check,
-  X,
-} from "lucide-react";
+import { Calendar, Clock, Video, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAppointmentStatusText } from "@/utils/enumUtils";
 import { getAppointmentStatusColor } from "@/utils/colorUtils";
-import { AppointmentStatus } from "@/constants/status";
-import { Button } from "../ui/button";
-import { hasPermission } from "@/constants/permission";
-import { getRoleKey } from "@/constants/role";
-import useAuth from "@/hooks/useAuth";
 
 const AppointmentCard = ({ appointment, onAccept, onReject }) => {
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Format date and time
@@ -37,7 +23,6 @@ const AppointmentCard = ({ appointment, onAccept, onReject }) => {
   const handleClick = () => {
     console.log("AppointmentID:", appointment.id);
 
-    // navigate(`/member/appointments/${appointment.id}`);
     navigate(`/appointments/${appointment.id}`);
   };
 
