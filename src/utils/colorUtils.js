@@ -1,4 +1,8 @@
-import { AccountStatus, AppointmentStatus } from "@/constants/status";
+import {
+  AccountStatus,
+  AppointmentStatus,
+  BlogStatus,
+} from "@/constants/status";
 
 export const getAccountStatusColor = (statusEnum) => {
   switch (statusEnum) {
@@ -25,5 +29,16 @@ export const getAppointmentStatusColor = (statusEnum) => {
       return "bg-red-500";
     default:
       return "bg-gray-500";
+  }
+};
+
+export const getBlogStatusColor = (statusEnum) => {
+  switch (statusEnum) {
+    case BlogStatus.Active:
+      return "bg-green-500";
+    case BlogStatus.Pending:
+      return "bg-yellow-500";
+    case BlogStatus.Inactive:
+      return "bg-red-500";
   }
 };

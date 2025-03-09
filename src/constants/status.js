@@ -12,3 +12,9 @@ export const AppointmentStatus = {
   Rejected: 4,
   Completed: 5,
 };
+
+export const BlogStatus = {
+  Active: 1,
+  Pending: 2,
+  Inactive: 0,
+};
