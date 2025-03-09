@@ -9,10 +9,12 @@ import { useEffect, useState } from "react";
 import { getTherapistDetails } from "@/api/accountApi";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
-import { formatTime } from "@/utils/timeUtils";
 import { hasPermission } from "@/constants/permission";
 import { getRoleKey } from "@/constants/role";
 import useAuth from "@/hooks/useAuth";
+import { getGenderText } from "@/utils/enumUtils";
+import { getFullName } from "@/utils/nameFormat";
+import TherapistAvailability from "./components/TherapistAvailability";
 
 const TherapistDetails = () => {
   const { user } = useAuth();
@@ -56,12 +58,18 @@ const TherapistDetails = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-2xl font-bold text-gray-800">
-                    Dr. Emily Harper
+                    {getFullName(
+                      therapistDetails?.firstName,
+                      therapistDetails?.lastName,
+                    )}
                   </h1>
                   <UserCheck className="h-5 w-5 text-green-500" />
                 </div>
                 <p className="text-blue-600 font-medium">
                   Pre-marital Counselor
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {getGenderText(therapistDetails?.gender)}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
                   {therapistDetails?.yearsOfExperience} years experience
@@ -74,12 +82,6 @@ const TherapistDetails = () => {
                   <span className="font-bold text-yellow-600">4.9</span>
                 </div>
                 <span className="text-sm text-gray-500">(9999 reviews)</span>
-                <Badge
-                  variant="success"
-                  className="ml-2 bg-green-100 text-green-700"
-                >
-                  Available
-                </Badge>
               </div>
             </div>
 
@@ -151,36 +153,39 @@ const TherapistDetails = () => {
                 Availability
               </h2>
 
-              <div className="grid grid-cols-7 gap-2">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                  (day, index) => {
-                    const availability = therapistDetails?.availabilities?.find(
-                      (slot) => slot.dayOfWeek === index + 1,
-                    );
-
-                    return (
-                      <div
-                        key={index}
-                        className={`p-4 text-center rounded-lg transition-all ${
-                          availability
-                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                            : "bg-gray-200 text-gray-500 opacity-50"
-                        }`}
-                      >
-                        <span className="block text-sm font-semibold">
-                          {day}
-                        </span>
-                        <span className="block text-xs mt-1">
-                          {availability
-                            ? `${formatTime(availability.fromTime)} - ${formatTime(availability.toTime)}`
-                            : "Unavailable"}
-                        </span>
-                      </div>
-                    );
-                  },
-                )}
-              </div>
+              {/* <div className="grid grid-cols-7 gap-2"> */}
+              {/*   {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map( */}
+              {/*     (day, index) => { */}
+              {/*       const availability = therapistDetails?.availabilities?.find( */}
+              {/*         (slot) => slot.dayOfWeek === index + 1, */}
+              {/*       ); */}
+              {/**/}
+              {/*       return ( */}
+              {/*         <div */}
+              {/*           key={index} */}
+              {/*           className={`p-4 text-center rounded-lg transition-all ${ */}
+              {/*             availability */}
+              {/*               ? "bg-blue-600 text-white hover:bg-blue-700" */}
+              {/*               : "bg-gray-200 text-gray-500 opacity-50" */}
+              {/*           }`} */}
+              {/*         > */}
+              {/*           <span className="block text-sm font-semibold"> */}
+              {/*             {day} */}
+              {/*           </span> */}
+              {/*           <span className="block text-xs mt-1"> */}
+              {/*             {availability */}
+              {/*               ? `${formatTime(availability.fromTime)} - ${formatTime(availability.toTime)}` */}
+              {/*               : "Unavailable"} */}
+              {/*           </span> */}
+              {/*         </div> */}
+              {/*       ); */}
+              {/*     }, */}
+              {/*   )} */}
+              {/* </div> */}
             </div>
+
+            {/* New Availability Component */}
+            <TherapistAvailability therapistDetails={therapistDetails} />
 
             <div>
               <h2 className="text-xl font-semibold mb-4 text-gray-800">

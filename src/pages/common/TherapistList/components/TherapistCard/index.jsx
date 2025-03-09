@@ -1,11 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { getGenderText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
-import { Star, UserCheck } from "lucide-react";
+import { ChevronDown, ChevronUp, Star, UserCheck } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const TherapistCard = ({ therapist }) => {
   const navigate = useNavigate();
+
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
   const specialties = therapist.qualifications.map(
     (qualification) => qualification.specialty.name,
   );
@@ -36,10 +40,14 @@ const TherapistCard = ({ therapist }) => {
                 </h3>
                 <UserCheck className="h-5 w-5 text-green-500" />
               </div>
+
               <div className="flex items-center space-x-2">
-                <span className="inline-block text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                  Available
+                <span className="text-sm text-gray-600">
+                  {getGenderText(therapist.gender)}
                 </span>
+              </div>
+
+              <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600">
                   {therapist.yearsOfExperience} years experience
                 </span>
@@ -60,29 +68,65 @@ const TherapistCard = ({ therapist }) => {
 
           <div className="flex items-center space-x-1 bg-yellow-50 px-3 py-2 rounded-full">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
-            <span className="text-sm font-bold text-yellow-600">4.9</span>
-            <span className="text-sm text-gray-500 ml-1">(9999)</span>
+            <span className="text-sm font-bold text-yellow-600">
+              {therapist.rating || "4.9"}
+            </span>
+            <span className="text-sm text-gray-500 ml-1">
+              ({therapist.reviewCount || "9999"} reviews)
+            </span>
           </div>
         </div>
 
-        <div className="mt-4 border-t border-gray-100 pt-4 flex justify-between items-center">
-          <p className="text-sm text-gray-600 line-clamp-2 pr-4">
-            {therapist.bio}
-          </p>
-          <div className="flex flex-col space-y-2 w-40">
-            <Button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-              onClick={() => navigate(`/therapists/${therapist.id}`)}
-            >
-              Book Appointment
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full text-blue-600 border-blue-600 hover:bg-blue-50 font-semibold"
-              onClick={() => navigate(`/therapists/${therapist.id}`)}
-            >
-              View Details
-            </Button>
+        {/* Bio Section with Expand/Collapse */}
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-full pr-4">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-gray-700">About me</h4>
+                <button
+                  onClick={() => setIsBioExpanded(!isBioExpanded)}
+                  className="text-blue-600 hover:text-blue-700 flex items-center text-sm font-medium"
+                >
+                  {isBioExpanded ? (
+                    <>
+                      Show less <ChevronUp className="h-4 w-4 ml-1" />
+                    </>
+                  ) : (
+                    <>
+                      Read more <ChevronDown className="h-4 w-4 ml-1" />
+                    </>
+                  )}
+                </button>
+              </div>
+              <p
+                className={`text-sm text-gray-600 ${isBioExpanded ? "" : "line-clamp-2"}`}
+              >
+                {therapist.bio ||
+                  "Licensed therapist specializing in anxiety, depression, and relationship issues. I believe in a holistic approach that combines evidence-based techniques with compassionate care tailored to each individual's unique needs and goals."}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2"></div>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                className="text-blue-600 border-blue-600 hover:bg-blue-50 font-semibold"
+                onClick={() => navigate(`/therapists/${therapist.id}`)}
+              >
+                View Profile
+              </Button>
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+                onClick={() =>
+                  navigate(`/therapists/${therapist.id}/appointment-booking`)
+                }
+              >
+                Book Now
+              </Button>
+            </div>
           </div>
         </div>
       </div>

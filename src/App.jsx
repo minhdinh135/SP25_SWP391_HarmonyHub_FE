@@ -32,6 +32,7 @@ import AppointmentDetails from "./pages/common/AppointmentDetails";
 import TherapistBlogManagement from "./pages/therapist/TherapistBlogManagement";
 import TherapistQuizManagement from "./pages/therapist/TherapistQuizManagement";
 import TherapistPackageManagement from "./pages/therapist/TherapistPackageManagement";
+import TherapistBlogList from "./pages/therapist/TherapistBlogList";
 
 function App() {
   return (
@@ -95,7 +96,8 @@ function App() {
             <Route path="appointments/:id" element={<AppointmentDetails />} />
             <Route path="schedule" element={<TherapistSchedule />} />
             <Route path="packages" element={<TherapistPackageManagement />} />
-            <Route path="blogs" element={<TherapistBlogManagement />} />
+            <Route path="blogs" element={<TherapistBlogList />} />
+            <Route path="new-blog" element={<TherapistBlogManagement />} />
             <Route path="quizzes" element={<TherapistQuizManagement />} />
           </Route>
         </Route>

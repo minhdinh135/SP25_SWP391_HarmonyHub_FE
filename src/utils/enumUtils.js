@@ -1,4 +1,4 @@
-import { AppointmentStatus } from "@/constants/status";
+import { AppointmentStatus, BlogStatus } from "@/constants/status";
 
 export const getAccountStatusText = (statusEnum) => {
   switch (statusEnum) {
@@ -29,6 +29,19 @@ export const getAppointmentStatusText = (statusEnum) => {
       return "Completed";
     default:
       return "Completed";
+  }
+};
+
+export const getBlogStatusText = (statusEnum) => {
+  switch (statusEnum) {
+    case BlogStatus.Active:
+      return "Active";
+    case BlogStatus.Pending:
+      return "Pending";
+    case BlogStatus.Inactive:
+      return "Inactive";
+    default:
+      return "Active";
   }
 };
 

@@ -1,11 +1,8 @@
-import BASE_API_URL from "@/constants/api";
-import axios from "axios";
+import api from "./apiConfig";
 
 export const getMemberAppointments = async (memberId) => {
   try {
-    const response = await axios.get(
-      `${BASE_API_URL}/members/${memberId}/appointments`,
-    );
+    const response = await api.get(`/members/${memberId}/appointments`);
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -15,9 +12,7 @@ export const getMemberAppointments = async (memberId) => {
 
 export const getTherapistAppointments = async (therapistId) => {
   try {
-    const response = await axios.get(
-      `${BASE_API_URL}/therapists/${therapistId}/appointments`,
-    );
+    const response = await api.get(`/therapists/${therapistId}/appointments`);
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -27,9 +22,7 @@ export const getTherapistAppointments = async (therapistId) => {
 
 export const getAppointmentDetails = async (appointmentId) => {
   try {
-    const response = await axios.get(
-      `${BASE_API_URL}/appointments/${appointmentId}`,
-    );
+    const response = await api.get(`/appointments/${appointmentId}`);
     return response.data.data;
   } catch (error) {
     console.log(error);
@@ -39,10 +32,7 @@ export const getAppointmentDetails = async (appointmentId) => {
 
 export const createAppointment = async (memberId, payload) => {
   try {
-    await axios.post(
-      `${BASE_API_URL}/members/${memberId}/appointments`,
-      payload,
-    );
+    await api.post(`/members/${memberId}/appointments`, payload);
   } catch (error) {
     console.log(error);
     throw new Error("Error creating appointment");
@@ -51,10 +41,7 @@ export const createAppointment = async (memberId, payload) => {
 
 export const updateAppointmentStatus = async (appointmentId, payload) => {
   try {
-    await axios.put(
-      `${BASE_API_URL}/appointments/${appointmentId}/status`,
-      payload,
-    );
+    await api.put(`/appointments/${appointmentId}/status`, payload);
   } catch (error) {
     console.log(error);
     throw new Error("Error getting appointmentDetails");

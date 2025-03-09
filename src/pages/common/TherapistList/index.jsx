@@ -58,7 +58,7 @@ const TherapistList = () => {
           </div>
         </div>
         <ItemList
-          className="flex flex-col space-y-10"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
           data={therapists}
           renderItem={(therapist) => (
             <TherapistCard key={therapist.id} therapist={therapist} />

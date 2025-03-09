@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
 import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
+import TherapistDetails from "@/pages/common/TherapistDetails";
 
 const ScheduleCalendar = ({ appointments }) => {
   const eventsService = useState(() => createEventsServicePlugin())[0];
@@ -98,10 +99,9 @@ const ScheduleCalendar = ({ appointments }) => {
     if (appointments.length > 0) {
       const transformedEvents = appointments.map((appointment) => ({
         id: appointment.id.toString(),
-        title: `Appointment with ${appointment.memberFullName}`,
+        people: [appointment.memberFullName],
         start: appointment.startTime.replace("T", " ").slice(0, 16), // Format: "YYYY-MM-DD HH:mm"
         end: appointment.endTime.replace("T", " ").slice(0, 16), // Format: "YYYY-MM-DD HH:mm"
-        description: `Package: ${appointment.packageName}\nClient Note: ${appointment.clientNote}`,
         location: appointment.meetUrl,
         calendarId: "school",
       }));
