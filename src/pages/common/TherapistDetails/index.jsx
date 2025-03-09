@@ -3,8 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Mail, Phone, UserCheck } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getTherapistDetails } from "@/api/accountApi";
 import { toast } from "sonner";
@@ -19,6 +18,7 @@ import TherapistAvailability from "./components/TherapistAvailability";
 const TherapistDetails = () => {
   const { user } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [therapistDetails, setTherapistDetails] = useState(null);
@@ -39,6 +39,15 @@ const TherapistDetails = () => {
 
     fetchData();
   }, [id]);
+
+  const handleClickBookAppointment = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(`/therapists/${id}/appointment-booking`);
+  };
 
   if (isLoading) return <Spinner />;
 
@@ -85,13 +94,15 @@ const TherapistDetails = () => {
               </div>
             </div>
 
-            {hasPermission(getRoleKey(user?.role), "create:appointment") && (
+            {(!user ||
+              hasPermission(getRoleKey(user?.role), "create:appointment")) && (
               <div className="absolute top-0 right-0">
-                <Link to="appointment-booking">
-                  <Button className="w-40 bg-blue-600 hover:bg-blue-700 transition-colors">
-                    Book Appointment
-                  </Button>
-                </Link>
+                <Button
+                  className="w-40 bg-blue-600 hover:bg-blue-700 transition-colors"
+                  onClick={handleClickBookAppointment}
+                >
+                  Book Appointment
+                </Button>
               </div>
             )}
           </div>
