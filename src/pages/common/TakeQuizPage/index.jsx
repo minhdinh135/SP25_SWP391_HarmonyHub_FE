@@ -1,53 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, AlertCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const TakeQuiz = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [quiz, setQuiz] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
 
-  // Sample quiz data - replace with your actual data or pass as prop
-  const quizData = {
-    title: "Relationship Communication Style",
-    questions: [
-      {
-        id: 1,
-        question:
-          "When facing a disagreement with your partner, you typically:",
-        options: [
-          "Express your feelings immediately and directly",
-          "Take time to process before discussing",
-          "Try to find a compromise right away",
-          "Seek advice from others first",
-        ],
-      },
-      {
-        id: 2,
-        question: "In emotional conversations, you find yourself:",
-        options: [
-          "Speaking more than listening",
-          "Listening more than speaking",
-          "Balancing speaking and listening equally",
-          "Struggling to express your thoughts",
-        ],
-      },
-      {
-        id: 3,
-        question: "Your preferred way of resolving conflicts is:",
-        options: [
-          "Having a deep discussion until resolved",
-          "Taking breaks and discussing gradually",
-          "Finding quick practical solutions",
-          "Writing down thoughts before talking",
-        ],
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchQuizData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch quiz data");
+        }
+
+        const result = await response.json();
+        const selectedQuiz = result.data.find(q => q.id === parseInt(id));
+
+        if (!selectedQuiz) {
+          throw new Error("Quiz not found");
+        }
+
+        if (!selectedQuiz.questionResponse || selectedQuiz.questionResponse.length === 0) {
+          throw new Error("This quiz has no questions");
+        }
+
+        setQuiz(selectedQuiz);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching quiz data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuizData();
+  }, [id]);
 
   const handleOptionSelect = (questionId, selectedOption) => {
     setAnswers((prev) => ({
@@ -57,7 +56,7 @@ const TakeQuiz = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < quizData.questions.length - 1) {
+    if (currentQuestion < quiz.questionResponse.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
     }
   };
@@ -70,21 +69,94 @@ const TakeQuiz = () => {
 
   const handleSubmit = () => {
     console.log("Quiz submitted with answers:", answers);
-    // Handle quiz submission logic here
-    navigate(`/quizzes/${id}/result`);
+    // Here you would typically send the answers to your backend
+    // For now, we'll just navigate to a result page
+    navigate(`/quizzes/${id}/result`, {
+      state: {
+        answers,
+        quizTitle: quiz.title,
+        quizId: quiz.id
+      }
+    });
   };
 
-  const currentQuestionData = quizData.questions[currentQuestion];
-  const isLastQuestion = currentQuestion === quizData.questions.length - 1;
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading quiz...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(`/quizzes/${id}`)}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Quiz Details
+          </Button>
+        </div>
+        <div className="bg-destructive/10 p-4 rounded-md flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-medium text-destructive">Error</h3>
+            <p className="text-sm text-muted-foreground">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!quiz) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/quizzes")}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Quizzes
+          </Button>
+        </div>
+        <Card className="p-8 text-center">
+          <p className="text-muted-foreground">Quiz not found</p>
+        </Card>
+      </div>
+    );
+  }
+
+  const currentQuestionData = quiz.questionResponse[currentQuestion];
+  const isLastQuestion = currentQuestion === quiz.questionResponse.length - 1;
   const isFirstQuestion = currentQuestion === 0;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(`/quizzes/${id}`)}
+          className="gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Quiz Details
+        </Button>
+      </div>
+
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-2xl">{quizData.title}</CardTitle>
+          <CardTitle className="text-2xl">{quiz.title}</CardTitle>
           <div className="text-sm text-muted-foreground">
-            Question {currentQuestion + 1} of {quizData.questions.length}
+            Question {currentQuestion + 1} of {quiz.questionResponse.length}
           </div>
         </CardHeader>
 
@@ -93,31 +165,28 @@ const TakeQuiz = () => {
             <div
               className="bg-primary h-2 rounded-full transition-all duration-300"
               style={{
-                width: `${((currentQuestion + 1) / quizData.questions.length) * 100}%`,
+                width: `${((currentQuestion + 1) / quiz.questionResponse.length) * 100}%`,
               }}
             />
           </div>
 
           <div className="space-y-4">
             <h3 className="text-xl font-medium">
-              {currentQuestionData.question}
+              {currentQuestionData.content}
             </h3>
 
             <div className="space-y-3">
-              {currentQuestionData.options.map((option, index) => (
+              {currentQuestionData.optionResponse.map((option, index) => (
                 <button
                   key={index}
-                  onClick={() =>
-                    handleOptionSelect(currentQuestionData.id, option)
-                  }
+                  onClick={() => handleOptionSelect(currentQuestionData.id, option.content)}
                   className={`w-full p-4 text-left rounded-lg border transition-all
-                    ${
-                      answers[currentQuestionData.id] === option
-                        ? "border-primary bg-primary/10"
-                        : "border-gray-200 hover:border-primary/50"
+                    ${answers[currentQuestionData.id] === option.content
+                      ? "border-primary bg-primary/10"
+                      : "border-gray-200 hover:border-primary/50"
                     }`}
                 >
-                  {option}
+                  {option.content}
                 </button>
               ))}
             </div>
