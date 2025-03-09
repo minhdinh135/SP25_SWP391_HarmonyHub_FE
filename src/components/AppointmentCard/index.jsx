@@ -1,11 +1,17 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Video, MessageSquare } from "lucide-react";
+import { Calendar, Clock, Video, MessageSquare, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAppointmentStatusText } from "@/utils/enumUtils";
 import { getAppointmentStatusColor } from "@/utils/colorUtils";
+import { Button } from "../ui/button";
+import { AppointmentStatus } from "@/constants/status";
+import { getRoleKey } from "@/constants/role";
+import useAuth from "@/hooks/useAuth";
+import { hasPermission } from "@/constants/permission";
 
 const AppointmentCard = ({ appointment, onAccept, onReject }) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Format date and time
@@ -95,6 +101,34 @@ const AppointmentCard = ({ appointment, onAccept, onReject }) => {
             </p>
           </div>
         )}
+
+        {appointment.status === AppointmentStatus.Pending &&
+          hasPermission(getRoleKey(user.role), "update:appointmentStatus") && (
+            <div className="mt-4 border-t pt-4">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    onAccept(appointment.id);
+                  }}
+                >
+                  <Check className="h-4 w-4 mr-2" /> Accept
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    onReject(appointment.id);
+                  }}
+                >
+                  <X className="h-4 w-4 mr-2" /> Reject
+                </Button>
+              </div>
+            </div>
+          )}
       </CardContent>
     </Card>
   );

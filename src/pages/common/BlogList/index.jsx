@@ -43,14 +43,6 @@ export function BlogList() {
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Insights and guidance for building stronger, healthier relationships
           </p>
-          <div className="mt-8">
-            <Button
-              className="bg-white text-gray-900 hover:bg-gray-100"
-              onClick={() => navigate("/contact")}
-            >
-              Book a Session
-            </Button>
-          </div>
         </div>
       </div>
 
