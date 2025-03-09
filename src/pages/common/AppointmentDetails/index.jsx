@@ -25,8 +25,35 @@ import { getAppointmentStatusColor } from "@/utils/colorUtils";
 import { useEffect, useState } from "react";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
-import { getAppointmentDetails } from "@/api/appointmentApi";
+import {
+  getAppointmentDetails,
+  updateAppointmentFeedback,
+} from "@/api/appointmentApi";
 import { AppointmentStatus } from "@/constants/status";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+
+// Assuming you'll create this function in your API file
+const submitFeedback = async (appointmentId, feedbackData) => {
+  // Implementation of API call would go here
+  console.log(
+    "Submitting feedback for appointment:",
+    appointmentId,
+    feedbackData,
+  );
+  // Return a promise that would typically be your API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ success: true });
+    }, 500);
+  });
+};
 
 const AppointmentDetails = () => {
   const { id } = useParams();
@@ -34,23 +61,76 @@ const AppointmentDetails = () => {
 
   const [appointmentDetails, setAppointmentDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [feedbackContent, setFeedbackContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getAppointmentDetails(id);
+      setAppointmentDetails(data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getAppointmentDetails(id);
-        setAppointmentDetails(data);
-      } catch (error) {
-        console.log(error);
-        toast.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, [id]);
+
+  const handleFeedbackSubmit = async () => {
+    if (rating === 0) {
+      toast.error("Please select a rating before submitting");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        feedbackRating: rating,
+        feedbackContent: feedbackContent,
+        feedbackDate: new Date().toISOString(),
+      };
+      console.log(payload);
+      await updateAppointmentFeedback(id, payload);
+      toast.success("Feedback submitted successfully");
+      setFeedbackOpen(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      toast.error("Failed to submit feedback. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const StarRating = () => {
+    return (
+      <div className="flex items-center space-x-1 mb-4">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => setRating(star)}
+            className="focus:outline-none"
+          >
+            <Star
+              className={`h-8 w-8 ${
+                star <= rating
+                  ? "text-yellow-500 fill-yellow-500"
+                  : "text-gray-300"
+              } hover:text-yellow-400 transition-colors`}
+            />
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   if (isLoading) return <Spinner />;
 
@@ -248,14 +328,17 @@ const AppointmentDetails = () => {
                 <div className="rounded-lg bg-blue-50 p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
-                      <Star className="h-5 w-5 text-yellow-500" />
+                      <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                       <span className="font-medium">Client Rating:</span>
-                      <span className="text-lg font-semibold">4/5</span>
+                      <span className="text-lg font-semibold">
+                        {appointmentDetails.feedbackRating}/5
+                      </span>
                     </div>
 
                     {appointmentDetails?.feedbackDate && (
                       <p className="text-xs text-muted-foreground">
-                        Submitted on {formatDateTime("2025-02-14T18:30:00.000")}
+                        Submitted on{" "}
+                        {formatDateTime(appointmentDetails.feedbackDate)}
                       </p>
                     )}
                   </div>
@@ -263,8 +346,7 @@ const AppointmentDetails = () => {
                   {appointmentDetails?.feedbackContent && (
                     <div className="mt-2">
                       <p className="text-blue-800">
-                        Very helpful session, felt heard and got practical
-                        advice.{" "}
+                        {appointmentDetails.feedbackContent}
                       </p>
                     </div>
                   )}
@@ -277,12 +359,63 @@ const AppointmentDetails = () => {
         {appointmentDetails?.status === AppointmentStatus.Completed &&
           !appointmentDetails.feedbackRating && (
             <CardFooter className="border-t pt-6 flex justify-center">
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => setFeedbackOpen(true)}
+              >
                 Provide Feedback
               </Button>
             </CardFooter>
           )}
       </Card>
+
+      {/* Feedback Dialog */}
+      <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rate Your Session</DialogTitle>
+          </DialogHeader>
+
+          <div className="py-4">
+            <div className="text-center mb-2">
+              <p className="text-sm text-gray-500 mb-2">
+                How would you rate your session with
+              </p>
+              <p className="font-medium">
+                {appointmentDetails?.therapistFullName}
+              </p>
+            </div>
+
+            <div className="flex justify-center my-4">
+              <StarRating />
+            </div>
+
+            <Textarea
+              placeholder="Share your experience with this therapist"
+              value={feedbackContent}
+              onChange={(e) => setFeedbackContent(e.target.value)}
+              className="min-h-20"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setFeedbackOpen(false)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleFeedbackSubmit}
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={isSubmitting || rating === 0}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Feedback"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

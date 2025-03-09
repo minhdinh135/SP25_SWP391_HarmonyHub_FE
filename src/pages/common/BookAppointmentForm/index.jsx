@@ -73,12 +73,13 @@ const BookAppointmentForm = () => {
       (pkg) => pkg.id.toString() === formData.packageId,
     );
 
+    const combinedDateTimeString = `${formData.startDate}T${formData.startTime}:00Z`;
     const combinedDateTime = new Date(
-      `${formData.startDate}T${formData.startTime}:00`,
+      `${formData.startDate}T${formData.startTime}:00Z`,
     );
 
     const appointmentPayload = {
-      startTime: combinedDateTime.toISOString(),
+      startTime: combinedDateTimeString,
       endTime: new Date(
         combinedDateTime.getTime() +
           selectedPackage.minutesPerAppointment * 60000,
@@ -88,6 +89,8 @@ const BookAppointmentForm = () => {
       therapistId: parseInt(id),
       packageId: parseInt(formData.packageId),
     };
+
+    console.log("Appointment payload:", appointmentPayload);
 
     try {
       setIsLoading(true);

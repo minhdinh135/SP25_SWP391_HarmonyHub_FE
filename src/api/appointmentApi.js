@@ -47,3 +47,12 @@ export const updateAppointmentStatus = async (appointmentId, payload) => {
     throw new Error("Error getting appointmentDetails");
   }
 };
+
+export const updateAppointmentFeedback = async (appointmentId, payload) => {
+  try {
+    await api.put(`appointments/${appointmentId}/update-feedback`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating appointment feedback");
+  }
+};
