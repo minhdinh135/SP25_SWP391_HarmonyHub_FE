@@ -34,6 +34,9 @@ import TherapistQuizManagement from "./pages/therapist/TherapistQuizManagement";
 import TherapistPackageManagement from "./pages/therapist/TherapistPackageManagement";
 import TherapistBlogList from "./pages/therapist/TherapistBlogList";
 import TherapistBlogDetails from "./pages/therapist/TherapistBlogDetails";
+import AdminQuizManagement from "./pages/admin/AdminQuizManagement";
+import AdminBlogManagement from "./pages/admin/AdminBlogManagement";
+import AdminReportManagement from "./pages/admin/AdminReportManagement";
 
 function App() {
   return (
@@ -62,6 +65,9 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="accounts" element={<Accounts />} />
+            <Route path="quizzes" element={<AdminQuizManagement />} />
+            <Route path="blogs" element={<AdminBlogManagement />} />
+            <Route path="reports" element={<AdminReportManagement />} />
           </Route>
         </Route>
 

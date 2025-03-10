@@ -3,12 +3,11 @@ import Header from "@/components/Header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import useToggleState from "@/hooks/useToggleState";
 import {
-  Calendar,
   Home,
   Inbox,
+  ListChecks,
   MenuIcon,
-  Search,
-  Settings,
+  Newspaper,
   User,
 } from "lucide-react";
 import { Outlet } from "react-router-dom";
@@ -16,10 +15,9 @@ import { Outlet } from "react-router-dom";
 const navigationItems = [
   { title: "Overview", path: "/admin", icon: Home },
   { title: "Accounts", path: "/admin/accounts", icon: User },
-  { title: "Inbox", path: "/admin/inbox", icon: Inbox, badge: 3 },
-  { title: "Calendar", path: "/admin/calendar", icon: Calendar },
-  { title: "Search", path: "/admin/search", icon: Search },
-  { title: "Settings", path: "/admin/settings", icon: Settings },
+  { title: "Quizzes", path: "/admin/quizzes", icon: ListChecks },
+  { title: "Blogs", path: "/admin/blogs", icon: Newspaper },
+  { title: "Reports", path: "/admin/reports", icon: Inbox },
 ];
 
 const AdminLayout = () => {

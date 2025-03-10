@@ -52,11 +52,6 @@ const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
                       </span>
-                      {item.badge && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-600">
-                          {item.badge}
-                        </span>
-                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
