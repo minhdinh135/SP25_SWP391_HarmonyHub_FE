@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import api from "@/api/apiConfig";
 
 const TherapistPackageManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
