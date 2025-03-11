@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import axios from "axios";
-
+import api from "@/api/apiConfig";
+import BASE_API_URL from "@/constants/api";
 const TherapistQuizManagement = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ const TherapistQuizManagement = () => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await axios.get("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
+        const response = await api.get("/quiz");
         setQuizzes(response.data.data);
       } catch (err) {
         setError("Failed to fetch quizzes");
@@ -53,10 +54,10 @@ const TherapistQuizManagement = () => {
         questions: formattedQuestions
       };
 
-      await axios.post("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes", requestBody);
+      await api.post("/quiz/create", requestBody);
 
       // Refresh quiz list after adding
-      const response = await axios.get("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
+      const response = await api.get("/quiz");
       setQuizzes(response.data.data);
 
       // Reset form and close modal

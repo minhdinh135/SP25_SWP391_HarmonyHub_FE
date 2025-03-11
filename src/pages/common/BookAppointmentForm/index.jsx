@@ -220,7 +220,7 @@ const BookAppointmentForm = () => {
                         <div className="flex justify-between items-center">
                           <span className="font-semibold">{pkg.name}</span>
                           <span className="text-muted-foreground text-sm">
-                            {pkg.price} VND
+                            {pkg.price} $
                           </span>
                         </div>
                         <div className="text-xs text-gray-500">
@@ -248,7 +248,7 @@ const BookAppointmentForm = () => {
                   </div>
                 </div>
                 <div className="text-sm font-bold text-blue-700">
-                  {selectedPackageDetails.price} VND
+                  {selectedPackageDetails.price} $
                 </div>
               </div>
             )}
