@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Spinner from "@/components/Spinner";
 import { getTherapistDetails } from "@/api/accountApi";
 import { createAppointment } from "@/api/appointmentApi";
@@ -30,10 +30,20 @@ const BookAppointmentForm = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Parse query parameters
+  const queryParams = useMemo(() => {
+    const searchParams = new URLSearchParams(location.search);
+    return {
+      date: searchParams.get("date") || "",
+      time: searchParams.get("time") || "",
+    };
+  }, [location.search]);
 
   const [formData, setFormData] = useState({
-    startDate: "",
-    startTime: "",
+    startDate: queryParams.date,
+    startTime: queryParams.time,
     packageId: "",
     clientNote: "",
   });
@@ -56,6 +66,15 @@ const BookAppointmentForm = () => {
 
     fetchData();
   }, [id]);
+
+  // Update form data if URL parameters change
+  useEffect(() => {
+    setFormData(prevData => ({
+      ...prevData,
+      startDate: queryParams.date || prevData.startDate,
+      startTime: queryParams.time || prevData.startTime,
+    }));
+  }, [queryParams.date, queryParams.time]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,7 +101,7 @@ const BookAppointmentForm = () => {
       startTime: combinedDateTimeString,
       endTime: new Date(
         combinedDateTime.getTime() +
-          selectedPackage.minutesPerAppointment * 60000,
+        selectedPackage.minutesPerAppointment * 60000,
       ).toISOString(),
       meetUrl: "string",
       clientNote: formData.clientNote,
@@ -115,11 +134,11 @@ const BookAppointmentForm = () => {
 
     return pkg
       ? {
-          ...pkg,
-          endTime: formData.startTime
-            ? calculateEndTime(formData.startTime, pkg.minutesPerAppointment)
-            : null,
-        }
+        ...pkg,
+        endTime: formData.startTime
+          ? calculateEndTime(formData.startTime, pkg.minutesPerAppointment)
+          : null,
+      }
       : null;
   }, [formData.packageId, formData.startTime, therapistDetails]);
 
@@ -152,6 +171,7 @@ const BookAppointmentForm = () => {
                 type="date"
                 id="startDate"
                 name="startDate"
+                value={formData.startDate}
                 onChange={handleChange}
                 className="w-full"
                 required
