@@ -14,6 +14,7 @@ import { AppointmentStatus } from "@/constants/status";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
+import api from "@/api/apiConfig";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
