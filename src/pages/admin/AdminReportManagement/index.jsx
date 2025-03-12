@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,65 +27,36 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { getAllReports } from "@/api/reportApi";
+import Spinner from "@/components/Spinner";
 
 const AdminReportManagement = () => {
-  // Sample data - replace with actual API call
-  const initialReports = [
-    {
-      reportId: 1,
-      accountId: 2467,
-      title: "Inappropriate message from therapist",
-      content:
-        "The therapist sent me a message that was unprofessional and made me uncomfortable.",
-      status: 1, // 1 = Pending, 2 = Resolved, 3 = Dismissed
-      createdAt: "2025-03-05T14:30:00Z",
-    },
-    {
-      reportId: 2,
-      accountId: 3512,
-      title: "Technical issue with video call",
-      content:
-        "During my session the video kept freezing and eventually disconnected. I was still charged for the full hour.",
-      status: 1,
-      createdAt: "2025-03-06T09:45:00Z",
-    },
-    {
-      reportId: 3,
-      accountId: 1834,
-      title: "Billing dispute",
-      content:
-        "I was charged twice for my last session. I've contacted support but haven't received a response in over a week.",
-      status: 2,
-      createdAt: "2025-02-28T16:20:00Z",
-    },
-    {
-      reportId: 4,
-      accountId: 4209,
-      title: "Therapist didn't show up",
-      content:
-        "I was scheduled for a session but the therapist never joined. I waited for 20 minutes before giving up.",
-      status: 3,
-      createdAt: "2025-03-01T11:15:00Z",
-    },
-    {
-      reportId: 5,
-      accountId: 2986,
-      title: "Offensive content in community forum",
-      content:
-        "There's a user posting inappropriate content in the anxiety support forum. Their username is 'stressless42' and they've been harassing several members.",
-      status: 1,
-      createdAt: "2025-03-08T13:50:00Z",
-    },
-  ];
-
-  const [reports, setReports] = useState(initialReports);
+  const [reports, setReports] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [adminResponse, setAdminResponse] = useState("");
   const [isRespondMode, setIsRespondMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Map status codes to readable labels
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getAllReports();
+        setReports(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const getStatusLabel = (status) => {
     switch (status) {
       case 1:
@@ -170,6 +141,8 @@ const AdminReportManagement = () => {
     statusFilter === "all"
       ? reports
       : reports.filter((report) => report.status === parseInt(statusFilter));
+
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">

@@ -13,6 +13,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { getAllQuizzes } from "@/api/quizApi";
 
 const AdminQuizManagement = () => {
   // Sample data from your API
@@ -22,7 +24,6 @@ const AdminQuizManagement = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
 
-  // Status options
   const statusOptions = {
     1: {
       label: "Pending",
@@ -36,104 +37,19 @@ const AdminQuizManagement = () => {
     },
   };
 
-  // Fetch quizzes from API (mocked for now)
   useEffect(() => {
-    // Simulating API fetch
-    const fetchData = () => {
-      const data = [
-        {
-          id: 24,
-          imageUrl:
-            "https://res.cloudinary.com/drtolqkjw/image/upload/v1741370408/qd6tyeiturkgncp9vje7.jpg",
-          title: "Huy co ny khong",
-          description: "Huy co don",
-          status: 2,
-          therapistId: 3,
-          questionResponse: [],
-        },
-        {
-          id: 25,
-          imageUrl:
-            "https://res.cloudinary.com/drtolqkjw/image/upload/v1741525562/ackm7ssf6sqhrrnewo5w.png",
-          title: "Quiz test",
-          description: "test host new",
-          status: 2,
-          therapistId: 3,
-          questionResponse: [],
-        },
-        {
-          id: 26,
-          imageUrl:
-            "https://res.cloudinary.com/drtolqkjw/image/upload/v1741524653/eitifce0wpq52mna54ng.jpg",
-          title: "Before You Say 'I Do' Premarital Quiz",
-          description: "Are you ready for marriage? ",
-          status: 1,
-          therapistId: 3,
-          questionResponse: [
-            {
-              id: 21,
-              content: "1. How would you describe your partner? ",
-              optionResponse: [
-                { content: "Original, foolish, charming" },
-                { content: "Sensitive, loving, caring, funny " },
-                { content: "Nothing special compared to others " },
-                { content: " Just a normal person" },
-              ],
-            },
-            // Additional questions omitted for brevity
-          ],
-        },
-        {
-          id: 27,
-          imageUrl:
-            "https://res.cloudinary.com/drtolqkjw/image/upload/v1741525061/sft7xbpsjkovw1v1sxlh.jpg",
-          title: "Pre-Marriage Counseling Quiz",
-          description: "Test Quiz",
-          status: 1,
-          therapistId: 3,
-          questionResponse: [
-            // Questions omitted for brevity
-          ],
-        },
-        {
-          id: 28,
-          imageUrl:
-            "https://res.cloudinary.com/drtolqkjw/image/upload/v1741579189/gerehhdp9hmsokzxjajp.jpg",
-          title: "Minh co gay khong",
-          description: "ok",
-          status: 1,
-          therapistId: 3,
-          questionResponse: [
-            // Questions omitted for brevity
-          ],
-        },
-        {
-          id: 35,
-          imageUrl: "string",
-          title: "string",
-          description: "string",
-          status: 2,
-          therapistId: 3,
-          questionResponse: [
-            // Questions omitted for brevity
-          ],
-        },
-        {
-          id: 36,
-          imageUrl: "https://example.com/dbz-quiz-image.jpg",
-          title: "Dragon Ball Z Quiz",
-          description: "Test your knowledge about the Dragon Ball Z universe!",
-          status: 2,
-          therapistId: 3,
-          questionResponse: [
-            // Questions omitted for brevity
-          ],
-        },
-      ];
-
-      setQuizzes(data);
-      setFilteredQuizzes(data);
-      setLoading(false);
+    const fetchData = async () => {
+      try {
+        const data = await getAllQuizzes();
+        setQuizzes(data);
+        setFilteredQuizzes(data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        toast.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -276,9 +192,9 @@ const AdminQuizManagement = () => {
             <Card key={quiz.id} className="overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-40 h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
-                  {quiz.imageUrl && quiz.imageUrl !== "string" ? (
+                  {quiz.imageUrl ? (
                     <img
-                      src="/api/placeholder/200/160"
+                      src={quiz.imageUrl}
                       alt={quiz.title}
                       className="object-cover w-full h-full"
                     />

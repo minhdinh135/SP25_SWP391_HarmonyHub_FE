@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,52 +18,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Eye } from "lucide-react";
+import { toast } from "sonner";
+import { getAllBlogs } from "@/api/blogApi";
+import Spinner from "@/components/Spinner";
 
 const AdminBlogManagement = () => {
-  // Sample data from API
-  const initialBlogs = [
-    {
-      blogId: 1,
-      imageUrl:
-        "https://images.unsplash.com/photo-1516585427167-9f4af9627e6c?w=800&auto=format&fit=crop&q=60",
-      title: "Blog title 1",
-      content: "blog content 1",
-      status: 1,
-      therapistId: 3,
-    },
-    {
-      blogId: 2,
-      imageUrl:
-        "https://res.cloudinary.com/drtolqkjw/image/upload/v1741516853/rbyjgli08yh16klqboio.png",
-      title: "Test blog title",
-      content: "<p>Test blog content</p>",
-      status: 2,
-      therapistId: 3,
-    },
-    {
-      blogId: 3,
-      imageUrl:
-        "https://res.cloudinary.com/drtolqkjw/image/upload/v1741529537/uu3nglbk7umvympoz7p1.jpg",
-      title: "Minh Gay",
-      content: "<p>Minh Gay vl</p>",
-      status: 2,
-      therapistId: 3,
-    },
-    {
-      blogId: 4,
-      imageUrl:
-        "https://res.cloudinary.com/drtolqkjw/image/upload/v1741542928/uzhxylqwty5wqtjltynz.jpg",
-      title: "Romance For Him: Speaking The Language Of Love With Your Man",
-      content: "<p>Long content about love languages...</p>",
-      status: 2,
-      therapistId: 3,
-    },
-  ];
-
-  const [blogs, setBlogs] = useState(initialBlogs);
+  const [blogs, setBlogs] = useState([]);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getAllBlogs();
+        setBlogs(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Map status codes to readable labels
   const getStatusLabel = (status) => {
@@ -101,6 +82,8 @@ const AdminBlogManagement = () => {
     statusFilter === "all"
       ? blogs
       : blogs.filter((blog) => blog.status === parseInt(statusFilter));
+
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -144,7 +127,7 @@ const AdminBlogManagement = () => {
                   <TableCell>{blog.blogId}</TableCell>
                   <TableCell>
                     <img
-                      src="/api/placeholder/80/60"
+                      src={blog.imageUrl}
                       alt="Blog thumbnail"
                       className="rounded object-cover w-20 h-16"
                     />

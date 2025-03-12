@@ -1,3 +1,7 @@
+import { getAllAccounts } from "@/api/accountApi";
+import { getAllReports } from "@/api/reportApi";
+import { getAllTransactions } from "@/api/transactionApi";
+import Spinner from "@/components/Spinner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Users,
@@ -7,6 +11,9 @@ import {
   Calendar,
   AlertCircle,
 } from "lucide-react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const AdminDashboard = () => {
   // Sample data - replace with your actual data
@@ -46,6 +53,58 @@ const AdminDashboard = () => {
     ],
   };
 
+  const [accounts, setAccounts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchAccounts = async () => {
+    try {
+      setIsLoading(true);
+      const accounts = await getAllAccounts();
+      setAccounts(accounts);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      setIsLoading(true);
+      const transactions = await getAllTransactions();
+      setTransactions(transactions);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchReports = async () => {
+    try {
+      setIsLoading(true);
+      const reports = await getAllReports();
+      setReports(reports);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+    fetchTransactions();
+    fetchReports();
+  }, []);
+
+  if (isLoading) return <Spinner />;
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center mb-6">
@@ -66,9 +125,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
-              <p className="text-3xl font-bold">
-                {dashboardData.totalUsers.toLocaleString()}
-              </p>
+              <p className="text-3xl font-bold">{accounts.length}</p>
               <p className="text-sm text-gray-500 mt-1">
                 Registered in the system
               </p>
@@ -85,9 +142,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
-              <p className="text-3xl font-bold">
-                {dashboardData.totalTransactions.toLocaleString()}
-              </p>
+              <p className="text-3xl font-bold">{transactions.length}</p>
               <p className="text-sm text-gray-500 mt-1">
                 Total processed transactions
               </p>
@@ -104,7 +159,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
-              <p className="text-3xl font-bold">{dashboardData.totalReports}</p>
+              <p className="text-3xl font-bold">{reports.length}</p>
               <p className="text-sm text-gray-500 mt-1">
                 Generated system reports
               </p>
@@ -113,13 +168,12 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center">
               <Clock className="mr-2 h-5 w-5" />
-              Recent Transactions
+              All Transactions
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -142,7 +196,7 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dashboardData.recentTransactions.map((transaction) => (
+                  {transactions.map((transaction) => (
                     <tr
                       key={transaction.id}
                       className="border-b border-gray-100"
