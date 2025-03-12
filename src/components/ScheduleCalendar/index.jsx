@@ -12,7 +12,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
 import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
-import TherapistDetails from "@/pages/common/TherapistDetails";
 
 const ScheduleCalendar = ({ appointments }) => {
   const eventsService = useState(() => createEventsServicePlugin())[0];

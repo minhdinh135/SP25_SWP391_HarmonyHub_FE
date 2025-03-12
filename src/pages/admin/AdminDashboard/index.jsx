@@ -4,6 +4,7 @@ import { getAllTransactions } from "@/api/transactionApi";
 import Spinner from "@/components/Spinner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getTransactionStatusColor } from "@/utils/colorUtils";
+import { formatCurrencyInVND } from "@/utils/currencyFormat";
 import { getTransactionStatusText } from "@/utils/enumUtils";
 import { Users, FileText, BarChart4, Clock } from "lucide-react";
 import { useEffect } from "react";
@@ -169,7 +170,7 @@ const AdminDashboard = () => {
                         {transaction.receiverFullName}
                       </td>
                       <td className="py-3 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
-                        {transaction.amount} VND
+                        {formatCurrencyInVND(transaction.amount)} VND
                       </td>
                       <td className="py-3 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
                         <span
