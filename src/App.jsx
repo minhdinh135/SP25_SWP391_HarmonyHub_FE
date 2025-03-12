@@ -37,6 +37,7 @@ import TherapistBlogDetails from "./pages/therapist/TherapistBlogDetails";
 import AdminQuizManagement from "./pages/admin/AdminQuizManagement";
 import AdminBlogManagement from "./pages/admin/AdminBlogManagement";
 import AdminReportManagement from "./pages/admin/AdminReportManagement";
+import PaymentResult from "./pages/common/PaymentResult"; // Import the new component
 
 function App() {
   return (
@@ -59,6 +60,8 @@ function App() {
             path="/therapists/:id/appointment-booking"
             element={<BookAppointmentForm />}
           />
+          {/* Add the payment result route here so it's accessible without authentication */}
+          <Route path="/payment/result" element={<PaymentResult />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Admin]} />}>
