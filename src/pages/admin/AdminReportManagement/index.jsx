@@ -165,17 +165,6 @@ const AdminReportManagement = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="text-red-600 border-red-600 hover:bg-red-50"
-              >
-                Export CSV
-              </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                Generate Report
-              </Button>
-            </div>
           </div>
 
           <Table>

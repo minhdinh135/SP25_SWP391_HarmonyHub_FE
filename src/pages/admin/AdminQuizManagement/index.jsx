@@ -9,57 +9,49 @@ import {
   AlertCircle,
   X,
   Eye,
+  Ban,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { getAllQuizzes } from "@/api/quizApi";
+import { getAllQuizzes, updateQuizStatus } from "@/api/quizApi";
+import { useNavigate } from "react-router-dom";
+import { getQuizStatusColor } from "@/utils/colorUtils";
+import { getQuizStatusText } from "@/utils/enumUtils";
+import { QuizStatus } from "@/constants/status";
+import Spinner from "@/components/Spinner";
 
 const AdminQuizManagement = () => {
-  // Sample data from your API
+  const navigate = useNavigate();
+
   const [quizzes, setQuizzes] = useState([]);
   const [filteredQuizzes, setFilteredQuizzes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const statusOptions = {
-    1: {
-      label: "Pending",
-      color: "bg-yellow-100 text-yellow-800",
-      icon: <Clock className="h-4 w-4" />,
-    },
-    2: {
-      label: "Approved",
-      color: "bg-green-100 text-green-800",
-      icon: <CheckCircle className="h-4 w-4" />,
-    },
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getAllQuizzes();
+      setQuizzes(data);
+      setFilteredQuizzes(data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getAllQuizzes();
-        setQuizzes(data);
-        setFilteredQuizzes(data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        toast.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
-  // Filter quizzes based on search term and status
   useEffect(() => {
     let result = quizzes;
 
-    // Filter by search term
     if (searchTerm) {
       result = result.filter(
         (quiz) =>
@@ -68,7 +60,6 @@ const AdminQuizManagement = () => {
       );
     }
 
-    // Filter by status
     if (statusFilter !== "all") {
       result = result.filter((quiz) => quiz.status === parseInt(statusFilter));
     }
@@ -76,32 +67,34 @@ const AdminQuizManagement = () => {
     setFilteredQuizzes(result);
   }, [searchTerm, statusFilter, quizzes]);
 
-  // Update quiz status
-  const handleStatusChange = (quizId, newStatus) => {
-    // In a real app, you would make an API call here
-    setQuizzes(
-      quizzes.map((quiz) =>
-        quiz.id === quizId ? { ...quiz, status: newStatus } : quiz,
-      ),
-    );
+  const handleUpdateQuizStatus = async (id, statusEnum) => {
+    try {
+      setIsLoading(true);
+      await updateQuizStatus(id, statusEnum);
+      toast.success("Update quiz status successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      fetchData();
+      setIsLoading(false);
+    }
   };
 
-  // View quiz details (in a real app, this would navigate to a detail page)
   const handleViewQuiz = (quizId) => {
-    console.log(`Viewing quiz ${quizId}`);
-    // Navigate to quiz detail page
-    // history.push(`/admin/quizzes/${quizId}`);
+    navigate(`/quizzes/${quizId}`);
   };
 
   const getQuestionCount = (quiz) => {
     return quiz.questionResponse ? quiz.questionResponse.length : 0;
   };
 
-  // Clear filters
   const clearFilters = () => {
     setSearchTerm("");
     setStatusFilter("all");
   };
+
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="p-6 space-y-6">
@@ -115,15 +108,20 @@ const AdminQuizManagement = () => {
             Total: {quizzes.length}
           </Badge>
           <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
-            Pending: {quizzes.filter((q) => q.status === 1).length}
+            Pending:{" "}
+            {quizzes.filter((q) => q.status === QuizStatus.Pending).length}
           </Badge>
           <Badge className="bg-green-100 text-green-800 border-green-200">
-            Approved: {quizzes.filter((q) => q.status === 2).length}
+            Active:{" "}
+            {quizzes.filter((q) => q.status === QuizStatus.Active).length}
+          </Badge>
+          <Badge className="bg-red-100 text-red-800 border-red-200">
+            Inactive:{" "}
+            {quizzes.filter((q) => q.status === QuizStatus.Inactive).length}
           </Badge>
         </div>
       </div>
 
-      {/* Filters */}
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4 items-end">
@@ -157,9 +155,10 @@ const AdminQuizManagement = () => {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">All Statuses</option>
-                <option value="1">Pending</option>
-                <option value="2">Approved</option>
+                <option value="all">Any</option>
+                <option value={QuizStatus.Pending}>Pending</option>
+                <option value={QuizStatus.Active}>Active</option>
+                <option value={QuizStatus.Inactive}>Inactive</option>
               </select>
             </div>
 
@@ -177,9 +176,7 @@ const AdminQuizManagement = () => {
 
       {/* Quiz List */}
       <div className="grid grid-cols-1 gap-4">
-        {loading ? (
-          <div className="text-center p-8">Loading quizzes...</div>
-        ) : filteredQuizzes.length === 0 ? (
+        {filteredQuizzes.length === 0 ? (
           <div className="text-center p-8">
             <AlertCircle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-medium">No quizzes found</h3>
@@ -212,12 +209,9 @@ const AdminQuizManagement = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge className={statusOptions[quiz.status].color}>
+                      <Badge className={getQuizStatusColor(quiz.status)}>
                         <span className="flex items-center">
-                          {statusOptions[quiz.status].icon}
-                          <span className="ml-1">
-                            {statusOptions[quiz.status].label}
-                          </span>
+                          {getQuizStatusText(quiz.status)}
                         </span>
                       </Badge>
                     </div>
@@ -225,38 +219,29 @@ const AdminQuizManagement = () => {
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Badge variant="outline" className="bg-gray-50">
-                      ID: {quiz.id}
-                    </Badge>
-                    <Badge variant="outline" className="bg-gray-50">
-                      Therapist ID: {quiz.therapistId}
-                    </Badge>
-                    <Badge variant="outline" className="bg-gray-50">
-                      Questions: {getQuestionCount(quiz)}
+                      Number of questions: {getQuestionCount(quiz)}
                     </Badge>
                   </div>
 
                   <div className="mt-4 flex justify-between items-center">
                     <div className="flex space-x-2">
-                      {quiz.status === 1 ? (
-                        <Button
-                          size="sm"
-                          className="bg-green-500 hover:bg-green-600 text-white"
-                          onClick={() => handleStatusChange(quiz.id, 2)}
-                        >
-                          <CheckCircle className="mr-1 h-4 w-4" />
-                          Approve
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-yellow-500 text-yellow-600 hover:bg-yellow-50"
-                          onClick={() => handleStatusChange(quiz.id, 1)}
-                        >
-                          <Clock className="mr-1 h-4 w-4" />
-                          Mark as Pending
-                        </Button>
-                      )}
+                      <Button
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() =>
+                          handleUpdateQuizStatus(quiz.id, QuizStatus.Active)
+                        }
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() =>
+                          handleUpdateQuizStatus(quiz.id, QuizStatus.Inactive)
+                        }
+                      >
+                        Reject
+                      </Button>
                     </div>
 
                     <Button

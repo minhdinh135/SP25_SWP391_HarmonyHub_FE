@@ -18,3 +18,16 @@ export const BlogStatus = {
   Pending: 2,
   Inactive: 0,
 };
+
+export const QuizStatus = {
+  Active: 1,
+  Pending: 2,
+  Inactive: 0,
+};
+
+export const TransactionStatus = {
+  Created: 1,
+  Successful: 2,
+  Cancelled: 3,
+  Failed: 0,
+};
