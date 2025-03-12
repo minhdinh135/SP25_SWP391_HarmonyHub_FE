@@ -49,15 +49,11 @@ const TherapistPackageManagement = () => {
       const accountId = userData.accountId;
 
       // Fetch therapist data using the accountId
-      const response = await fetch(
-        `https://sp25-swp391-harmonyhub-be.onrender.com/api/therapists/${accountId}`
+      const response = await api.get(
+        `/therapists/${accountId}`
       );
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-
-      const result = await response.json();
+      const result = await response.data;
 
       if (result.statusCode === 200 && result.data && result.data.packages) {
         console.log("Packages data:", result.data.packages);
@@ -111,8 +107,8 @@ const TherapistPackageManagement = () => {
         price: formData.price
       };
 
-      const response = await fetch(
-        `https://sp25-swp391-harmonyhub-be.onrender.com/api/therapists/${accountId}/packages`,
+      const response = await api.get(
+        `/therapists/${accountId}/packages`,
         {
           method: "POST",
           headers: {
@@ -184,8 +180,8 @@ const TherapistPackageManagement = () => {
       }
 
       // Changed from PATCH to PUT method as per API requirements
-      const response = await fetch(
-        `https://sp25-swp391-harmonyhub-be.onrender.com/api/packages/${packageId}/status`,
+      const response = await api.put(
+        `/packages/${packageId}/status`,
         {
           method: "PUT", // Changed from PATCH to PUT
           headers: {
@@ -200,15 +196,8 @@ const TherapistPackageManagement = () => {
       // Log the full response for debugging
       console.log("Status update response:", response);
 
-      if (!response.ok) {
-        let errorMessage = `API request failed with status ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          // If parsing JSON fails, use the default error message
-        }
-        throw new Error(errorMessage);
+      if (response.status !== 200) {
+        throw new Error(`API request failed with status ${response.status}`);
       }
 
       // Set success state

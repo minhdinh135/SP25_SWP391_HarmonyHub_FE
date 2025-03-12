@@ -48,7 +48,7 @@ const TherapistQuizManagement = () => {
         therapistId: 3, // Fixed therapist ID as specified
         questions: formattedQuestions
       };
-      await axios.post("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes", requestBody);
+      await api.post("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes", requestBody);
       const response = await api.get("/quiz");
       setQuizzes(response.data.data);
       setShowAddQuizModal(false);
