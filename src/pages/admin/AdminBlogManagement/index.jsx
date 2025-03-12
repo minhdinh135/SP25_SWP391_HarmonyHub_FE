@@ -17,10 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { toast } from "sonner";
-import { getAllBlogs } from "@/api/blogApi";
+import { getAllBlogs, updateBlogStatus } from "@/api/blogApi";
 import Spinner from "@/components/Spinner";
+import { BlogStatus } from "@/constants/status";
+import { getBlogStatusText } from "@/utils/enumUtils";
+import { getBlogStatusColor } from "@/utils/colorUtils";
 
 const AdminBlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
@@ -29,55 +32,42 @@ const AdminBlogManagement = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getAllBlogs();
-        setBlogs(data);
-      } catch (error) {
-        console.log(error);
-        toast.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // Map status codes to readable labels
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case 1:
-        return { label: "Draft", color: "bg-yellow-500" };
-      case 2:
-        return { label: "Published", color: "bg-green-500" };
-      default:
-        return { label: "Unknown", color: "bg-gray-500" };
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getAllBlogs();
+      setBlogs(data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Function to handle status change
-  const handleStatusChange = (blogId, newStatus) => {
-    setBlogs(
-      blogs.map((blog) =>
-        blog.blogId === blogId
-          ? { ...blog, status: parseInt(newStatus) }
-          : blog,
-      ),
-    );
-    // In a real application, you would make an API call here
-    console.log(`Updated blog ${blogId} status to ${newStatus}`);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleUpdateBlogStatus = async (blogId, statusEnum) => {
+    try {
+      setIsLoading(true);
+      await updateBlogStatus(blogId, statusEnum);
+      toast.success("Update blog status successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      fetchData();
+      setIsLoading(false);
+    }
   };
 
-  // Function to preview blog
   const handlePreview = (blog) => {
     setSelectedBlog(blog);
     setIsPreviewOpen(true);
   };
 
-  // Filter blogs based on status
   const filteredBlogs =
     statusFilter === "all"
       ? blogs
@@ -99,15 +89,13 @@ const AdminBlogManagement = () => {
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Blogs</SelectItem>
-                  <SelectItem value="1">Draft</SelectItem>
-                  <SelectItem value="2">Published</SelectItem>
+                  <SelectItem value="all">Any</SelectItem>
+                  <SelectItem value={BlogStatus.Pending}>Pending</SelectItem>
+                  <SelectItem value={BlogStatus.Active}>Active</SelectItem>
+                  <SelectItem value={BlogStatus.Inactive}>Inactive</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              Add New Blog
-            </Button>
           </div>
 
           <Table>
@@ -136,38 +124,43 @@ const AdminBlogManagement = () => {
                   <TableCell>
                     <Badge
                       className={
-                        getStatusLabel(blog.status).color + " text-white"
+                        getBlogStatusColor(blog.status) + " text-white"
                       }
                     >
-                      {getStatusLabel(blog.status).label}
+                      {getBlogStatusText(blog.status)}
                     </Badge>
                   </TableCell>
                   <TableCell>{blog.therapistId}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Select
-                        value={blog.status.toString()}
-                        onValueChange={(value) =>
-                          handleStatusChange(blog.blogId, value)
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() =>
+                          handleUpdateBlogStatus(blog.blogId, BlogStatus.Active)
                         }
                       >
-                        <SelectTrigger className="w-32">
-                          <SelectValue placeholder="Change Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">Draft</SelectItem>
-                          <SelectItem value="2">Published</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        Approve
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() =>
+                          handleUpdateBlogStatus(
+                            blog.blogId,
+                            BlogStatus.Inactive,
+                          )
+                        }
+                      >
+                        Reject
+                      </Button>
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => handlePreview(blog)}
                       >
                         <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon">
-                        <Edit className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -178,7 +171,6 @@ const AdminBlogManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Blog Preview Modal */}
       {isPreviewOpen && selectedBlog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <Card className="w-full max-w-4xl max-h-screen overflow-auto">
@@ -191,17 +183,17 @@ const AdminBlogManagement = () => {
             <CardContent>
               <div className="mb-4">
                 <img
-                  src="/api/placeholder/800/400"
+                  src={selectedBlog.imageUrl}
                   alt="Blog header"
                   className="w-full rounded object-cover mb-4"
                 />
                 <div className="flex justify-between items-center mb-4">
                   <Badge
                     className={
-                      getStatusLabel(selectedBlog.status).color + " text-white"
+                      getBlogStatusColor(selectedBlog.status) + " text-white"
                     }
                   >
-                    {getStatusLabel(selectedBlog.status).label}
+                    {getBlogStatusText(selectedBlog.status)}
                   </Badge>
                   <span className="text-sm text-gray-500">
                     Therapist ID: {selectedBlog.therapistId}
