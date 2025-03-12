@@ -82,7 +82,6 @@ const AdminReportManagement = () => {
     }
   };
 
-  // Function to handle status change
   const handleStatusChange = (reportId, newStatus) => {
     setReports(
       reports.map((report) =>
@@ -124,18 +123,6 @@ const AdminReportManagement = () => {
     setIsDetailOpen(false);
   };
 
-  // Format date string
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   // Filter reports based on status
   const filteredReports =
     statusFilter === "all"
@@ -173,70 +160,76 @@ const AdminReportManagement = () => {
                 <TableHead>ID</TableHead>
                 <TableHead>User ID</TableHead>
                 <TableHead className="w-1/4">Title</TableHead>
-                <TableHead>Submitted</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredReports.map((report) => (
-                <TableRow key={report.reportId}>
-                  <TableCell>{report.reportId}</TableCell>
-                  <TableCell>{report.accountId}</TableCell>
-                  <TableCell className="font-medium truncate max-w-xs">
-                    {report.title}
-                  </TableCell>
-                  <TableCell>{formatDate(report.createdAt)}</TableCell>
-                  <TableCell>
-                    <Badge
-                      className={
-                        getStatusLabel(report.status).color +
-                        " text-white flex items-center w-fit"
-                      }
-                    >
-                      {getStatusLabel(report.status).icon}
-                      {getStatusLabel(report.status).label}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Select
-                        value={report.status.toString()}
-                        onValueChange={(value) =>
-                          handleStatusChange(report.reportId, value)
+              {filteredReports.length > 0 ? (
+                filteredReports.map((report) => (
+                  <TableRow key={report.id}>
+                    <TableCell>{report.id}</TableCell>
+                    <TableCell>{report.accountId}</TableCell>
+                    <TableCell className="font-medium truncate max-w-xs">
+                      {report.title}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={
+                          getStatusLabel(report.status).color +
+                          " text-white flex items-center w-fit"
                         }
                       >
-                        <SelectTrigger className="w-32">
-                          <SelectValue placeholder="Change Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">Pending</SelectItem>
-                          <SelectItem value="2">Resolved</SelectItem>
-                          <SelectItem value="3">Dismissed</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleViewDetails(report)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-blue-600"
-                        onClick={() => {
-                          handleViewDetails(report);
-                          setIsRespondMode(true);
-                        }}
-                      >
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                    </div>
+                        {getStatusLabel(report.status).icon}
+                        {getStatusLabel(report.status).label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Select
+                          value={report.status.toString()}
+                          onValueChange={(value) =>
+                            handleStatusChange(report.id, value)
+                          }
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue placeholder="Change Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">Pending</SelectItem>
+                            <SelectItem value="2">Resolved</SelectItem>
+                            <SelectItem value="3">Dismissed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleViewDetails(report)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-blue-600"
+                          onClick={() => {
+                            handleViewDetails(report);
+                            setIsRespondMode(true);
+                          }}
+                        >
+                          <MessageSquare className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4">
+                    No reports found
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
@@ -249,7 +242,7 @@ const AdminReportManagement = () => {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>
                 {isRespondMode ? "Respond to Report" : "Report Details"}: #
-                {selectedReport.reportId}
+                {selectedReport.id}
               </CardTitle>
               <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                 Close
@@ -268,15 +261,12 @@ const AdminReportManagement = () => {
                       {getStatusLabel(selectedReport.status).icon}
                       {getStatusLabel(selectedReport.status).label}
                     </Badge>
-                    <span className="text-sm text-gray-500">
-                      Submitted on: {formatDate(selectedReport.createdAt)}
-                    </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm text-gray-500">Report ID</Label>
-                      <p className="font-medium">{selectedReport.reportId}</p>
+                      <p className="font-medium">{selectedReport.id}</p>
                     </div>
                     <div>
                       <Label className="text-sm text-gray-500">User ID</Label>
@@ -304,9 +294,7 @@ const AdminReportManagement = () => {
                     <Button
                       variant="outline"
                       className="border-red-600 text-red-600 hover:bg-red-50"
-                      onClick={() =>
-                        handleStatusChange(selectedReport.reportId, "3")
-                      }
+                      onClick={() => handleStatusChange(selectedReport.id, "3")}
                     >
                       Dismiss Report
                     </Button>
@@ -354,6 +342,7 @@ const AdminReportManagement = () => {
                         type="checkbox"
                         id="markAsResolved"
                         className="mr-2 h-4 w-4"
+                        defaultChecked
                       />
                       <Label htmlFor="markAsResolved" className="text-sm">
                         Mark report as resolved after sending
