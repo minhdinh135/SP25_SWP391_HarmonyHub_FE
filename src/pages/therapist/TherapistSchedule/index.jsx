@@ -1,6 +1,7 @@
 import { getTherapistAppointments } from "@/api/appointmentApi";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
 import Spinner from "@/components/Spinner";
+import { AppointmentStatus } from "@/constants/status";
 import useAuth from "@/hooks/useAuth";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useEffect } from "react";
@@ -29,11 +30,17 @@ const TherapistSchedule = () => {
     fetchData();
   }, [user.accountId]);
 
+  const acceptedAppointments = appointments.filter(
+    (appointment) =>
+      appointment.status === AppointmentStatus.Accepted ||
+      appointment.status === AppointmentStatus.Completed,
+  );
+
   if (isLoading) return <Spinner />;
 
   return (
     <DashboardLayout role="therapist">
-      <ScheduleCalendar appointments={appointments} />
+      <ScheduleCalendar appointments={acceptedAppointments} />
     </DashboardLayout>
   );
 };

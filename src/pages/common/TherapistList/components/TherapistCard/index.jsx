@@ -1,18 +1,63 @@
+import { getTherapistAppointments } from "@/api/appointmentApi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { hasPermission } from "@/constants/permission";
+import { getRoleKey } from "@/constants/role";
+import useAuth from "@/hooks/useAuth";
 import { getGenderText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
 import { ChevronDown, ChevronUp, Star, UserCheck } from "lucide-react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const TherapistCard = ({ therapist }) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [appointments, setAppointments] = useState([]);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const specialties = therapist.qualifications.map(
     (qualification) => qualification.specialty.name,
   );
+
+  useEffect(() => {
+    const fetchTherapistAppointments = async () => {
+      try {
+        const data = await getTherapistAppointments(therapist.id);
+        setAppointments(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTherapistAppointments();
+  }, [therapist.id]);
+
+  const reviewedAppointments = appointments.filter(
+    (appointment) => appointment.feedbackRating !== null,
+  );
+
+  // Count of reviews
+  const reviewCount = reviewedAppointments.length;
+
+  // Calculate average rating
+  const totalRating = reviewedAppointments.reduce(
+    (sum, app) => sum + app.feedbackRating,
+    0,
+  );
+
+  const averageRating =
+    reviewCount > 0 ? (totalRating / reviewCount).toFixed(1) : 0;
+
+  const handleClickBookAppointment = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(`/therapists/${therapist.id}/appointment-booking`);
+  };
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-lg transition-all duration-300 hover:shadow-xl group overflow-hidden">
@@ -69,10 +114,10 @@ const TherapistCard = ({ therapist }) => {
           <div className="flex items-center space-x-1 bg-yellow-50 px-3 py-2 rounded-full">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
             <span className="text-sm font-bold text-yellow-600">
-              {therapist.rating || "4.9"}
+              {averageRating || "0.0"}
             </span>
             <span className="text-sm text-gray-500 ml-1">
-              ({therapist.reviewCount || "9999"} reviews)
+              ({reviewCount || 0} reviews)
             </span>
           </div>
         </div>
@@ -118,14 +163,18 @@ const TherapistCard = ({ therapist }) => {
               >
                 View Profile
               </Button>
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-                onClick={() =>
-                  navigate(`/therapists/${therapist.id}/appointment-booking`)
-                }
-              >
-                Book Now
-              </Button>
+              {(!user ||
+                hasPermission(
+                  getRoleKey(user?.role),
+                  "create:appointment",
+                )) && (
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+                  onClick={handleClickBookAppointment}
+                >
+                  Book Now
+                </Button>
+              )}
             </div>
           </div>
         </div>

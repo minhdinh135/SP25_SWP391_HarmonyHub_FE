@@ -14,6 +14,7 @@ import useAuth from "@/hooks/useAuth";
 import { getGenderText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
 import TherapistAvailability from "./components/TherapistAvailability";
+import { getTherapistAppointments } from "@/api/appointmentApi";
 
 const TherapistDetails = () => {
   const { user } = useAuth();
@@ -22,23 +23,50 @@ const TherapistDetails = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [therapistDetails, setTherapistDetails] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getTherapistDetails(id);
+      setTherapistDetails(data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error getting profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchTherapistAppointments = async () => {
+    try {
+      const data = await getTherapistAppointments(id);
+      setAppointments(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getTherapistDetails(id);
-        setTherapistDetails(data);
-      } catch (error) {
-        console.log(error);
-        toast.error("Error getting profile");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
+    fetchTherapistAppointments();
   }, [id]);
+
+  const reviewedAppointments = appointments.filter(
+    (appointment) => appointment.feedbackRating !== null,
+  );
+
+  // Count of reviews
+  const reviewCount = reviewedAppointments.length;
+
+  // Calculate average rating
+  const totalRating = reviewedAppointments.reduce(
+    (sum, app) => sum + app.feedbackRating,
+    0,
+  );
+
+  const averageRating =
+    reviewCount > 0 ? (totalRating / reviewCount).toFixed(1) : 0;
 
   const handleClickBookAppointment = () => {
     if (!user) {
@@ -88,9 +116,13 @@ const TherapistDetails = () => {
               <div className="flex items-center gap-3 mt-2">
                 <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-full">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                  <span className="font-bold text-yellow-600">4.9</span>
+                  <span className="font-bold text-yellow-600">
+                    {averageRating || 0.0}
+                  </span>
                 </div>
-                <span className="text-sm text-gray-500">(9999 reviews)</span>
+                <span className="text-sm text-gray-500">
+                  ({reviewCount || 0} reviews)
+                </span>
               </div>
             </div>
 
