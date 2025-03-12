@@ -2,6 +2,8 @@ import {
   AccountStatus,
   AppointmentStatus,
   BlogStatus,
+  QuizStatus,
+  TransactionStatus,
 } from "@/constants/status";
 
 export const getAccountStatusColor = (statusEnum) => {
@@ -40,5 +42,31 @@ export const getBlogStatusColor = (statusEnum) => {
       return "bg-yellow-500";
     case BlogStatus.Inactive:
       return "bg-red-500";
+  }
+};
+
+export const getQuizStatusColor = (statusEnum) => {
+  switch (statusEnum) {
+    case QuizStatus.Active:
+      return "bg-green-500";
+    case QuizStatus.Pending:
+      return "bg-yellow-500";
+    case QuizStatus.Inactive:
+      return "bg-red-500";
+  }
+};
+
+export const getTransactionStatusColor = (statusEnum) => {
+  switch (statusEnum) {
+    case TransactionStatus.Created:
+      return "bg-blue-500";
+    case TransactionStatus.Successful:
+      return "bg-green-500";
+    case TransactionStatus.Cancelled:
+      return "bg-yellow-500";
+    case TransactionStatus.Failed:
+      return "bg-red-500";
+    default:
+      return "bg-blue-500";
   }
 };

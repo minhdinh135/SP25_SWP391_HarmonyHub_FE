@@ -9,3 +9,12 @@ export const getAllQuizzes = async () => {
     throw new Error("Error getting all quizzes");
   }
 };
+
+export const updateQuizStatus = async (id, status) => {
+  try {
+    await api.put(`/quiz/SetStatus/${id}?status=${status}`);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating quiz status");
+  }
+};

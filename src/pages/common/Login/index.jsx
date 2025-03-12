@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -70,7 +69,6 @@ const Login = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Spinner />
-        {/* <p className="ml-2 text-gray-600">Logging you in...</p> */}
       </div>
     );
   }

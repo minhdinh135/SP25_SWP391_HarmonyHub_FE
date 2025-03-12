@@ -38,3 +38,12 @@ export const createBlog = async (payload) => {
     throw new Error("Error creating blog");
   }
 };
+
+export const updateBlogStatus = async (id, status) => {
+  try {
+    await api.put(`/${id}/UpdateStatus?status=${status}`);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating blog status");
+  }
+};
