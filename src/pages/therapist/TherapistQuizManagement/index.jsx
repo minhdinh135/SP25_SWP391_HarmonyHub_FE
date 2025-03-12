@@ -18,8 +18,9 @@ const TherapistQuizManagement = () => {
     imageUrl: "",
     questions: [{
       content: "",
-      options: [{ content: "" }, { content: "" }]
-    }]
+      options: [{ content: "" }, { content: "" }],
+    }],
+    results: [{ content: "" }] // Added results array
   });
   const quizzesPerPage = 6;
   useEffect(() => {
@@ -46,9 +47,11 @@ const TherapistQuizManagement = () => {
         description: newQuiz.description,
         imageUrl: newQuiz.imageUrl,
         therapistId: 3, // Fixed therapist ID as specified
-        questions: formattedQuestions
+        questions: formattedQuestions,
+        results: newQuiz.results
+
       };
-      await api.post("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes", requestBody);
+      await api.post("/quiz/create", requestBody);
       const response = await api.get("/quiz");
       setQuizzes(response.data.data);
       setShowAddQuizModal(false);
@@ -58,8 +61,10 @@ const TherapistQuizManagement = () => {
         imageUrl: "",
         questions: [{
           content: "",
-          options: [{ content: "" }, { content: "" }]
-        }]
+          options: [{ content: "" }, { content: "" }],
+        }],
+        results: [{ content: "" }] // Added results array
+
       });
     } catch (error) {
       console.error("Error adding quiz", error);
