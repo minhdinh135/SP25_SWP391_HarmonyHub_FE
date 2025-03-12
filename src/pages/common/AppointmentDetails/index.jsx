@@ -19,6 +19,8 @@ const AppointmentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [appointmentDetails, setAppointmentDetails] = useState(null);
+  const [therapistPackages, setTherapistPackages] = useState([]);
+  const [currentPackage, setCurrentPackage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -35,11 +37,40 @@ const AppointmentDetails = () => {
       setIsLoading(true);
       const data = await getAppointmentDetails(id);
       setAppointmentDetails(data);
+
+      // Fetch therapist data to get accurate package prices
+      if (data?.therapistId) {
+        await fetchTherapistData(data.therapistId, data.packageName);
+      }
     } catch (error) {
       console.log(error);
       toast.error(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchTherapistData = async (therapistId, packageName) => {
+    try {
+      const response = await axios.get(
+        `https://harmony-backend-tlgv.onrender.com/api/therapists/${therapistId}`
+      );
+
+      if (response.data && response.data.statusCode === 200) {
+        const therapistData = response.data.data;
+        setTherapistPackages(therapistData.packages || []);
+
+        // Find the matching package by name
+        const matchedPackage = therapistData.packages.find(
+          pkg => pkg.name === packageName
+        );
+
+        if (matchedPackage) {
+          setCurrentPackage(matchedPackage);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching therapist data:", error);
     }
   };
 
@@ -108,8 +139,11 @@ const AppointmentDetails = () => {
 
   // Convert USD to VND (1 USD = approximately 24,000 VND)
   const convertToVND = (usdPrice) => {
-    if (!usdPrice) return 0;
-    const usdAmount = parseFloat(usdPrice.replace(/[^0-9.]/g, ''));
+    if (!usdPrice && usdPrice !== 0) return 0;
+    // If price is already a number, use it directly
+    const usdAmount = typeof usdPrice === 'number'
+      ? usdPrice
+      : parseFloat(usdPrice.toString().replace(/[^0-9.]/g, ''));
     return Math.round(usdAmount * 24000);
   };
 
@@ -117,8 +151,8 @@ const AppointmentDetails = () => {
     try {
       setIsProcessingPayment(true);
 
-      // Extract package price from appointmentDetails and convert to VND
-      const packagePrice = appointmentDetails?.packagePrice || "0";
+      // Use the price from the therapist API if available, otherwise fallback to packagePrice
+      const packagePrice = currentPackage?.price || appointmentDetails?.packagePrice || "0";
       const amountInVND = convertToVND(packagePrice);
 
       const payload = {
@@ -189,6 +223,14 @@ const AppointmentDetails = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  // Get the formatted price display for UI
+  const getFormattedPrice = () => {
+    if (currentPackage?.price) {
+      return `$${currentPackage.price}`;
+    }
+    return appointmentDetails?.packagePrice || 'Price not available';
   };
 
   return (
@@ -277,9 +319,12 @@ const AppointmentDetails = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Package</p>
                   <p>{appointmentDetails?.packageName}</p>
-                  {appointmentDetails?.packagePrice && (
+                  {(currentPackage?.price || appointmentDetails?.packagePrice) && (
                     <p className="text-sm font-medium text-blue-600">
-                      {appointmentDetails?.packagePrice}
+                      {getFormattedPrice()}
+                      {currentPackage?.minutesPerAppointment && (
+                        <span className="text-gray-500 ml-2">({currentPackage.minutesPerAppointment} min)</span>
+                      )}
                     </p>
                   )}
                 </div>
@@ -470,14 +515,20 @@ const AppointmentDetails = () => {
                 <span className="font-medium">{appointmentDetails?.packageName}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-sm text-gray-500">Duration:</span>
+                <span className="font-medium">
+                  {currentPackage?.minutesPerAppointment || "N/A"} minutes
+                </span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Price (USD):</span>
-                <span className="font-medium">{appointmentDetails?.packagePrice}</span>
+                <span className="font-medium">${currentPackage?.price || appointmentDetails?.packagePrice?.replace('$', '') || "N/A"}</span>
               </div>
               <Separator className="my-2" />
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Price (VND):</span>
                 <span className="font-medium">
-                  {convertToVND(appointmentDetails?.packagePrice).toLocaleString()} VND
+                  {convertToVND(currentPackage?.price || appointmentDetails?.packagePrice?.replace('$', '')).toLocaleString()} VND
                 </span>
               </div>
             </div>
