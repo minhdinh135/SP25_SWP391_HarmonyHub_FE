@@ -15,15 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { getAccountStatusColor } from "@/utils/colorUtils";
 import { getAccountStatusText, getRoleText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
-import {
-  Search,
-  MoreVertical,
-  Download,
-  UserPlus,
-  Trash2,
-  Edit2,
-  RefreshCw,
-} from "lucide-react";
+import { Search, MoreVertical, Trash2, Edit2, RefreshCw } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,10 +41,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AccountStatus } from "@/constants/status";
+import { Roles } from "@/constants/role";
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -62,6 +56,7 @@ const Accounts = () => {
 
   const fetchAccounts = async () => {
     try {
+      setIsLoading(true);
       const data = await getAllAccounts();
       setAccounts(data.filter((x) => getRoleText(x.role) !== "System"));
     } catch (error) {
@@ -98,7 +93,6 @@ const Accounts = () => {
     if (!selectedAccount) return;
 
     try {
-      // Implement delete API call here
       toast({
         title: "Account deleted",
         description: `Account ${selectedAccount.email} has been deleted.`,
@@ -138,14 +132,6 @@ const Accounts = () => {
     }
   };
 
-  const exportToCsv = () => {
-    // Implement CSV export functionality
-    toast({
-      title: "Export started",
-      description: "Downloading accounts data as CSV...",
-    });
-  };
-
   if (isLoading) return <Spinner />;
 
   return (
@@ -156,14 +142,6 @@ const Accounts = () => {
           <Button onClick={fetchAccounts} variant="outline" size="sm">
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
-          </Button>
-          <Button onClick={exportToCsv} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-          <Button size="sm">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Account
           </Button>
         </div>
       </div>
@@ -184,8 +162,8 @@ const Accounts = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-            <SelectItem value="user">User</SelectItem>
+            <SelectItem value={Roles.Member}>Member</SelectItem>
+            <SelectItem value={Roles.Therapist}>Therapist</SelectItem>
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -194,8 +172,9 @@ const Accounts = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value={AccountStatus.Active}>Active</SelectItem>
+            <SelectItem value={AccountStatus.Inactive}>Inactive</SelectItem>
+            <SelectItem value={AccountStatus.Pending}>Pending</SelectItem>
           </SelectContent>
         </Select>
       </div>
