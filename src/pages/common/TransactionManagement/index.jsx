@@ -1,8 +1,8 @@
-import { getMemberDetails, getTherapistDetails } from "@/api/accountApi";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import Spinner from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -13,67 +13,109 @@ import {
 } from "@/components/ui/table";
 import useAuth from "@/hooks/useAuth";
 import { formatCurrencyInVND } from "@/utils/currencyFormat";
-import { ArrowDownRight, ArrowUpRight, DollarSign } from "lucide-react";
-import { useEffect } from "react";
-import { useState } from "react";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
-const TransactionManagement = ({ role = "member", transactions }) => {
+const TransactionManagement = ({ role = "member" }) => {
   const { user } = useAuth();
-  const [details, setDetails] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTransactions = async () => {
+      setIsLoading(true);
       try {
-        const data =
-          role === "member"
-            ? await getMemberDetails(user.accountId)
-            : await getTherapistDetails(user.accountId);
-        setDetails(data);
+        const response = await axios.get(
+          "https://harmony-backend-tlgv.onrender.com/api/transactions"
+        );
+
+        if (response.data.statusCode === 200) {
+          // Transform API data to match component's expected format
+          const formattedTransactions = response.data.data.map((transaction) => ({
+            id: transaction.transactionId, // Using transactionId as the unique id
+            transactionId: transaction.transactionId,
+            amount: transaction.amount,
+            paymentMethod: getPaymentMethodName(transaction.paymentMethod),
+            description: transaction.description,
+            senderId: transaction.senderId,
+            receiverId: transaction.receiverId,
+            status: getStatusName(transaction.status),
+            date: new Date().toLocaleDateString(), // Using current date as API doesn't provide date
+            type: determineTransactionType(transaction, user.accountId),
+            senderFullName: transaction.senderFullName,
+            receiverFullName: transaction.receiverFullName,
+            appointmentReference: transaction.appointmentId
+              ? `Appointment #${transaction.appointmentId}`
+              : null
+          }));
+
+          const filterdTransactions = formattedTransactions.filter(item => item.senderId === user.accountId);
+
+          console.log(filterdTransactions);
+
+          setTransactions(filterdTransactions);
+        }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching transactions:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
-  });
+    fetchTransactions();
+  }, [user.accountId]);
+
+  // Helper function to determine if transaction is credit or debit
+  const determineTransactionType = (transaction, currentUserId) => {
+    // If the current user is the receiver, it's a credit (incoming)
+    // If the current user is the sender, it's a debit (outgoing)
+    return transaction.receiverId === currentUserId ? "credit" : "debit";
+  };
+
+  // Convert payment method code to name
+  const getPaymentMethodName = (methodCode) => {
+    const methods = {
+      1: "Bank Transfer",
+      2: "Credit Card",
+      3: "E-Wallet"
+      // Add more as needed
+    };
+    return methods[methodCode] || "Unknown";
+  };
+
+  // Convert status code to name
+  const getStatusName = (statusCode) => {
+    const statuses = {
+      1: "completed",
+      2: "pending",
+      3: "cancelled"
+      // Add more as needed
+    };
+    return statuses[statusCode] || "unknown";
+  };
 
   const getStatusColor = (status) => {
-    return status === "completed" ? "bg-green-500" : "bg-yellow-500";
+    const colors = {
+      "completed": "bg-green-500",
+      "pending": "bg-yellow-500",
+      "cancelled": "bg-red-500",
+      "unknown": "bg-gray-500"
+    };
+    return colors[status] || "bg-gray-500";
   };
 
   if (isLoading) return <Spinner />;
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 space-y-6">
-      {/* Balance Card */}
-      {/* <Card> */}
-      {/*   <CardHeader> */}
-      {/*     <CardTitle className="text-xl font-semibold"> */}
-      {/*       Account Balance */}
-      {/*     </CardTitle> */}
-      {/*   </CardHeader> */}
-      {/*   <CardContent> */}
-      {/*     <div className="flex items-center space-x-2"> */}
-      {/*       <DollarSign className="h-8 w-8 text-green-500" /> */}
-      {/*       <span className="text-3xl font-bold"> */}
-      {/*         {formatCurrencyInVND(details?.balance)} VND */}
-      {/*       </span> */}
-      {/*     </div> */}
-      {/*   </CardContent> */}
-      {/* </Card> */}
-
+    <div className="w-full mx-auto p-4 space-y-6">
       {/* Transactions Card */}
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-xl font-semibold">
             Transaction History
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[400px] pr-4">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -84,74 +126,88 @@ const TransactionManagement = ({ role = "member", transactions }) => {
                   <TableHead>Status</TableHead>
                   <TableHead>Payment Method</TableHead>
                   <TableHead>Sender</TableHead>
+                  <TableHead>Receiver</TableHead>
                   <TableHead>Appointment</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>{" "}
+                  <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>
-                      {transaction.type === "credit" ? (
-                        <ArrowUpRight className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <ArrowDownRight className="h-5 w-5 text-red-500" />
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {transaction.transactionId}
-                    </TableCell>
+                {transactions.length > 0 ? (
+                  transactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>
+                        {transaction.type === "credit" ? (
+                          <ArrowUpRight className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <ArrowDownRight className="h-5 w-5 text-red-500" />
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {transaction.transactionId}
+                      </TableCell>
 
-                    {/* Description */}
-                    <TableCell className="font-medium">
-                      {transaction.description}
-                    </TableCell>
+                      {/* Description */}
+                      <TableCell className="font-medium">
+                        {transaction.description}
+                      </TableCell>
 
-                    {/* Date */}
-                    <TableCell className="text-gray-500">
-                      {transaction.date}
-                    </TableCell>
+                      {/* Date */}
+                      <TableCell className="text-gray-500">
+                        {transaction.date}
+                      </TableCell>
 
-                    {/* Status */}
-                    <TableCell>
-                      <Badge className={getStatusColor(transaction.status)}>
-                        {transaction.status}
-                      </Badge>
-                    </TableCell>
+                      {/* Status */}
+                      <TableCell>
+                        <Badge className={getStatusColor(transaction.status)}>
+                          {transaction.status}
+                        </Badge>
+                      </TableCell>
 
-                    {/* Payment Method */}
-                    <TableCell className="text-gray-500">
-                      {transaction.paymentMethod}
-                    </TableCell>
+                      {/* Payment Method */}
+                      <TableCell className="text-gray-500">
+                        {transaction.paymentMethod}
+                      </TableCell>
 
-                    {/* Sender Full Name */}
-                    <TableCell className="text-gray-500">
-                      {transaction.senderFullName || "N/A"}
-                    </TableCell>
+                      {/* Sender Full Name */}
+                      <TableCell className="text-gray-500">
+                        {transaction.senderFullName || "N/A"}
+                      </TableCell>
 
-                    {/* Associated Appointment Reference */}
-                    <TableCell className="text-gray-500">
-                      {transaction.appointmentReference || "N/A"}
-                    </TableCell>
+                      {/* Receiver Full Name */}
+                      <TableCell className="text-gray-500">
+                        {transaction.receiverFullName || "N/A"}
+                      </TableCell>
 
-                    {/* Amount */}
-                    <TableCell className="text-right font-semibold">
-                      <span
-                        className={
-                          transaction.type === "credit"
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }
-                      >
-                        {transaction.type === "credit" ? "+" : "-"}
-                        {formatCurrencyInVND(transaction.amount)}
-                      </span>
+                      {/* Associated Appointment Reference */}
+                      <TableCell className="text-gray-500">
+                        {transaction.appointmentReference || "N/A"}
+                      </TableCell>
+
+                      {/* Amount */}
+                      <TableCell className="text-right font-semibold">
+                        <span
+                          className={
+                            transaction.type === "credit"
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          {transaction.type === "credit" ? "+" : "-"}
+                          {formatCurrencyInVND(transaction.amount)}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center py-6">
+                      No transactions found
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
-            </Table>{" "}
-          </ScrollArea>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
