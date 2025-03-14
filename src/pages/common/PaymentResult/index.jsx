@@ -32,7 +32,7 @@ const PaymentResult = () => {
         const paymentInfo = {
           success: result === "1",
           orderId,
-          amount: parseFloat(amount),
+          amount: parseFloat(amount / 100),
           orderInfo,
           payDate
         };
