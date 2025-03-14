@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatTime } from "@/utils/timeUtils";
 
-const TherapistAvailability = ({ therapistDetails }) => {
+const TherapistAvailability = ({ therapistDetails, appointments }) => {
   const [currentWeek, setCurrentWeek] = useState(0);
 
   // Generate dates for the current week view
@@ -42,8 +42,44 @@ const TherapistAvailability = ({ therapistDetails }) => {
     return `${startMonth} ${startDate.getDate()}–${endMonth} ${endDate.getDate()}, ${endDate.getFullYear()}`;
   };
 
+  // Check if a time slot is booked
+  const isTimeSlotBooked = (date, timeSlot) => {
+    if (!appointments || !appointments.length) return false;
+
+    const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
+    const [hours, minutes] = timeSlot.split(":");
+
+    // Create a new date object for the slot start time
+    const slotStartTime = new Date(date);
+    slotStartTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    // Create a new date object for the slot end time (30 minutes later)
+    const slotEndTime = new Date(slotStartTime);
+    slotEndTime.setMinutes(slotEndTime.getMinutes() + 30);
+
+    // Check if any appointment with status 3 overlaps with this time slot
+    return appointments.some((appointment) => {
+      if (appointment.status !== 3) return false;
+
+      const appointmentStartTime = new Date(appointment.startTime);
+      const appointmentEndTime = new Date(appointment.endTime);
+
+      // Check for overlap
+      return (
+        (slotStartTime >= appointmentStartTime &&
+          slotStartTime < appointmentEndTime) ||
+        (slotEndTime > appointmentStartTime &&
+          slotEndTime <= appointmentEndTime) ||
+        (slotStartTime <= appointmentStartTime &&
+          slotEndTime >= appointmentEndTime)
+      );
+    });
+  };
+
   // Generate time slots for a specific day
-  const getTimeSlotsForDay = (dayOfWeek) => {
+  const getTimeSlotsForDay = (date) => {
+    const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay(); // Convert Sunday (0) to 7 for compatibility
+
     const availability = therapistDetails?.availabilities?.find(
       (slot) => slot.dayOfWeek === dayOfWeek,
     );
@@ -65,9 +101,13 @@ const TherapistAvailability = ({ therapistDetails }) => {
       currentHour < toHour ||
       (currentHour === toHour && currentMinute < toMinute)
     ) {
-      slots.push(
-        `${currentHour.toString().padStart(2, "0")}:${currentMinute.toString().padStart(2, "0")}`,
-      );
+      const timeSlot = `${currentHour.toString().padStart(2, "0")}:${currentMinute.toString().padStart(2, "0")}`;
+      const isBooked = isTimeSlotBooked(date, timeSlot);
+
+      slots.push({
+        time: timeSlot,
+        isBooked,
+      });
 
       currentMinute += 30;
       if (currentMinute >= 60) {
@@ -129,10 +169,9 @@ const TherapistAvailability = ({ therapistDetails }) => {
 
       <div className="grid grid-cols-7 gap-4">
         {weekDates.map((date, index) => {
-          const dayOfWeek = index + 1;
           const dayName = date.toLocaleString("default", { weekday: "short" });
           const dayNumber = date.getDate();
-          const timeSlots = getTimeSlotsForDay(dayOfWeek);
+          const timeSlots = getTimeSlotsForDay(date);
           const dateStr = formatDateForURL(date);
 
           return (
@@ -145,15 +184,24 @@ const TherapistAvailability = ({ therapistDetails }) => {
               </div>
 
               <div className="flex flex-col gap-2 mt-2">
-                {timeSlots.map((time, timeIndex) => (
-                  <Link
-                    key={timeIndex}
-                    to={`appointment-booking?date=${dateStr}&time=${time}`}
-                    className="text-center py-2 px-1 rounded bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 transition-colors font-medium text-sm"
-                  >
-                    {formatTime(time)}
-                  </Link>
-                ))}
+                {timeSlots.map((slot, timeIndex) =>
+                  slot.isBooked ? (
+                    <div
+                      key={timeIndex}
+                      className="text-center py-2 px-1 rounded bg-gray-100 border border-gray-200 text-gray-500 font-medium text-sm cursor-not-allowed"
+                    >
+                      {formatTime(slot.time)} - Booked
+                    </div>
+                  ) : (
+                    <Link
+                      key={timeIndex}
+                      to={`appointment-booking?date=${dateStr}&time=${slot.time}`}
+                      className="text-center py-2 px-1 rounded bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 transition-colors font-medium text-sm"
+                    >
+                      {formatTime(slot.time)}
+                    </Link>
+                  ),
+                )}
 
                 {timeSlots.length === 0 && (
                   <div className="text-center py-4 text-gray-400 text-sm">

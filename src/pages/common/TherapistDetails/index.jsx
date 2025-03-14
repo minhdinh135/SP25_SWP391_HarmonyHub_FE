@@ -228,7 +228,10 @@ const TherapistDetails = () => {
             </div>
 
             {/* New Availability Component */}
-            <TherapistAvailability therapistDetails={therapistDetails} />
+            <TherapistAvailability
+              therapistDetails={therapistDetails}
+              appointments={appointments}
+            />
 
             <div>
               <h2 className="text-xl font-semibold mb-4 text-gray-800">
