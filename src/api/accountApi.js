@@ -59,3 +59,19 @@ export const registerTherapist = async (payload) => {
     throw new Error("Error registering therapist");
   }
 };
+
+export const updateAccountAvatar = async (id, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    await api.put(`/accounts/${id}/avatar`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating account avatar");
+  }
+};
