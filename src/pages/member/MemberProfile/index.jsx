@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import useToggleState from "@/hooks/useToggleState";
-import { getMemberDetails } from "@/api/accountApi";
+import { getMemberDetails, updateAccountAvatar } from "@/api/accountApi";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -19,57 +9,38 @@ import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
 import { formatBirthdate } from "@/utils/dateUtils";
-import { Mail, Phone, UploadCloud } from "lucide-react";
+import { ChevronRight, Edit, Mail, Phone } from "lucide-react";
 import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import AvatarDialog from "./components/AvatarDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import PersonalInfoDialog from "./components/PersonalInfoDialog";
 
-const MemberProfile = ({ userData }) => {
+const MemberProfile = () => {
   const { user } = useAuth();
 
-  const [isEditing, toggleIsEditing] = useToggleState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [memberDetails, setMemberDetails] = useState(null);
-  const [formData, setFormData] = useState(userData);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
   const [isDropZoneOpen, setIsDropZoneOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const data = await getMemberDetails(user.accountId);
+      console.log(data);
+      setMemberDetails(data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error getting profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getMemberDetails(user.accountId);
-        console.log(data);
-        setMemberDetails(data);
-      } catch (error) {
-        console.log(error);
-        toast.error("Error getting profile");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, [user.accountId]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = () => {
-    console.log("Updated data:", formData);
-    toggleIsEditing();
-  };
 
   const onDrop = useCallback((acceptedFiles) => {
     const uploadedFile = acceptedFiles[0];
@@ -77,18 +48,21 @@ const MemberProfile = ({ userData }) => {
     setPreview(URL.createObjectURL(uploadedFile));
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: { "image/*": [] },
-    multiple: false,
-  });
-
-  const handleSaveAvatar = () => {
+  const handleSaveAvatar = async () => {
     if (!file) return toast.error("Please select an image!");
 
-    // Simulate API call
-    setIsDropZoneOpen(false);
-    toast.success("Avatar updated successfully!");
+    try {
+      setIsLoading(true);
+      await updateAccountAvatar(user.accountId, file);
+      fetchData();
+      toast.success("Avatar updated successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+      setIsDropZoneOpen(false);
+    }
   };
 
   const handleCancel = () => {
@@ -101,24 +75,17 @@ const MemberProfile = ({ userData }) => {
 
   return (
     <DashboardLayout role="member">
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold">Profile Information</h1>
             <p className="text-gray-500">Manage your personal information</p>
           </div>
-          <Button
-            className="hover:bg-gray-600"
-            variant={isEditing ? "outline" : "default"}
-            onClick={() => (isEditing ? handleSubmit() : toggleIsEditing())}
-          >
-            {isEditing ? "Save Changes" : "Edit Information"}
-          </Button>
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Avatar Section */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center space-y-4 mr-4">
             <Avatar
               className="w-32 h-32 hover:cursor-pointer hover:ring-2 hover:ring-blue-500"
               onClick={() => setIsDropZoneOpen(true)}
@@ -153,76 +120,36 @@ const MemberProfile = ({ userData }) => {
               </div>
             </div>{" "}
           </div>
-
-          {/* Profile Information */}
-          <div className="flex-1 space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">First Name</Label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={memberDetails?.firstName}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
-                  />
-                ) : (
+          {/* Personal Information Section */}
+          <Card
+            className="w-2/3 hover:bg-gray-50 transition-colors cursor-pointer group"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <CardHeader className="pb-2 flex flex-row justify-between items-center">
+              <CardTitle className="text-lg">My Information</CardTitle>
+              <div className="text-gray-400 group-hover:text-gray-600">
+                <Edit className="h-4 w-4 mr-1 inline-block" />
+                <ChevronRight className="h-4 w-4 inline-block" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">First Name</p>
                   <p className="text-gray-700">{memberDetails?.firstName}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Last Name</Label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={memberDetails?.lastName}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
-                  />
-                ) : (
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Last Name</p>
                   <p className="text-gray-700">{memberDetails?.lastName}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Birthdate</Label>
-                {isEditing ? (
-                  <input
-                    type="date"
-                    name="birthdate"
-                    value={formatBirthdate(memberDetails?.birthdate)}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
-                  />
-                ) : (
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Birthdate</p>
                   <p className="text-gray-700">
                     {formatBirthdate(memberDetails?.birthdate)}
                   </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Gender</Label>
-                {isEditing ? (
-                  <Select
-                    value={memberDetails?.gender.toString()}
-                    onValueChange={handleInputChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Male</SelectItem>
-                      <SelectItem value="2">Female</SelectItem>
-                      <SelectItem value="0">Prefer not to say</SelectItem>
-                    </SelectContent>
-                  </Select>
-                ) : (
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Gender</p>
                   <p className="text-gray-700">
                     {memberDetails?.gender === 1
                       ? "Male"
@@ -230,81 +157,44 @@ const MemberProfile = ({ userData }) => {
                         ? "Female"
                         : "Prefer not to say"}
                   </p>
-                )}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Bio</Label>
-              {isEditing ? (
-                <textarea
-                  name="bio"
-                  value={memberDetails?.bio ?? "N/A"}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-md resize-none h-24"
-                  placeholder="Tell us about yourself"
-                />
-              ) : (
-                <p className="text-gray-700">{memberDetails?.bio}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Relationship Goal</Label>
-              {isEditing ? (
-                <textarea
-                  name="relationshipGoal"
-                  value={memberDetails?.relationshipGoal ?? "N/A"}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-md resize-none h-24"
-                  placeholder="What are your relationship goals?"
-                />
-              ) : (
-                <p className="text-gray-700">
-                  {memberDetails?.relationshipGoal}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <Dialog open={isDropZoneOpen} onOpenChange={setIsDropZoneOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Update Profile Picture</DialogTitle>
-            </DialogHeader>
-
-            {/* Dropzone Area */}
-            <div
-              {...getRootProps()}
-              className="border-2 border-dashed p-6 text-center cursor-pointer"
-            >
-              <input {...getInputProps()} />
-              {preview ? (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-40 h-40 object-cover mx-auto rounded-full"
-                />
-              ) : (
-                <div className="flex flex-col items-center space-y-2">
-                  <UploadCloud className="h-10 w-10 text-gray-500" />
-                  <p className="text-gray-500">
-                    Drag & drop or click to upload
+              <div className="mt-6 pt-6 border-t">
+                <div className="space-y-1 mb-4">
+                  <p className="text-sm text-gray-500">About Me</p>
+                  <p className="text-gray-700">
+                    {memberDetails?.bio || "Add information about yourself"}
                   </p>
                 </div>
-              )}
-            </div>
 
-            {/* Actions */}
-            <DialogFooter>
-              <Button variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveAvatar}>Save Changes</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Relationship Goals</p>
+                  <p className="text-gray-700">
+                    {memberDetails?.relationshipGoal ||
+                      "Add your relationship goals"}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>{" "}
+        </div>
+
+        <PersonalInfoDialog
+          memberDetails={memberDetails}
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+          handleCancel={handleCancel}
+        />
+
+        <AvatarDialog
+          onDrop={onDrop}
+          preview={preview}
+          handleCancel={handleCancel}
+          handleSaveAvatar={handleSaveAvatar}
+          isDropZoneOpen={isDropZoneOpen}
+          setIsDropZoneOpen={setIsDropZoneOpen}
+        />
       </div>
     </DashboardLayout>
   );
