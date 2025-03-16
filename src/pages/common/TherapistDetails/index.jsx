@@ -126,17 +126,17 @@ const TherapistDetails = () => {
               </div>
             </div>
 
-            {(!user ||
-              hasPermission(getRoleKey(user?.role), "create:appointment")) && (
-              <div className="absolute top-0 right-0">
-                <Button
-                  className="w-40 bg-blue-600 hover:bg-blue-700 transition-colors"
-                  onClick={handleClickBookAppointment}
-                >
-                  Book Appointment
-                </Button>
-              </div>
-            )}
+            {/* {(!user || */}
+            {/*   hasPermission(getRoleKey(user?.role), "create:appointment")) && ( */}
+            {/*   <div className="absolute top-0 right-0"> */}
+            {/*     <Button */}
+            {/*       className="w-40 bg-blue-600 hover:bg-blue-700 transition-colors" */}
+            {/*       onClick={handleClickBookAppointment} */}
+            {/*     > */}
+            {/*       Book Appointment */}
+            {/*     </Button> */}
+            {/*   </div> */}
+            {/* )} */}
           </div>
 
           <Separator className="my-6 bg-gray-200" />
