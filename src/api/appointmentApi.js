@@ -44,27 +44,42 @@ export const updateAppointmentStatus = async (appointmentId, payload) => {
     await api.put(`/appointments/${appointmentId}/status`, payload);
   } catch (error) {
     console.log(error);
-    throw new Error("Error getting appointmentDetails");
+    throw new Error("Error updating appointment status");
   }
 };
 
 export const updateAppointmentFeedback = async (appointmentId, payload) => {
   try {
-    await api.put(`/appointments/update-feedback/${appointmentId}`, payload);
+    await api.put(`/appointments/${appointmentId}/feedback`, payload);
   } catch (error) {
     console.log(error);
     throw new Error("Error updating appointment feedback");
   }
 };
 
-export const updateAppointmentNote = async (appointmentId, payload) => {
+export const deleteAppointmentFeedback = async (appointmentId, payload) => {
   try {
-    await api.put(
-      `/therapists/appointments/update-appointment-note/${appointmentId}`,
-      payload,
-    );
+    await api.put(`/appointments/${appointmentId}/delete-feedback`, payload);
   } catch (error) {
     console.log(error);
-    throw new Error("Error updating appointment feedback");
+    throw new Error("Error deleting appointment feedback");
+  }
+};
+
+export const updateAppointmentNote = async (appointmentId, payload) => {
+  try {
+    await api.put(`/appointments/${appointmentId}/therapist-note`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating therapist note");
+  }
+};
+
+export const updateAppointmentMeetUrl = async (appointmentId, payload) => {
+  try {
+    await api.put(`/appointments/${appointmentId}/meet-url`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating meeting url");
   }
 };

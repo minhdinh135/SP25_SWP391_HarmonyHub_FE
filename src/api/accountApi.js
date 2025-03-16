@@ -10,6 +10,16 @@ export const getAllAccounts = async () => {
   }
 };
 
+export const getAccountById = async (id) => {
+  try {
+    const response = await api.get(`/accounts/${id}`);
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting account");
+  }
+};
+
 export const getAllTherapists = async () => {
   try {
     const response = await api.get("/therapists");
@@ -60,16 +70,44 @@ export const registerTherapist = async (payload) => {
   }
 };
 
+export const updateMemberDetails = async (memberId, payload) => {
+  try {
+    await api.put(`/members/${memberId}/profile`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating member details");
+  }
+};
+
+export const updateTherapistDetails = async (therapistId, payload) => {
+  try {
+    await api.put(`/therapists/${therapistId}/profile`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating member details");
+  }
+};
+
+export const updateQualification = async (qualificationId, payload) => {
+  try {
+    await api.put(`/qualifications/${qualificationId}`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating qualification");
+  }
+};
+
 export const updateAccountAvatar = async (id, file) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("avatarFile", file);
 
   try {
-    await api.put(`/accounts/${id}/avatar`, formData, {
+    const response = await api.put(`/accounts/${id}/avatar`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
+    return response.data.data;
   } catch (error) {
     console.log(error);
     throw new Error("Error updating account avatar");
