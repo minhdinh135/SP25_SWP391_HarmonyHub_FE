@@ -21,7 +21,10 @@ import { useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Spinner from "@/components/Spinner";
 import { getTherapistDetails } from "@/api/accountApi";
-import { createAppointment } from "@/api/appointmentApi";
+import {
+  createAppointment,
+  getTherapistAppointments,
+} from "@/api/appointmentApi";
 import useAuth from "@/hooks/useAuth";
 import { Calendar, Check, Clock, MessageSquare, Package } from "lucide-react";
 import { calculateEndTime, formatTimeString } from "@/utils/timeUtils";
@@ -67,9 +70,8 @@ const BookAppointmentForm = () => {
     fetchData();
   }, [id]);
 
-  // Update form data if URL parameters change
   useEffect(() => {
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
       startDate: queryParams.date || prevData.startDate,
       startTime: queryParams.time || prevData.startTime,
@@ -85,8 +87,123 @@ const BookAppointmentForm = () => {
     setFormData((prev) => ({ ...prev, packageId: value }));
   };
 
+  const isTimeSlotBooked = (appointments, date, timeSlot) => {
+    if (!appointments || !appointments.length) return false;
+
+    const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
+    const [hours, minutes] = timeSlot.split(":");
+
+    // Create a new date object for the slot start time
+    const slotStartTime = new Date(date);
+    slotStartTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    // Create a new date object for the slot end time (30 minutes later)
+    const slotEndTime = new Date(slotStartTime);
+    slotEndTime.setMinutes(slotEndTime.getMinutes() + 30);
+
+    // Check if any appointment with status 3 overlaps with this time slot
+    return appointments.some((appointment) => {
+      if (appointment.status !== 3) return false;
+
+      const appointmentStartTime = new Date(appointment.startTime);
+      const appointmentEndTime = new Date(appointment.endTime);
+
+      // Check for overlap
+      return (
+        (slotStartTime >= appointmentStartTime &&
+          slotStartTime < appointmentEndTime) ||
+        (slotEndTime > appointmentStartTime &&
+          slotEndTime <= appointmentEndTime) ||
+        (slotStartTime <= appointmentStartTime &&
+          slotEndTime >= appointmentEndTime)
+      );
+    });
+  };
+
+  const isFormDataValid = async () => {
+    try {
+      // Check if all required fields are filled
+      if (!formData.startDate || !formData.startTime || !formData.packageId) {
+        toast.error("Please fill in all required fields");
+        return false;
+      }
+
+      // Parse the selected date and time
+      const selectedDate = new Date(
+        `${formData.startDate}T${formData.startTime}:00`,
+      );
+      const now = new Date();
+
+      // Check if the selected date is in the past
+      if (selectedDate < now) {
+        toast.error("Cannot book appointments in the past");
+        return false;
+      }
+
+      // Check if the selected date is too far in the future (e.g., 3 months)
+      const maxFutureDate = new Date();
+      maxFutureDate.setMonth(maxFutureDate.getMonth() + 3);
+      if (selectedDate > maxFutureDate) {
+        toast.error("Cannot book appointments more than 3 months in advance");
+        return false;
+      }
+
+      // Check if the selected package exists
+      const selectedPackage = therapistDetails?.packages.find(
+        (pkg) => pkg.id.toString() === formData.packageId,
+      );
+      if (!selectedPackage) {
+        toast.error("Selected package is not valid");
+        return false;
+      }
+
+      // Check if the therapist is available at the selected time
+      const therapistAppointments = await getTherapistAppointments(id);
+
+      // Convert to date object for comparison
+      const dateObj = new Date(formData.startDate);
+      const timeBooked = isTimeSlotBooked(
+        therapistAppointments,
+        dateObj,
+        formData.startTime,
+      );
+
+      if (timeBooked) {
+        toast.error("This time slot is already booked");
+        return false;
+      }
+
+      // Check if the appointment is within the therapist's working hours
+      // This would require additional data about therapist's schedule
+      // For now, let's assume working hours are 9 AM to 5 PM
+      const hour = selectedDate.getHours();
+      if (hour < 9 || hour >= 17) {
+        toast.error("Appointments are only available between 9 AM and 5 PM");
+        return false;
+      }
+
+      // Check if the day is a weekend
+      const day = selectedDate.getDay();
+      if (day === 0 || day === 6) {
+        toast.error("Appointments are not available on weekends");
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Validation error:", error);
+      toast.error("An error occurred while validating your appointment");
+      return false;
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isValid = await isFormDataValid();
+    if (!isValid) {
+      toast.error("Form data is not valid");
+      return;
+    }
 
     const selectedPackage = therapistDetails?.packages.find(
       (pkg) => pkg.id.toString() === formData.packageId,
@@ -101,9 +218,8 @@ const BookAppointmentForm = () => {
       startTime: combinedDateTimeString,
       endTime: new Date(
         combinedDateTime.getTime() +
-        selectedPackage.minutesPerAppointment * 60000,
+          selectedPackage.minutesPerAppointment * 60000,
       ).toISOString(),
-      meetUrl: "string",
       clientNote: formData.clientNote,
       therapistId: parseInt(id),
       packageId: parseInt(formData.packageId),
@@ -134,11 +250,11 @@ const BookAppointmentForm = () => {
 
     return pkg
       ? {
-        ...pkg,
-        endTime: formData.startTime
-          ? calculateEndTime(formData.startTime, pkg.minutesPerAppointment)
-          : null,
-      }
+          ...pkg,
+          endTime: formData.startTime
+            ? calculateEndTime(formData.startTime, pkg.minutesPerAppointment)
+            : null,
+        }
       : null;
   }, [formData.packageId, formData.startTime, therapistDetails]);
 
