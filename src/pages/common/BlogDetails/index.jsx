@@ -17,38 +17,26 @@ export function BlogPost() {
   const [therapistDetails, setTherapistDetails] = useState(null);
 
   useEffect(() => {
-    const fetchBlogDetails = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
-        const data = await getBlogDetails(id);
-        setBlog(data);
-      } catch (error) {
-        console.error("Error fetching blog details:", error);
-        toast.error("Failed to load blog details");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+        const blogData = await getBlogDetails(id);
+        setBlog(blogData);
 
-    fetchBlogDetails();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchTherapistDetails = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getTherapistDetails(blog.therapistId);
-        setTherapistDetails(data);
+        if (blogData?.therapistId) {
+          const therapistData = await getTherapistDetails(blogData.therapistId);
+          setTherapistDetails(therapistData);
+        }
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load blog details");
+        toast.error(error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchTherapistDetails();
-  }, [blog]);
+    loadData();
+  }, [id]);
 
   if (isLoading) return <Spinner />;
 
