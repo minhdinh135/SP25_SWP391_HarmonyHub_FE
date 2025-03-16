@@ -2,29 +2,31 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Video, MessageSquare, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAppointmentStatusText } from "@/utils/enumUtils";
+import { getAppointmentStatusText, getRoleText } from "@/utils/enumUtils";
 import { getAppointmentStatusColor } from "@/utils/colorUtils";
 import { Button } from "../ui/button";
 import { AppointmentStatus } from "@/constants/status";
 import { getRoleKey } from "@/constants/role";
 import useAuth from "@/hooks/useAuth";
 import { hasPermission } from "@/constants/permission";
+import { formatDateTime } from "@/utils/dateUtils";
 
-const AppointmentCard = ({ appointment, onAccept, onReject }) => {
+const AppointmentCard = ({
+  appointment,
+  onAccept,
+  onReject,
+  handleCancelAppointment,
+}) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Format date and time
-  const formatDateTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const isMember = getRoleText(user.role) === "Member";
+
+  const isCancellable = ![
+    AppointmentStatus.Cancelled,
+    AppointmentStatus.Completed,
+    AppointmentStatus.Rejected,
+  ].includes(appointment.status);
 
   const handleClick = () => {
     console.log("AppointmentID:", appointment.id);
@@ -34,7 +36,7 @@ const AppointmentCard = ({ appointment, onAccept, onReject }) => {
 
   return (
     <Card
-      className="w-full max-w-2xl mb-4 cursor-pointer hover:shadow-md transition-shadow"
+      className="w-full max-w-4xl mb-4 cursor-pointer hover:shadow-md transition-shadow"
       onClick={handleClick}
     >
       <CardHeader className="flex flex-row items-center justify-between">
@@ -129,6 +131,20 @@ const AppointmentCard = ({ appointment, onAccept, onReject }) => {
               </div>
             </div>
           )}
+
+        {isMember && isCancellable && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCancelAppointment(appointment.id);
+            }}
+          >
+            <X className="h-4 w-4 mr-2" /> Cancel Appointment
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
