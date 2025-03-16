@@ -70,6 +70,7 @@ const MemberProfile = () => {
     setIsDropZoneOpen(false);
     setPreview(null);
     setFile(null);
+    setIsDialogOpen(false);
   };
 
   if (isLoading) return <Spinner />;
@@ -164,16 +165,13 @@ const MemberProfile = () => {
               <div className="mt-6 pt-6 border-t">
                 <div className="space-y-1 mb-4">
                   <p className="text-sm text-gray-500">About Me</p>
-                  <p className="text-gray-700">
-                    {memberDetails?.bio || "Add information about yourself"}
-                  </p>
+                  <p className="text-gray-700">{memberDetails?.bio || "N/A"}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-sm text-gray-500">Relationship Goals</p>
+                  <p className="text-sm text-gray-500">Relationship Goal</p>
                   <p className="text-gray-700">
-                    {memberDetails?.relationshipGoal ||
-                      "Add your relationship goals"}
+                    {memberDetails?.relationshipGoal || "N/A"}
                   </p>
                 </div>
               </div>
