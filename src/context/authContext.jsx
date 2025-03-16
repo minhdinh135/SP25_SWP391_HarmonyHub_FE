@@ -31,8 +31,17 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
   };
 
+  const updateAvatar = (avatarUrl) => {
+    const updatedUser = {
+      ...user,
+      avatarUrl: avatarUrl,
+    };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, updateAvatar, token, login, logout }}>
       {isLoaded ? children : null}
     </AuthContext.Provider>
   );

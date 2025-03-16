@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PersonalInfoDialog from "./components/PersonalInfoDialog";
 
 const MemberProfile = () => {
-  const { user } = useAuth();
+  const { user, updateAvatar } = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
   const [memberDetails, setMemberDetails] = useState(null);
@@ -53,8 +53,9 @@ const MemberProfile = () => {
 
     try {
       setIsLoading(true);
-      await updateAccountAvatar(user.accountId, file);
+      const data = await updateAccountAvatar(user.accountId, file);
       fetchData();
+      updateAvatar(data.avatarUrl);
       toast.success("Avatar updated successfully!");
     } catch (error) {
       console.log(error);

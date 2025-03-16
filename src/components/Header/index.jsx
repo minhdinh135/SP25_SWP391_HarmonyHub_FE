@@ -21,6 +21,7 @@ import { ArrowLeftSquare, Menu, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getFullName } from "@/utils/nameFormat";
+import { useEffect } from "react";
 
 const navLinks = {
   Home: "/",
@@ -95,7 +96,9 @@ const Header = () => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarImage
+                        src={user.avatarUrl || "https://github.com/shadcn.png"}
+                      />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                   </NavigationMenuTrigger>
