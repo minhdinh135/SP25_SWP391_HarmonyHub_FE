@@ -41,7 +41,7 @@ export const createBlog = async (payload) => {
 
 export const updateBlogStatus = async (id, status) => {
   try {
-    await api.put(`/${id}/UpdateStatus?status=${status}`);
+    await api.put(`/blogs/${id}/status?status=${status}`);
   } catch (error) {
     console.log(error);
     throw new Error("Error updating blog status");

@@ -1,3 +1,4 @@
+import { updateMemberDetails } from "@/api/accountApi";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,7 +27,7 @@ const PersonalInfoDialog = ({
   setIsDialogOpen,
   handleCancel,
 }) => {
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState(memberDetails);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,10 +37,25 @@ const PersonalInfoDialog = ({
     }));
   };
 
-  const handleSaveChanges = () => {
-    // Here you would make an API call to update the data
-    setIsDialogOpen(false);
-    toast.success("Profile updated successfully!");
+  const handleSaveChanges = async () => {
+    try {
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        birthdate: formData.birthdate,
+        gender: formData.gender,
+        bio: formData.bio,
+        relationshipGoal: formData.relationshipGoal,
+      };
+      console.log("Payload", payload);
+      await updateMemberDetails(memberDetails.id, payload);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsDialogOpen(false);
+    }
   };
 
   return (
@@ -64,22 +80,20 @@ const PersonalInfoDialog = ({
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
                   id="firstName"
+                  name="firstName"
                   placeholder="Enter your first name"
-                  value={memberDetails?.firstName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, firstName: e.target.value })
-                  }
+                  value={formData?.firstName}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
+                  name="lastName"
                   placeholder="Enter your last name"
-                  value={memberDetails?.lastName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, lastName: e.target.value })
-                  }
+                  value={formData?.lastName}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
@@ -89,20 +103,18 @@ const PersonalInfoDialog = ({
                 <Label htmlFor="birthDate">Birth Date</Label>
                 <Input
                   id="birthDate"
+                  name="birthdate"
                   type="date"
-                  value={memberDetails?.birthdate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, birthDate: e.target.value })
-                  }
+                  value={formData?.birthdate}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="gender">Gender</Label>
                 <Select
-                  value={memberDetails?.gender}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, gender: value })
-                  }
+                  name="gender"
+                  value={formData?.gender}
+                  onValueChange={handleInputChange}
                 >
                   <SelectTrigger id="gender">
                     <SelectValue placeholder="Select gender" />
@@ -120,28 +132,23 @@ const PersonalInfoDialog = ({
               <Label htmlFor="bio">Bio</Label>
               <Textarea
                 id="bio"
+                name="bio"
                 placeholder="Tell us about yourself..."
                 className="min-h-24"
-                value={memberDetails?.bio}
-                onChange={(e) =>
-                  setFormData({ ...formData, bio: e.target.value })
-                }
+                value={formData?.bio}
+                onChange={handleInputChange}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="relationshipGoals">Relationship Goals</Label>
+              <Label htmlFor="relationshipGoal">Relationship Goals</Label>
               <Textarea
-                id="relationshipGoals"
+                id="relationshipGoal"
+                name="relationshipGoal"
                 placeholder="What are you looking for in a relationship?"
                 className="min-h-24"
-                value={memberDetails?.relationshipGoal}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    relationshipGoals: e.target.value,
-                  })
-                }
+                value={formData?.relationshipGoal}
+                onChange={handleInputChange}
               />
             </div>
           </div>
