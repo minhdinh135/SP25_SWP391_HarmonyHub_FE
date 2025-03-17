@@ -1,21 +1,13 @@
-const { google } = require("googleapis");
-const calendar = google.calendar("v3");
+// 1. Create a utility function to generate Google Meet URLs
+// utils/meetingUtils.js
+export const generateGoogleMeetUrl = (appointmentId, title) => {
+  // Format the title for the URL
+  const formattedTitle = encodeURIComponent(title || 'Marital Counseling Session');
 
-async function createMeetEvent(auth, summary, startTime, endTime, attendees) {
-  const event = {
-    summary: summary,
-    start: { dateTime: startTime, timeZone: "UTC" },
-    end: { dateTime: endTime, timeZone: "UTC" },
-    attendees: attendees.map(email => ({ email })),
-    conferenceData: { createRequest: { requestId: "random-string" } },
-  };
+  // Create a unique meeting ID based on the appointment ID
+  const meetingId = `appointment-${appointmentId}`;
 
-  const response = await calendar.events.insert({
-    auth,
-    calendarId: "primary",
-    resource: event,
-    conferenceDataVersion: 1,
-  });
-
-  return response.data.hangoutLink; // Google Meet link
-}
+  // Generate the Google Meet URL
+  // Note: This is a simplified version. In a real implementation, you'd need to use the Google Calendar API
+  return `https://meet.google.com/${meetingId}`;
+};

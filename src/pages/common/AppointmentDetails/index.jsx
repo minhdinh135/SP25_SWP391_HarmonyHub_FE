@@ -474,7 +474,7 @@ const AppointmentDetails = () => {
           )}
         </CardContent>
         <CardFooter className="border-t pt-6 flex flex-wrap gap-3 justify-center">
-          {appointmentDetails?.status === AppointmentStatus.Pending && (
+          {appointmentDetails?.status === AppointmentStatus.Accepted && (
             <Button
               className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
               onClick={() => setPaymentDialogOpen(true)}
