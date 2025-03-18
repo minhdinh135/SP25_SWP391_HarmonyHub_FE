@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import api from "@/api/apiConfig"
+import { getAllQuizzes } from "@/api/quizApi";
+
+
 
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
@@ -14,22 +18,15 @@ const QuizList = () => {
     const fetchQuizzes = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
+        const response = await getAllQuizzes();
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch quizzes");
-        }
-
-        const result = await response.json();
-
-        // Filter quizzes where status equals 1 (Active)
-        const activeQuizzes = result.data.filter(quiz => quiz.status === 1);
+        const activeQuizzes = response.filter(quiz => quiz.status === 1);
         setQuizzes(activeQuizzes);
-        setError(null);
       } catch (err) {
         setError(err.message);
         console.error("Error fetching quizzes:", err);
       } finally {
+        setError(null);
         setLoading(false);
       }
     };

@@ -237,7 +237,7 @@ const PaymentResult = () => {
           {paymentData?.success ? (
             <Button
               className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
-              onClick={() => navigate(`/member/appointments/${appointmentDetails?.id}`)}
+              onClick={() => navigate(`/member/transactions/`)}
             >
               View Appointment Details
               <ArrowRight className="h-4 w-4" />
