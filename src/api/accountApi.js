@@ -88,6 +88,15 @@ export const updateTherapistDetails = async (therapistId, payload) => {
   }
 };
 
+export const addQualification = async (payload) => {
+  try {
+    await api.post(`/qualifications`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error adding qualification");
+  }
+};
+
 export const updateQualification = async (qualificationId, payload) => {
   try {
     await api.put(`/qualifications/${qualificationId}`, payload);
