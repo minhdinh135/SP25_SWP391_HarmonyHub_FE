@@ -23,7 +23,6 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +42,6 @@ const Login = () => {
     const payload = {
       email: form.email,
       password: form.password,
-      rememberMe,
     };
 
     try {

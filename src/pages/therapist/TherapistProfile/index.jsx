@@ -96,7 +96,7 @@ const TherapistProfile = () => {
             >
               <AvatarImage
                 src={
-                  therapistDetails?.avatarUrl ?? "https://github.com/shadcn.png"
+                  therapistDetails?.avatarUrl || "https://github.com/shadcn.png"
                 }
                 alt={`${therapistDetails?.firstName} ${therapistDetails?.lastName}`}
               />

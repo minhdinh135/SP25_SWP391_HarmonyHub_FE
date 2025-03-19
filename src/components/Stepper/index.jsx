@@ -36,16 +36,16 @@ const Stepper = ({
   }, [currentStep, onStepChange]);
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-8">
+    <div className="w-full mx-auto space-y-6">
       {/* Stepper Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-center">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
           const isCurrent = stepNumber === currentStep;
 
           return (
-            <div key={step} className="flex flex-1 items-center">
+            <div key={index} className="flex flex-1 items-center">
               {/* Step circle with number or check */}
               <div
                 className="relative flex items-center justify-center cursor-pointer"
