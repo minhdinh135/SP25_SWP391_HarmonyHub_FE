@@ -94,7 +94,7 @@ const MemberProfile = () => {
             >
               <AvatarImage
                 src={
-                  memberDetails?.avatarUrl ?? "https://github.com/shadcn.png"
+                  memberDetails?.avatarUrl || "https://github.com/shadcn.png"
                 }
                 alt={`${memberDetails?.firstName} ${memberDetails?.lastName}`}
               />
