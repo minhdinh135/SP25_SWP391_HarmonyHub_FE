@@ -15,6 +15,7 @@ import useAuth from "@/hooks/useAuth";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { getRoleText } from "@/utils/enumUtils";
 
 const Login = () => {
   const { login } = useAuth();
@@ -48,7 +49,11 @@ const Login = () => {
       const user = await accountLogin(payload);
       login(user);
       toast.success("Welcome back to Harmony Hub!");
-      navigate("/");
+      if (getRoleText(user.role) === "Admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error(
