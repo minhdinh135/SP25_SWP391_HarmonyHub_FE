@@ -14,8 +14,10 @@ const QualificationSection = ({ therapistDetails }) => {
               <div className="flex items-center gap-4">
                 {qualification.imageUrl && (
                   <img
-                    // src={qualification.imageUrl}
-                    src="https://www.github.com/shadcn.png"
+                    src={
+                      qualification.imageUrl ||
+                      "https://www.github.com/shadcn.png"
+                    }
                     alt={qualification.specialty.name}
                     className="w-16 h-16 object-cover rounded-full"
                   />
