@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import axios from "axios";
 import api from "@/api/apiConfig";
-import BASE_API_URL from "@/constants/api";
 const TherapistQuizManagement = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,11 +14,13 @@ const TherapistQuizManagement = () => {
     title: "",
     description: "",
     imageUrl: "",
-    questions: [{
-      content: "",
-      options: [{ content: "" }, { content: "" }],
-    }],
-    results: [{ content: "" }] // Added results array
+    questions: [
+      {
+        content: "",
+        options: [{ content: "" }, { content: "" }],
+      },
+    ],
+    results: [{ content: "" }], // Added results array
   });
   const quizzesPerPage = 6;
   useEffect(() => {
@@ -29,6 +29,7 @@ const TherapistQuizManagement = () => {
         const response = await api.get("/quiz");
         setQuizzes(response.data.data);
       } catch (err) {
+        console.log(err);
         setError("Failed to fetch quizzes");
       } finally {
         setLoading(false);
@@ -38,9 +39,9 @@ const TherapistQuizManagement = () => {
   }, []);
   const handleAddQuiz = async () => {
     try {
-      const formattedQuestions = newQuiz.questions.map(question => ({
+      const formattedQuestions = newQuiz.questions.map((question) => ({
         content: question.content,
-        options: question.options
+        options: question.options,
       }));
       const requestBody = {
         title: newQuiz.title,
@@ -48,8 +49,7 @@ const TherapistQuizManagement = () => {
         imageUrl: newQuiz.imageUrl,
         therapistId: 3, // Fixed therapist ID as specified
         questions: formattedQuestions,
-        results: newQuiz.results
-
+        results: newQuiz.results,
       };
       await api.post("/quiz/create", requestBody);
       const response = await api.get("/quiz");
@@ -59,12 +59,13 @@ const TherapistQuizManagement = () => {
         title: "",
         description: "",
         imageUrl: "",
-        questions: [{
-          content: "",
-          options: [{ content: "" }, { content: "" }],
-        }],
-        results: [{ content: "" }] // Added results array
-
+        questions: [
+          {
+            content: "",
+            options: [{ content: "" }, { content: "" }],
+          },
+        ],
+        results: [{ content: "" }], // Added results array
       });
     } catch (error) {
       console.error("Error adding quiz", error);
@@ -97,8 +98,8 @@ const TherapistQuizManagement = () => {
       ...newQuiz,
       questions: [
         ...newQuiz.questions,
-        { content: "", options: [{ content: "" }, { content: "" }] }
-      ]
+        { content: "", options: [{ content: "" }, { content: "" }] },
+      ],
     });
   };
   const removeQuestion = (questionIndex) => {
@@ -115,35 +116,41 @@ const TherapistQuizManagement = () => {
       setUploadingImage(true);
       const quizId = selectedQuiz.id;
       const formData = new FormData();
-      formData.append('imgUrl', file);  // Changed from 'image' to 'imgUrl'
-      const response = await api.put(
-        `/quiz/imgUrl/${quizId}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      console.log('API Response:', response.data);  // Log the response for debugging
+      formData.append("imgUrl", file); // Changed from 'image' to 'imgUrl'
+      const response = await api.put(`/quiz/imgUrl/${quizId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("API Response:", response.data); // Log the response for debugging
       // If successful, update the selected quiz's image URL with the returned data
       if (response.data && response.data.data && response.data.data.imageUrl) {
         // Update the selected quiz state with the new image URL
-        const updatedQuiz = { ...selectedQuiz, imageUrl: response.data.data.imageUrl };
+        const updatedQuiz = {
+          ...selectedQuiz,
+          imageUrl: response.data.data.imageUrl,
+        };
         setSelectedQuiz(updatedQuiz);
         // Also update the quiz in the quizzes array
-        const updatedQuizzes = quizzes.map(quiz =>
-          quiz.id === quizId ? { ...quiz, imageUrl: response.data.data.imageUrl } : quiz
+        const updatedQuizzes = quizzes.map((quiz) =>
+          quiz.id === quizId
+            ? { ...quiz, imageUrl: response.data.data.imageUrl }
+            : quiz,
         );
         setQuizzes(updatedQuizzes);
         // Show success message
         alert(`Image for Quiz ID: ${quizId} uploaded successfully!`);
       } else if (response.data && response.data.imageUrl) {
         // Alternative response format
-        const updatedQuiz = { ...selectedQuiz, imageUrl: response.data.imageUrl };
+        const updatedQuiz = {
+          ...selectedQuiz,
+          imageUrl: response.data.imageUrl,
+        };
         setSelectedQuiz(updatedQuiz);
-        const updatedQuizzes = quizzes.map(quiz =>
-          quiz.id === quizId ? { ...quiz, imageUrl: response.data.imageUrl } : quiz
+        const updatedQuizzes = quizzes.map((quiz) =>
+          quiz.id === quizId
+            ? { ...quiz, imageUrl: response.data.imageUrl }
+            : quiz,
         );
         setQuizzes(updatedQuizzes);
         alert(`Image for Quiz ID: ${quizId} uploaded successfully!`);
@@ -169,16 +176,30 @@ const TherapistQuizManagement = () => {
   const indexOfFirstQuiz = indexOfLastQuiz - quizzesPerPage;
   const currentQuizzes = quizzes.slice(indexOfFirstQuiz, indexOfLastQuiz);
   const totalPages = Math.ceil(quizzes.length / quizzesPerPage);
-  if (loading) return <div className="text-center text-lg font-semibold text-gray-700">Loading quizzes...</div>;
-  if (error) return <div className="text-center text-red-500 font-semibold">{error}</div>;
+  if (loading)
+    return (
+      <div className="text-center text-lg font-semibold text-gray-700">
+        Loading quizzes...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="text-center text-red-500 font-semibold">{error}</div>
+    );
   return (
     <DashboardLayout role="therapist">
       <div className="p-6 bg-gray-100 min-h-screen">
-        <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">Pre-Marriage Counselling Quizzes</h2>
+        <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">
+          Pre-Marriage Counselling Quizzes
+        </h2>
         <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-          These quizzes are designed to help couples explore essential topics before marriage, enhancing communication and understanding.
+          These quizzes are designed to help couples explore essential topics
+          before marriage, enhancing communication and understanding.
         </p>
-        <button className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded-lg" onClick={() => setShowAddQuizModal(true)}>
+        <button
+          className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded-lg"
+          onClick={() => setShowAddQuizModal(true)}
+        >
           Add Quiz
         </button>
         {showAddQuizModal && (
@@ -186,25 +207,33 @@ const TherapistQuizManagement = () => {
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl my-8 mx-4">
               <h3 className="text-xl font-semibold mb-4">Add New Quiz</h3>
               <div className="mb-6">
-                <h4 className="font-medium mb-2 text-gray-700">Quiz Information</h4>
+                <h4 className="font-medium mb-2 text-gray-700">
+                  Quiz Information
+                </h4>
                 <input
                   type="text"
                   placeholder="Title"
                   value={newQuiz.title}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewQuiz({ ...newQuiz, title: e.target.value })
+                  }
                   className="w-full p-2 mb-2 border border-gray-300 rounded"
                 />
                 <textarea
                   placeholder="Description"
                   value={newQuiz.description}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewQuiz({ ...newQuiz, description: e.target.value })
+                  }
                   className="w-full p-2 mb-2 border border-gray-300 rounded"
                 ></textarea>
                 <input
                   type="text"
                   placeholder="Image URL"
                   value={newQuiz.imageUrl}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, imageUrl: e.target.value })}
+                  onChange={(e) =>
+                    setNewQuiz({ ...newQuiz, imageUrl: e.target.value })
+                  }
                   className="w-full p-2 mb-2 border border-gray-300 rounded"
                 />
               </div>
@@ -219,7 +248,10 @@ const TherapistQuizManagement = () => {
                   </button>
                 </div>
                 {newQuiz.questions.map((question, qIndex) => (
-                  <div key={qIndex} className="border border-gray-200 p-4 rounded-lg mb-4">
+                  <div
+                    key={qIndex}
+                    className="border border-gray-200 p-4 rounded-lg mb-4"
+                  >
                     <div className="flex justify-between mb-2">
                       <h5 className="font-medium">Question {qIndex + 1}</h5>
                       {newQuiz.questions.length > 1 && (
@@ -235,12 +267,16 @@ const TherapistQuizManagement = () => {
                       type="text"
                       placeholder="Question content"
                       value={question.content}
-                      onChange={(e) => handleQuestionChange(qIndex, 'content', e.target.value)}
+                      onChange={(e) =>
+                        handleQuestionChange(qIndex, "content", e.target.value)
+                      }
                       className="w-full p-2 mb-3 border border-gray-300 rounded"
                     />
                     <div className="ml-4">
                       <div className="flex justify-between items-center mb-2">
-                        <h6 className="font-medium text-sm text-gray-600">Answer Options</h6>
+                        <h6 className="font-medium text-sm text-gray-600">
+                          Answer Options
+                        </h6>
                         <button
                           className="bg-blue-500 text-white text-xs px-2 py-1 rounded"
                           onClick={() => addOption(qIndex)}
@@ -254,7 +290,9 @@ const TherapistQuizManagement = () => {
                             type="text"
                             placeholder={`Option ${oIndex + 1}`}
                             value={option.content}
-                            onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                            onChange={(e) =>
+                              handleOptionChange(qIndex, oIndex, e.target.value)
+                            }
                             className="flex-grow p-2 border border-gray-300 rounded"
                           />
                           {question.options.length > 2 && (
@@ -297,28 +335,63 @@ const TherapistQuizManagement = () => {
                   className="bg-white border border-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 cursor-pointer"
                   onClick={() => setSelectedQuiz(quiz)}
                 >
-                  <img src={quiz.imageUrl} alt={quiz.title} className="w-full h-48 object-cover rounded-md" />
-                  <h3 className="text-xl font-semibold mt-4 text-gray-800">{quiz.title}</h3>
+                  <img
+                    src={quiz.imageUrl}
+                    alt={quiz.title}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                  <h3 className="text-xl font-semibold mt-4 text-gray-800">
+                    {quiz.title}
+                  </h3>
                   <p className="text-gray-600 mt-2">{quiz.description}</p>
-                  <span className={`mt-4 inline-block px-4 py-2 text-sm font-medium rounded-full ${quiz.status === 1 ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                  <span
+                    className={`mt-4 inline-block px-4 py-2 text-sm font-medium rounded-full ${quiz.status === 1 ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}
+                  >
                     {quiz.status === 1 ? "Active" : "Inactive"}
                   </span>
                 </div>
               ))}
             </div>
             <div className="flex justify-center mt-6 space-x-4">
-              <button className={`px-4 py-2 rounded-lg ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 text-white'}`} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Previous</button>
-              <span className="px-4 py-2 bg-gray-200 rounded-lg">Page {currentPage} of {totalPages}</span>
-              <button className={`px-4 py-2 rounded-lg ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 text-white'}`} onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Next</button>
+              <button
+                className={`px-4 py-2 rounded-lg ${currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-indigo-600 text-white"}`}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span className="px-4 py-2 bg-gray-200 rounded-lg">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                className={`px-4 py-2 rounded-lg ${currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-indigo-600 text-white"}`}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
             </div>
           </>
         ) : (
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <button className="text-indigo-600 mb-4" onClick={() => setSelectedQuiz(null)}>← Back to Quizzes</button>
+            <button
+              className="text-indigo-600 mb-4"
+              onClick={() => setSelectedQuiz(null)}
+            >
+              ← Back to Quizzes
+            </button>
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">{selectedQuiz.title}</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                {selectedQuiz.title}
+              </h3>
               <div className="relative mb-4">
-                <img src={selectedQuiz.imageUrl} alt={selectedQuiz.title} className="w-full h-60 object-cover rounded-md" />
+                <img
+                  src={selectedQuiz.imageUrl}
+                  alt={selectedQuiz.title}
+                  className="w-full h-60 object-cover rounded-md"
+                />
                 <div className="absolute bottom-4 right-4">
                   <input
                     ref={fileInputRef}
@@ -338,32 +411,51 @@ const TherapistQuizManagement = () => {
               </div>
               <p className="text-gray-600 mb-4">{selectedQuiz.description}</p>
               <div className="flex items-center mb-6">
-                <span className={`px-4 py-2 text-sm font-medium rounded-full ${selectedQuiz.status === 1 ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                <span
+                  className={`px-4 py-2 text-sm font-medium rounded-full ${selectedQuiz.status === 1 ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}
+                >
                   {selectedQuiz.status === 1 ? "Active" : "Inactive"}
                 </span>
-                <span className="ml-4 text-gray-500">Quiz ID: {selectedQuiz.id}</span>
+                <span className="ml-4 text-gray-500">
+                  Quiz ID: {selectedQuiz.id}
+                </span>
               </div>
             </div>
             <div>
-              <h4 className="text-xl font-semibold text-gray-700 mb-4">Questions</h4>
-              {selectedQuiz.questionResponse && selectedQuiz.questionResponse.length > 0 ? (
+              <h4 className="text-xl font-semibold text-gray-700 mb-4">
+                Questions
+              </h4>
+              {selectedQuiz.questionResponse &&
+              selectedQuiz.questionResponse.length > 0 ? (
                 <div className="space-y-6">
                   {selectedQuiz.questionResponse.map((question, qIndex) => (
-                    <div key={qIndex} className="border border-gray-200 p-4 rounded-lg">
-                      <h5 className="font-medium text-lg mb-3">Question {qIndex + 1}: {question.content}</h5>
+                    <div
+                      key={qIndex}
+                      className="border border-gray-200 p-4 rounded-lg"
+                    >
+                      <h5 className="font-medium text-lg mb-3">
+                        Question {qIndex + 1}: {question.content}
+                      </h5>
                       <div className="ml-4">
-                        <h6 className="font-medium text-sm text-gray-600 mb-2">Answer Options:</h6>
+                        <h6 className="font-medium text-sm text-gray-600 mb-2">
+                          Answer Options:
+                        </h6>
                         <ul className="list-disc ml-6 space-y-2">
-                          {question.optionResponse && question.optionResponse.map((option, oIndex) => (
-                            <li key={oIndex} className="text-gray-700">{option.content}</li>
-                          ))}
+                          {question.optionResponse &&
+                            question.optionResponse.map((option, oIndex) => (
+                              <li key={oIndex} className="text-gray-700">
+                                {option.content}
+                              </li>
+                            ))}
                         </ul>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-4 text-gray-500">No questions available for this quiz.</div>
+                <div className="text-center py-4 text-gray-500">
+                  No questions available for this quiz.
+                </div>
               )}
             </div>
           </div>

@@ -31,6 +31,7 @@ const TherapistProfile = () => {
     try {
       setIsLoading(true);
       const data = await getTherapistDetails(user.accountId);
+      console.log(data);
       setTherapistDetails(data);
     } catch (error) {
       console.log(error);

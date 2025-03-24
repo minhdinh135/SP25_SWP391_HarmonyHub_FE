@@ -12,16 +12,14 @@ const QualificationSection = ({ therapistDetails }) => {
               className="bg-gray-50 p-4 rounded-lg shadow-sm"
             >
               <div className="flex items-center gap-4">
-                {qualification.imageUrl && (
-                  <img
-                    src={
-                      qualification.imageUrl ||
-                      "https://www.github.com/shadcn.png"
-                    }
-                    alt={qualification.specialty.name}
-                    className="w-16 h-16 object-cover rounded-full"
-                  />
-                )}
+                <img
+                  src={
+                    qualification.imageUrl ||
+                    "https://www.github.com/shadcn.png"
+                  }
+                  alt={qualification.specialty.name}
+                  className="w-16 h-16 object-cover rounded-full"
+                />
                 <div>
                   <p className="font-medium">{qualification.specialty.name}</p>
                   <p className="text-sm text-gray-600">
