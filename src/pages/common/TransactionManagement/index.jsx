@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Spinner from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +13,7 @@ import {
 import useAuth from "@/hooks/useAuth";
 import { formatCurrencyInVND } from "@/utils/currencyFormat";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { getAllTransactions } from "@/api/transactionApi";
 
 const TransactionManagement = ({ role = "member" }) => {
   const { user } = useAuth();
@@ -24,36 +24,33 @@ const TransactionManagement = ({ role = "member" }) => {
     const fetchTransactions = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          "https://harmony-backend-tlgv.onrender.com/api/transactions"
+        const data = await getAllTransactions();
+
+        const formattedTransactions = data.map((transaction) => ({
+          id: transaction.transactionId, // Using transactionId as the unique id
+          transactionId: transaction.transactionId,
+          amount: transaction.amount,
+          paymentMethod: getPaymentMethodName(transaction.paymentMethod),
+          description: transaction.description,
+          senderId: transaction.senderId,
+          receiverId: transaction.receiverId,
+          status: getStatusName(transaction.status),
+          date: new Date().toLocaleDateString(), // Using current date as API doesn't provide date
+          type: determineTransactionType(transaction, user.accountId),
+          senderFullName: transaction.senderFullName,
+          receiverFullName: transaction.receiverFullName,
+          appointmentReference: transaction.appointmentId
+            ? `Appointment #${transaction.appointmentId}`
+            : null,
+        }));
+
+        const filterdTransactions = formattedTransactions.filter(
+          (item) => item.senderId === user.accountId,
         );
 
-        if (response.data.statusCode === 200) {
-          // Transform API data to match component's expected format
-          const formattedTransactions = response.data.data.map((transaction) => ({
-            id: transaction.transactionId, // Using transactionId as the unique id
-            transactionId: transaction.transactionId,
-            amount: transaction.amount,
-            paymentMethod: getPaymentMethodName(transaction.paymentMethod),
-            description: transaction.description,
-            senderId: transaction.senderId,
-            receiverId: transaction.receiverId,
-            status: getStatusName(transaction.status),
-            date: new Date().toLocaleDateString(), // Using current date as API doesn't provide date
-            type: determineTransactionType(transaction, user.accountId),
-            senderFullName: transaction.senderFullName,
-            receiverFullName: transaction.receiverFullName,
-            appointmentReference: transaction.appointmentId
-              ? `Appointment #${transaction.appointmentId}`
-              : null
-          }));
+        console.log(filterdTransactions);
 
-          const filterdTransactions = formattedTransactions.filter(item => item.senderId === user.accountId);
-
-          console.log(filterdTransactions);
-
-          setTransactions(filterdTransactions);
-        }
+        setTransactions(filterdTransactions);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       } finally {
@@ -76,7 +73,7 @@ const TransactionManagement = ({ role = "member" }) => {
     const methods = {
       1: "Bank Transfer",
       2: "Credit Card",
-      3: "E-Wallet"
+      3: "E-Wallet",
       // Add more as needed
     };
     return methods[methodCode] || "Unknown";
@@ -87,7 +84,7 @@ const TransactionManagement = ({ role = "member" }) => {
     const statuses = {
       1: "completed",
       2: "pending",
-      3: "cancelled"
+      3: "cancelled",
       // Add more as needed
     };
     return statuses[statusCode] || "unknown";
@@ -95,10 +92,10 @@ const TransactionManagement = ({ role = "member" }) => {
 
   const getStatusColor = (status) => {
     const colors = {
-      "completed": "bg-green-500",
-      "pending": "bg-yellow-500",
-      "cancelled": "bg-red-500",
-      "unknown": "bg-gray-500"
+      completed: "bg-green-500",
+      pending: "bg-yellow-500",
+      cancelled: "bg-red-500",
+      unknown: "bg-gray-500",
     };
     return colors[status] || "bg-gray-500";
   };

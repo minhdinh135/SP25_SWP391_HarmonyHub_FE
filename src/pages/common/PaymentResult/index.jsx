@@ -1,13 +1,27 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, CreditCard, CheckCircle, XCircle, ChevronLeft, ArrowRight } from "lucide-react";
+import {
+  Calendar,
+  CreditCard,
+  CheckCircle,
+  XCircle,
+  ChevronLeft,
+  ArrowRight,
+} from "lucide-react";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner";
 import axios from "axios";
+import { getAppointmentDetails } from "@/api/appointmentApi";
 
 const PaymentResult = () => {
   const location = useLocation();
@@ -34,17 +48,18 @@ const PaymentResult = () => {
           orderId,
           amount: parseFloat(amount / 100),
           orderInfo,
-          payDate
+          payDate,
         };
 
         setPaymentData(paymentInfo);
 
         // If payment was successful and it's for an appointment, update the appointment status
         if (paymentInfo.success && orderInfo === "purchase appointment") {
+          // TODO:: Recheck this code section
           // Extract the appointmentId from the payment record on your backend
           // This is an example implementation - you'll need to adjust according to your API
           const response = await axios.get(
-            `https://harmony-backend-tlgv.onrender.com/api/payments/vnpay/${orderId}`
+            `https://harmony-backend-tlgv.onrender.com/api/payments/vnpay/${orderId}`,
           );
 
           if (response.data && response.data.statusCode === 200) {
@@ -53,19 +68,16 @@ const PaymentResult = () => {
 
             // Fetch appointment details if available
             if (appointmentId) {
-              const appointmentResponse = await axios.get(
-                `https://harmony-backend-tlgv.onrender.com/api/appointments/${appointmentId}`
-              );
-
-              if (appointmentResponse.data && appointmentResponse.data.statusCode === 200) {
-                setAppointmentDetails(appointmentResponse.data.data);
-              }
+              const data = await getAppointmentDetails(appointmentId);
+              setAppointmentDetails(data);
             }
           }
         }
       } catch (error) {
         console.error("Error processing payment result:", error);
-        toast.error("Failed to process payment result. Please contact support.");
+        toast.error(
+          "Failed to process payment result. Please contact support.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -86,7 +98,9 @@ const PaymentResult = () => {
       const minute = dateString.substring(10, 12);
       const second = dateString.substring(12, 14);
 
-      const date = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+      const date = new Date(
+        `${year}-${month}-${day}T${hour}:${minute}:${second}`,
+      );
 
       return date.toLocaleString("en-US", {
         year: "numeric",
@@ -94,7 +108,7 @@ const PaymentResult = () => {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit"
+        second: "2-digit",
       });
     }
 
@@ -105,21 +119,27 @@ const PaymentResult = () => {
       month: "short",
       day: "numeric",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     });
   };
 
   const formatCurrency = (amount) => {
     if (!amount && amount !== 0) return "N/A";
     // Format as VND
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
   };
 
   // Convert VND to USD (approximately 24,000 VND = 1 USD)
   const convertToUSD = (vndAmount) => {
     if (!vndAmount && vndAmount !== 0) return "N/A";
     const usdAmount = vndAmount / 24000;
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(usdAmount);
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(usdAmount);
   };
 
   if (isLoading) return <Spinner />;
@@ -145,8 +165,11 @@ const PaymentResult = () => {
             </CardTitle>
           </div>
           <Badge
-            className={`${paymentData?.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-              } px-3 py-1.5 text-base`}
+            className={`${
+              paymentData?.success
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            } px-3 py-1.5 text-base`}
           >
             {paymentData?.success ? "SUCCESSFUL" : "FAILED"}
           </Badge>
@@ -206,7 +229,9 @@ const PaymentResult = () => {
                 <div className="flex items-center gap-3">
                   <Calendar className="h-5 w-5 text-gray-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Session Date</p>
+                    <p className="text-sm text-muted-foreground">
+                      Session Date
+                    </p>
                     <p>{formatDate(appointmentDetails?.startTime)}</p>
                   </div>
                 </div>
