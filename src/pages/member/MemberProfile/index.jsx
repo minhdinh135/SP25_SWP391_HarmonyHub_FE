@@ -8,7 +8,7 @@ import { getAccountStatusText } from "@/utils/enumUtils";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import useAuth from "@/hooks/useAuth";
-import { formatBirthdate } from "@/utils/dateUtils";
+import { formatDate } from "@/utils/dateUtils";
 import { ChevronRight, Edit, Mail, Phone } from "lucide-react";
 import { useCallback } from "react";
 import AvatarDialog from "./components/AvatarDialog";
@@ -147,7 +147,7 @@ const MemberProfile = () => {
                 <div className="space-y-1">
                   <p className="text-sm text-gray-500">Birthdate</p>
                   <p className="text-gray-700">
-                    {formatBirthdate(memberDetails?.birthdate)}
+                    {formatDate(memberDetails?.birthdate)}
                   </p>
                 </div>
                 <div className="space-y-1">
