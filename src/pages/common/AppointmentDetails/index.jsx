@@ -13,14 +13,10 @@ import {
   Calendar,
   Clock,
   Video,
-  MessageSquare,
-  Star,
   User,
   UserCheck,
   Package,
   ChevronLeft,
-  Pencil,
-  Plus,
   CreditCard,
 } from "lucide-react";
 import { getAppointmentStatusText } from "@/utils/enumUtils";
@@ -46,13 +42,19 @@ import {
 import api from "@/api/apiConfig";
 import { getTherapistDetails } from "@/api/accountApi";
 import { createVnPayPaymentUrl } from "@/api/vnpayApi";
-import { Textarea } from "@/components/ui/textarea";
+import useAuth from "@/hooks/useAuth";
+import { formatDate, formatTime } from "@/utils/dateUtils";
+import { convertToVND } from "@/utils/currencyUtils";
+import UpdateFeedbackDialog from "./components/UpdateFeedbackDialog";
+import UpdateTherapistNoteDialog from "./components/UpdateTherapistNoteDialog";
+import FeedbackSection from "./components/FeedbackSection";
+import NoteSection from "./components/NoteSection";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [appointmentDetails, setAppointmentDetails] = useState(null);
-  const [therapistPackages, setTherapistPackages] = useState([]);
   const [currentPackage, setCurrentPackage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -66,21 +68,6 @@ const AppointmentDetails = () => {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isUpdatingMeetUrl, setIsUpdatingMeetUrl] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-
-  // Get user info from localStorage
-  useEffect(() => {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        const userData = JSON.parse(userStr);
-        setCurrentUser(userData);
-        console.log("Current user role:", userData.role);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -100,83 +87,10 @@ const AppointmentDetails = () => {
     }
   };
 
-  // Auto-refresh data periodically for members to see therapist updates
-  useEffect(() => {
-    // Only set up auto-refresh for members (role=1) and only for accepted appointments
-    if (
-      !currentUser ||
-      currentUser.role !== 1 ||
-      !appointmentDetails ||
-      appointmentDetails.status !== AppointmentStatus.Accepted
-    ) {
-      return;
-    }
-
-    // If the meetUrl is not set or is a placeholder, set up periodic refresh
-    if (
-      !appointmentDetails.meetUrl ||
-      appointmentDetails.meetUrl === "string" ||
-      appointmentDetails.meetUrl === "https://string/"
-    ) {
-      console.log(
-        "Setting up auto-refresh for member to check for meeting URL updates",
-      );
-
-      // Show initial notification to let member know auto-refresh is active
-      toast.info("Waiting for therapist to set up meeting", {
-        description:
-          "We're checking for updates automatically. You'll be notified when the therapist creates the meeting room.",
-        duration: 5000,
-        id: "waiting-for-meeting", // Using an ID prevents duplicate toasts
-      });
-
-      // Refresh every 15 seconds to check for therapist updates (reduced from 30 seconds)
-      const refreshInterval = setInterval(() => {
-        console.log(
-          "Auto-refreshing appointment data to check for meeting URL",
-        );
-        fetchData().then(() => {
-          // Check if meeting URL was found after refresh
-          if (
-            appointmentDetails?.meetUrl &&
-            appointmentDetails.meetUrl !== "string" &&
-            appointmentDetails.meetUrl !== "https://string/"
-          ) {
-            toast.success("Meeting room is ready!", {
-              description:
-                "Your therapist has set up the meeting room. You can now join the session.",
-              duration: 8000,
-              id: "meeting-ready",
-            });
-          }
-        });
-      }, 15000); // 15 seconds
-
-      return () => clearInterval(refreshInterval);
-    } else if (
-      appointmentDetails.meetUrl &&
-      appointmentDetails.meetUrl !== "string" &&
-      appointmentDetails.meetUrl !== "https://string/"
-    ) {
-      // If a valid meeting URL is detected, show a success notification
-      console.log("Valid meeting URL detected:", appointmentDetails.meetUrl);
-
-      // Show this notification only once when a valid URL is first detected
-      toast.success("Meeting room is ready!", {
-        description:
-          "Your therapist has set up the meeting room. You can now join the session.",
-        duration: 8000,
-        id: "meeting-ready",
-      });
-    }
-  }, [currentUser, appointmentDetails?.meetUrl]);
-
   const fetchTherapistData = async (therapistId, packageName) => {
     try {
       const data = await getTherapistDetails(therapistId);
-      setTherapistPackages(data.packages || []);
 
-      // Find the matching package by name
       const matchedPackage = data.packages.find(
         (pkg) => pkg.name === packageName,
       );
@@ -214,12 +128,12 @@ const AppointmentDetails = () => {
       toast.error("Please select a rating before submitting");
       return;
     }
+
     try {
       setIsSubmitting(true);
       const payload = {
         feedbackRating: rating,
         feedbackContent: feedbackContent,
-        feedbackDate: new Date().toISOString(),
       };
       console.log(payload);
       await updateAppointmentFeedback(id, payload);
@@ -252,24 +166,12 @@ const AppointmentDetails = () => {
     }
   };
 
-  // Convert USD to VND (1 USD = approximately 24,000 VND)
-  const convertToVND = (usdPrice) => {
-    if (!usdPrice && usdPrice !== 0) return 0;
-    // If price is already a number, use it directly
-    const usdAmount =
-      typeof usdPrice === "number"
-        ? usdPrice
-        : parseFloat(usdPrice.toString().replace(/[^0-9.]/g, ""));
-    return Math.round(usdAmount * 24000);
-  };
-
   const handlePayment = async () => {
     try {
       setIsProcessingPayment(true);
 
       // Use the price from the therapist API if available, otherwise fallback to packagePrice
-      const packagePrice =
-        currentPackage?.price || appointmentDetails?.packagePrice || "0";
+      const packagePrice = currentPackage?.price || "0";
       const amountInVND = convertToVND(packagePrice);
 
       const payload = {
@@ -289,58 +191,7 @@ const AppointmentDetails = () => {
     }
   };
 
-  const StarRating = () => {
-    return (
-      <div className="flex items-center space-x-1 mb-4">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            onClick={() => setRating(star)}
-            className="focus:outline-none"
-          >
-            <Star
-              className={`h-8 w-8 ${
-                star <= rating
-                  ? "text-yellow-500 fill-yellow-500"
-                  : "text-gray-300"
-              } hover:text-yellow-400 transition-colors`}
-            />
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   if (isLoading) return <Spinner />;
-
-  const formatDateTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  // Get the formatted price display for UI
-  const getFormattedPrice = () => {
-    if (currentPackage?.price) {
-      return `$${currentPackage.price}`;
-    }
-    return appointmentDetails?.packagePrice || "Price not available";
-  };
 
   // Function to join Google Meet session
   const joinMeeting = async () => {
@@ -365,7 +216,7 @@ const AppointmentDetails = () => {
         );
 
         // For members, show a message instructing them to wait and force refresh
-        if (currentUser && currentUser.role === 1) {
+        if (user.role === 1) {
           toast.info("Checking for meeting room updates", {
             description: "We're checking with the server for updates...",
             id: "checking-meeting",
@@ -410,7 +261,7 @@ const AppointmentDetails = () => {
         }
 
         // For therapists: Create a new Google Meet meeting and auto-update the URL
-        if (currentUser && currentUser.role === 2) {
+        if (user.role === 2) {
           // Launch Google Meet in a new window and store the reference to access it later
           const meetWindow = window.open(
             "https://meet.google.com/new",
@@ -664,8 +515,7 @@ const AppointmentDetails = () => {
       </Button>
 
       {/* Add a refresh button for members */}
-      {currentUser &&
-        currentUser.role === 1 &&
+      {user.role === 1 &&
         appointmentDetails?.status === AppointmentStatus.Accepted && (
           <Button
             variant="outline"
@@ -711,23 +561,8 @@ const AppointmentDetails = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Time</p>
                   <p>
-                    {new Date(appointmentDetails?.startTime).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      },
-                    )}{" "}
-                    -{" "}
-                    {new Date(appointmentDetails?.endTime).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      },
-                    )}
+                    {formatTime(appointmentDetails?.startTime)} -{" "}
+                    {formatTime(appointmentDetails?.endTime)}
                   </p>
                 </div>
               </div>
@@ -744,7 +579,7 @@ const AppointmentDetails = () => {
                         appointmentDetails.meetUrl === "string" ||
                         appointmentDetails.meetUrl === "https://string/" ? (
                           <div>
-                            {currentUser && currentUser.role === 1 ? (
+                            {user.role === 1 ? (
                               <div className="border border-amber-200 bg-amber-50 rounded-md p-3 mb-3">
                                 <h4 className="text-sm font-medium text-amber-800 flex items-center">
                                   <Clock className="h-4 w-4 mr-1" /> Waiting for
@@ -788,14 +623,14 @@ const AppointmentDetails = () => {
                               className="bg-green-600 hover:bg-green-700 text-white w-full flex items-center gap-2 justify-center mb-2"
                             >
                               <Video className="h-4 w-4" />
-                              {currentUser && currentUser.role === 2
+                              {user.role === 2
                                 ? isSessionActive
                                   ? "Join Active Session"
                                   : "Create Meeting Room"
                                 : "Check Meeting Status"}
                             </Button>
 
-                            {currentUser && currentUser.role === 2 && (
+                            {user.role === 2 && (
                               <div className="mt-2">
                                 <Button
                                   variant="outline"
@@ -815,7 +650,7 @@ const AppointmentDetails = () => {
                               </div>
                             )}
 
-                            {currentUser && currentUser.role === 1 && (
+                            {user.role === 1 && (
                               <div>
                                 <p className="text-xs text-gray-500 mt-1">
                                   Has your therapist already shared a meeting
@@ -827,7 +662,7 @@ const AppointmentDetails = () => {
                           </div>
                         ) : (
                           <div className="flex flex-col gap-2">
-                            {currentUser && currentUser.role === 1 && (
+                            {user.role === 1 && (
                               <div className="border border-green-200 bg-green-50 rounded-md p-3 mb-3">
                                 <h4 className="text-sm font-medium text-green-800 flex items-center">
                                   <Video className="h-4 w-4 mr-1" /> Meeting
@@ -858,7 +693,7 @@ const AppointmentDetails = () => {
                               </p>
                             </div>
 
-                            {currentUser && currentUser.role === 2 && (
+                            {user.role === 2 && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -883,10 +718,9 @@ const AppointmentDetails = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Package</p>
                   <p>{appointmentDetails?.packageName}</p>
-                  {(currentPackage?.price ||
-                    appointmentDetails?.packagePrice) && (
+                  {currentPackage?.price && (
                     <p className="text-sm font-medium text-blue-600">
-                      {getFormattedPrice()}
+                      {currentPackage?.price || "Price not available"}
                       {currentPackage?.minutesPerAppointment && (
                         <span className="text-gray-500 ml-2">
                           ({currentPackage.minutesPerAppointment} min)
@@ -922,121 +756,17 @@ const AppointmentDetails = () => {
             </div>
           </div>
           <Separator />
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Notes</h3>
-              {appointmentDetails?.status === AppointmentStatus.Completed && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-1"
-                  onClick={openTherapistNoteDialog}
-                >
-                  {appointmentDetails?.therapistNote ? (
-                    <>
-                      <Pencil className="h-3 w-3" />
-                      Edit Note
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="h-3 w-3" />
-                      Add Note
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
-            {appointmentDetails?.clientNote && (
-              <div className="rounded-lg bg-slate-50 p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <MessageSquare className="h-4 w-4 text-slate-500" />
-                  <span className="font-medium">Client Note:</span>
-                </div>
-                <p className="text-slate-700">
-                  {appointmentDetails?.clientNote}
-                </p>
-              </div>
-            )}
-            {appointmentDetails?.therapistNote ? (
-              <div className="rounded-lg bg-slate-50 p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <MessageSquare className="h-4 w-4 text-slate-500" />
-                    <span className="font-medium">Therapist Note:</span>
-                  </div>
-                </div>
-                <p className="text-slate-700">
-                  {appointmentDetails?.therapistNote}
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-lg border border-dashed border-slate-200 p-4 text-center">
-                <p className="text-slate-500 mb-3">No therapist notes yet</p>
-                {appointmentDetails?.status === AppointmentStatus.Completed && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-1 mx-auto"
-                    onClick={openTherapistNoteDialog}
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add Session Notes
-                  </Button>
-                )}
-              </div>
-            )}
-            {!appointmentDetails?.clientNote &&
-              !appointmentDetails?.therapistNote && (
-                <p className="text-muted-foreground italic">
-                  No notes available for this appointment.
-                </p>
-              )}
-          </div>
+
+          <NoteSection
+            appointmentDetails={appointmentDetails}
+            openTherapistNoteDialog={openTherapistNoteDialog}
+          />
+
           {appointmentDetails?.feedbackRating && (
-            <>
-              <Separator />
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Feedback</h3>
-                  {appointmentDetails?.status ===
-                    AppointmentStatus.Completed && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1"
-                      onClick={() => openFeedbackDialog(true)}
-                    >
-                      <Pencil className="h-3 w-3" />
-                      Edit Feedback
-                    </Button>
-                  )}
-                </div>
-                <div className="rounded-lg bg-blue-50 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                      <span className="font-medium">Client Rating:</span>
-                      <span className="text-lg font-semibold">
-                        {appointmentDetails.feedbackRating}/5
-                      </span>
-                    </div>
-                    {appointmentDetails?.feedbackDate && (
-                      <p className="text-xs text-muted-foreground">
-                        Submitted on{" "}
-                        {formatDateTime(appointmentDetails.feedbackDate)}
-                      </p>
-                    )}
-                  </div>
-                  {appointmentDetails?.feedbackContent && (
-                    <div className="mt-2">
-                      <p className="text-blue-800">
-                        {appointmentDetails.feedbackContent}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </>
+            <FeedbackSection
+              appointmentDetails={appointmentDetails}
+              openFeedbackDialog={openFeedbackDialog}
+            />
           )}
         </CardContent>
         <CardFooter className="border-t pt-6 flex flex-wrap gap-3 justify-center">
@@ -1108,10 +838,7 @@ const AppointmentDetails = () => {
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Price (USD):</span>
                 <span className="font-medium">
-                  $
-                  {currentPackage?.price ||
-                    appointmentDetails?.packagePrice?.replace("$", "") ||
-                    "N/A"}
+                  ${currentPackage?.price || "N/A"}
                 </span>
               </div>
               <Separator className="my-2" />
@@ -1151,97 +878,28 @@ const AppointmentDetails = () => {
       </Dialog>
 
       {/* Feedback Dialog */}
-      <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Rate Your Session</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="text-center mb-2">
-              <p className="text-sm text-gray-500 mb-2">
-                How would you rate your session with
-              </p>
-              <p className="font-medium">
-                {appointmentDetails?.therapistFullName}
-              </p>
-            </div>
-            <div className="flex justify-center my-4">
-              <StarRating />
-            </div>
-            <Textarea
-              placeholder="Share your experience with this therapist"
-              value={feedbackContent}
-              onChange={(e) => setFeedbackContent(e.target.value)}
-              className="min-h-20"
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setFeedbackOpen(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleFeedbackSubmit}
-              className="bg-blue-600 hover:bg-blue-700"
-              disabled={isSubmitting || rating === 0}
-            >
-              {isSubmitting ? "Submitting..." : "Submit Feedback"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <UpdateFeedbackDialog
+        appointmentDetails={appointmentDetails}
+        feedbackOpen={feedbackOpen}
+        setFeedbackOpen={setFeedbackOpen}
+        rating={rating}
+        setRating={setRating}
+        feedbackContent={feedbackContent}
+        setFeedbackContent={setFeedbackContent}
+        handleFeedbackSubmit={handleFeedbackSubmit}
+        isSubmitting={isSubmitting}
+      />
 
       {/* Therapist Note Dialog */}
-      <Dialog open={therapistNoteOpen} onOpenChange={setTherapistNoteOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {appointmentDetails?.therapistNote
-                ? "Edit Session Notes"
-                : "Add Session Notes"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="mb-2">
-              <p className="text-sm text-gray-500 mb-2">
-                {appointmentDetails?.therapistNote
-                  ? "Update your notes for this session"
-                  : "Add your notes for this session with"}
-              </p>
-              {!appointmentDetails?.therapistNote && (
-                <p className="font-medium">
-                  {appointmentDetails?.memberFullName}
-                </p>
-              )}
-            </div>
-            <Textarea
-              placeholder="Enter your session notes here..."
-              value={therapistNoteContent}
-              onChange={(e) => setTherapistNoteContent(e.target.value)}
-              className="min-h-40"
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setTherapistNoteOpen(false)}
-              disabled={isSubmittingNote}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleTherapistNoteSubmit}
-              className="bg-blue-600 hover:bg-blue-700"
-              disabled={isSubmittingNote || !therapistNoteContent.trim()}
-            >
-              {isSubmittingNote ? "Saving..." : "Save Notes"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <UpdateTherapistNoteDialog
+        appointmentDetails={appointmentDetails}
+        therapistNoteContent={therapistNoteContent}
+        setTherapistNoteContent={setTherapistNoteContent}
+        therapistNoteOpen={therapistNoteOpen}
+        setTherapistNoteOpen={setTherapistNoteOpen}
+        handleTherapistNoteSubmit={handleTherapistNoteSubmit}
+        isSubmittingNote={isSubmittingNote}
+      />
     </div>
   );
 };
