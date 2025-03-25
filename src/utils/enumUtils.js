@@ -2,6 +2,7 @@ import {
   AppointmentStatus,
   BlogStatus,
   QuizStatus,
+  ReportStatus,
   TransactionStatus,
 } from "@/constants/status";
 
@@ -57,6 +58,21 @@ export const getQuizStatusText = (statusEnum) => {
     case QuizStatus.Pending:
       return "Pending";
     case QuizStatus.Inactive:
+      return "Inactive";
+    default:
+      return "Active";
+  }
+};
+
+export const getReportStatusText = (statusEnum) => {
+  switch (statusEnum) {
+    case ReportStatus.Active:
+      return "Active";
+    case ReportStatus.Pending:
+      return "Pending";
+    case ReportStatus.Resolved:
+      return "Resolved";
+    case ReportStatus.Inactive:
       return "Inactive";
     default:
       return "Active";

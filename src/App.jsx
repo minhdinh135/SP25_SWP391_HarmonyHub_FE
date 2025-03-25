@@ -1,43 +1,44 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Unauthorized from "./pages/error/Unauthorized";
-import NotFound from "./pages/error/NotFound";
 import { Roles } from "./constants/role";
 import AdminLayout from "./layouts/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import Accounts from "./pages/admin/Accounts";
 import CommonLayout from "./layouts/CommonLayout";
+import Accounts from "./pages/admin/Accounts";
+import AdminBlogManagement from "./pages/admin/AdminBlogManagement";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminQuizManagement from "./pages/admin/AdminQuizManagement";
+import AdminReportManagement from "./pages/admin/AdminReportManagement";
+import AboutUsPage from "./pages/common/About";
+import AppointmentDetails from "./pages/common/AppointmentDetails";
+import { BlogPost } from "./pages/common/BlogDetails";
+import { BlogList } from "./pages/common/BlogList";
+import BookAppointmentForm from "./pages/common/BookAppointmentForm";
 import Homepage from "./pages/common/Homepage";
 import Login from "./pages/common/Login";
-import SignUp from "./pages/common/SignUp";
-import { BlogList } from "./pages/common/BlogList";
-import { BlogPost } from "./pages/common/BlogDetails";
-import TherapistList from "./pages/common/TherapistList";
-import TherapistDetails from "./pages/common/TherapistDetails";
-import AboutUsPage from "./pages/common/About";
-import QuizList from "./pages/common/QuizList";
-import QuizDetails from "./pages/common/QuizDetails";
-import QuizResults from "./pages/common/QuizResults";
-import TakeQuiz from "./pages/common/TakeQuizPage";
-import BookAppointmentForm from "./pages/common/BookAppointmentForm";
-import MemberProfile from "./pages/member/MemberProfile";
-import TherapistProfile from "./pages/therapist/TherapistProfile";
-import MemberAppointmentList from "./pages/member/MemberAppointmentList";
-import MemberSchedule from "./pages/member/MemberSchedule";
-import TherapistAppointmentList from "./pages/therapist/TherapistAppointmentList";
-import TherapistSchedule from "./pages/therapist/TherapistSchedule";
-import MemberTransactionManagement from "./pages/member/MemberTransactionManagement";
-import TherapistTransactionManagement from "./pages/therapist/TherapistTransactionManagement";
-import AppointmentDetails from "./pages/common/AppointmentDetails";
-import TherapistBlogManagement from "./pages/therapist/TherapistBlogManagement";
-import TherapistQuizManagement from "./pages/therapist/TherapistQuizManagement";
-import TherapistPackageManagement from "./pages/therapist/TherapistPackageManagement";
-import TherapistBlogList from "./pages/therapist/TherapistBlogList";
-import TherapistBlogDetails from "./pages/therapist/TherapistBlogDetails";
-import AdminQuizManagement from "./pages/admin/AdminQuizManagement";
-import AdminBlogManagement from "./pages/admin/AdminBlogManagement";
-import AdminReportManagement from "./pages/admin/AdminReportManagement";
 import PaymentResult from "./pages/common/PaymentResult"; // Import the new component
+import QuizDetails from "./pages/common/QuizDetails";
+import QuizList from "./pages/common/QuizList";
+import QuizResults from "./pages/common/QuizResults";
+import ReportManagement from "./pages/common/ReportManagement";
+import SignUp from "./pages/common/SignUp";
+import TakeQuiz from "./pages/common/TakeQuizPage";
+import TherapistDetails from "./pages/common/TherapistDetails";
+import TherapistList from "./pages/common/TherapistList";
+import NotFound from "./pages/error/NotFound";
+import Unauthorized from "./pages/error/Unauthorized";
+import MemberAppointmentList from "./pages/member/MemberAppointmentList";
+import MemberProfile from "./pages/member/MemberProfile";
+import MemberSchedule from "./pages/member/MemberSchedule";
+import MemberTransactionManagement from "./pages/member/MemberTransactionManagement";
+import TherapistAppointmentList from "./pages/therapist/TherapistAppointmentList";
+import TherapistBlogDetails from "./pages/therapist/TherapistBlogDetails";
+import TherapistBlogList from "./pages/therapist/TherapistBlogList";
+import TherapistBlogManagement from "./pages/therapist/TherapistBlogManagement";
+import TherapistPackageManagement from "./pages/therapist/TherapistPackageManagement";
+import TherapistProfile from "./pages/therapist/TherapistProfile";
+import TherapistQuizManagement from "./pages/therapist/TherapistQuizManagement";
+import TherapistSchedule from "./pages/therapist/TherapistSchedule";
+import TherapistTransactionManagement from "./pages/therapist/TherapistTransactionManagement";
 
 function App() {
   return (
@@ -92,6 +93,10 @@ function App() {
             <Route path="appointments" element={<MemberAppointmentList />} />
             <Route path="appointments/:id" element={<AppointmentDetails />} />
             <Route path="schedule" element={<MemberSchedule />} />
+            <Route
+              path="reports"
+              element={<ReportManagement role="member" />}
+            />
           </Route>
         </Route>
 
@@ -110,6 +115,10 @@ function App() {
             <Route path="blogs/:id" element={<TherapistBlogDetails />} />
             <Route path="new-blog" element={<TherapistBlogManagement />} />
             <Route path="quizzes" element={<TherapistQuizManagement />} />
+            <Route
+              path="reports"
+              element={<ReportManagement role="therapist" />}
+            />
           </Route>
         </Route>
 

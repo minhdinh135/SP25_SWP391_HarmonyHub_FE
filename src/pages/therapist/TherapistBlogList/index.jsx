@@ -25,6 +25,7 @@ const TherapistBlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -49,10 +50,6 @@ const TherapistBlogList = () => {
         {getBlogStatusText(status)}
       </Badge>
     );
-  };
-
-  const createMarkup = (htmlContent) => {
-    return { __html: htmlContent };
   };
 
   const filteredBlogs = blogs.filter((blog) =>
@@ -135,6 +132,7 @@ const TherapistBlogList = () => {
                       variant="outline"
                       size="sm"
                       className="text-red-500 border-red-500 hover:bg-red-50"
+                      onClick={() => setIsDialogOpen(true)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
