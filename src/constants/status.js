@@ -31,3 +31,10 @@ export const TransactionStatus = {
   Cancelled: 3,
   Failed: 0,
 };
+
+export const ReportStatus = {
+  Active: 1,
+  Pending: 2,
+  Resolved: 3,
+  Inactive: 0,
+};
