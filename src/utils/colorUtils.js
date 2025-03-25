@@ -3,6 +3,7 @@ import {
   AppointmentStatus,
   BlogStatus,
   QuizStatus,
+  ReportStatus,
   TransactionStatus,
 } from "@/constants/status";
 
@@ -52,6 +53,19 @@ export const getQuizStatusColor = (statusEnum) => {
     case QuizStatus.Pending:
       return "bg-yellow-500";
     case QuizStatus.Inactive:
+      return "bg-red-500";
+  }
+};
+
+export const getReportStatusColor = (statusEnum) => {
+  switch (statusEnum) {
+    case ReportStatus.Active:
+      return "bg-green-500";
+    case ReportStatus.Pending:
+      return "bg-yellow-500";
+    case ReportStatus.Resolved:
+      return "bg-blue-500";
+    case ReportStatus.Inactive:
       return "bg-red-500";
   }
 };

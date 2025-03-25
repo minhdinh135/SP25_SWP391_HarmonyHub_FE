@@ -7,6 +7,7 @@ import {
   Newspaper,
   ClipboardList,
   Package,
+  AlertTriangle,
 } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import useToggleState from "@/hooks/useToggleState";
@@ -22,6 +23,7 @@ const roleNavigationItems = {
     },
     { title: "Appointments", path: "/member/appointments", icon: Calendar },
     { title: "Schedule", path: "/member/schedule", icon: Clock },
+    { title: "Reports", path: "/member/reports", icon: AlertTriangle },
   ],
   therapist: [
     { title: "Profile", path: "/therapist/profile", icon: User },
@@ -35,6 +37,7 @@ const roleNavigationItems = {
     { title: "Packages", path: "/therapist/packages", icon: Package },
     { title: "Quizzes", path: "/therapist/quizzes", icon: ClipboardList },
     { title: "Blogs", path: "/therapist/blogs", icon: Newspaper },
+    { title: "Reports", path: "/therapist/reports", icon: AlertTriangle },
   ],
 };
 
