@@ -25,32 +25,48 @@ import { Eye, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import ViewReportDetailsDialog from "./components/ViewReportDetailsDialog";
+import CreateReportDialog from "./components/CreateReportDialog";
 
 const ReportManagement = ({ role = "member" }) => {
   const { user } = useAuth();
 
   const [reports, setReports] = useState([]);
+  const [dialog, setDialog] = useState({
+    type: null,
+    data: null,
+  });
+  const [trigger, setTrigger] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getAllReports();
+      const memberReports = data.filter(
+        (report) => report.accountId === user.accountId,
+      );
+      console.log(memberReports);
+      setReports(memberReports);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getAllReports();
-        const memberReports = data.filter(
-          (report) => report.accountId === user.accountId,
-        );
-        console.log(memberReports);
-        setReports(memberReports);
-      } catch (error) {
-        console.error("Error fetching reports:", error);
-        toast.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchData();
-  }, [user.accountId]);
+  }, [user.accountId, trigger]);
+
+  const openDialog = (type, data = null) => {
+    setDialog({ type, data });
+  };
+
+  const closeDialog = () => {
+    setDialog({ type: null, data: null });
+  };
 
   if (isLoading) return <Spinner />;
 
@@ -61,7 +77,9 @@ const ReportManagement = ({ role = "member" }) => {
           <h1 className="text-2xl font-bold text-gray-800">
             Report Management
           </h1>
-          <Button>Create New Report</Button>
+          <Button onClick={() => openDialog("createReport")}>
+            Create New Report
+          </Button>
         </div>
 
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -96,7 +114,9 @@ const ReportManagement = ({ role = "member" }) => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={() => openDialog("viewDetails", report)}
+                        >
                           <Eye className="mr-2 h-4 w-4" /> View Details
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -113,6 +133,15 @@ const ReportManagement = ({ role = "member" }) => {
             </div>
           )}
         </div>
+
+        <ViewReportDetailsDialog dialog={dialog} closeDialog={closeDialog} />
+
+        <CreateReportDialog
+          dialog={dialog}
+          closeDialog={closeDialog}
+          setTrigger={setTrigger}
+          setIsLoading={setIsLoading}
+        />
       </div>
     </DashboardLayout>
   );

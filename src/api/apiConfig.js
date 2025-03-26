@@ -1,7 +1,7 @@
 import BASE_API_URL from "@/constants/api";
 import axios from "axios";
 
-const timeoutDuration = 20000;
+const timeoutDuration = 60000;
 
 const api = axios.create({
   baseURL: `${BASE_API_URL}`,
