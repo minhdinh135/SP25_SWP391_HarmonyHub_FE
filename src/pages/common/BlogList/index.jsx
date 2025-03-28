@@ -6,6 +6,8 @@ import { ArrowRight, Calendar } from "lucide-react";
 import { getAllBlogs } from "@/api/blogApi";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
+import { formatDate } from "@/utils/dateUtils";
+import { BlogStatus } from "@/constants/status";
 
 export function BlogList() {
   const navigate = useNavigate();
@@ -17,7 +19,10 @@ export function BlogList() {
       try {
         setIsLoading(true);
         const data = await getAllBlogs();
-        setBlogs(data);
+        const activeBlogs = data
+          .filter((item) => item.status === BlogStatus.Active)
+          .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        setBlogs(activeBlogs);
       } catch (error) {
         console.error("Error fetching blogs:", error);
         toast.error(error.message || "Failed to load blogs");
@@ -83,16 +88,15 @@ export function BlogList() {
                         {post.title}
                       </h2>
                       <p className="text-gray-600 mb-4 line-clamp-3">
-                        {post.description ||
-                          "Discover insights and practical advice on strengthening your relationship through effective communication, trust-building, and emotional connection."}
+                        {post.description || "No description"}
                       </p>
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                      {/* <div className="flex items-center text-sm text-gray-500"> */}
-                      {/*   <Calendar size={14} className="mr-1" /> */}
-                      {/*   <span>{formatDate(post.updatedAt)}</span> */}
-                      {/* </div> */}
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Calendar size={14} className="mr-1" />
+                        <span>{formatDate(post.updatedAt)}</span>
+                      </div>
 
                       <Button
                         variant="ghost"

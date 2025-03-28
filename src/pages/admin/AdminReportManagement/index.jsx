@@ -118,7 +118,6 @@ const AdminReportManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>User Email</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -129,7 +128,6 @@ const AdminReportManagement = () => {
                 filteredReports.map((report) => (
                   <TableRow key={report.id}>
                     <TableCell>{report.id}</TableCell>
-                    <TableCell>{report.accountId}</TableCell>
                     <TableCell className="font-medium truncate max-w-xs">
                       {report.title}
                     </TableCell>
@@ -185,7 +183,7 @@ const AdminReportManagement = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <Card className="w-full max-w-3xl max-h-screen overflow-auto">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Report Details: #{selectedReport.id}</CardTitle>
+              <CardTitle>Report Details</CardTitle>
               <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                 Close
               </Button>
@@ -206,10 +204,6 @@ const AdminReportManagement = () => {
                   <div>
                     <p className="text-sm text-gray-500">Report ID</p>
                     <p className="font-medium">{selectedReport.id}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">User ID</p>
-                    <p className="font-medium">{selectedReport.accountId}</p>
                   </div>
                 </div>
 
