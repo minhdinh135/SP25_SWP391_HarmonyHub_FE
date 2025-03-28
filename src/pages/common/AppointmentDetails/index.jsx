@@ -14,7 +14,7 @@ import { AppointmentStatus } from "@/constants/status";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
-import api from "@/api/apiConfig";
+import api from "@/api/apiConfig"
 
 const AppointmentDetails = () => {
   const { id } = useParams();
@@ -474,7 +474,7 @@ const AppointmentDetails = () => {
           )}
         </CardContent>
         <CardFooter className="border-t pt-6 flex flex-wrap gap-3 justify-center">
-          {appointmentDetails?.status === AppointmentStatus.Pending && (
+          {appointmentDetails?.status === AppointmentStatus.Accepted && (
             <Button
               className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
               onClick={() => setPaymentDialogOpen(true)}
