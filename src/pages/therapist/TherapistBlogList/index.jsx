@@ -105,15 +105,12 @@ const TherapistBlogList = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between">
                     {getStatusBadge(blog.status)}
-                    <span className="text-xs text-gray-500">
-                      ID: {blog.blogId}
-                    </span>
                   </div>
                   <CardTitle className="text-lg">{blog.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="pb-2">
                   <p className="text-sm text-gray-600 line-clamp-3">
-                    Sample description
+                    {blog.description}
                   </p>
                 </CardContent>
                 <CardFooter className="pt-2 flex justify-between">
