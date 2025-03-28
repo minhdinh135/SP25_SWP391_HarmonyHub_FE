@@ -59,13 +59,11 @@ export const getQuizStatusColor = (statusEnum) => {
 
 export const getReportStatusColor = (statusEnum) => {
   switch (statusEnum) {
-    case ReportStatus.Active:
+    case ReportStatus.Resolved:
       return "bg-green-500";
     case ReportStatus.Pending:
       return "bg-yellow-500";
-    case ReportStatus.Resolved:
-      return "bg-blue-500";
-    case ReportStatus.Inactive:
+    case ReportStatus.Dismissed:
       return "bg-red-500";
   }
 };

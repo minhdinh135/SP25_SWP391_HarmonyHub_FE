@@ -10,8 +10,8 @@ const AboutUsPage = () => {
     visible: (delay) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, delay: delay * 0.2 }
-    })
+      transition: { duration: 0.8, delay: delay * 0.2 },
+    }),
   };
 
   return (
@@ -41,10 +41,10 @@ const AboutUsPage = () => {
             custom={1}
             variants={fadeIn}
           >
-            HarmonyHub is dedicated to providing expert pre-marital counseling to
-            help couples build strong, lasting relationships. We focus on
-            communication, trust-building, and resolving conflicts before marriage
-            to ensure a harmonious future together.
+            HarmonyHub is dedicated to providing expert pre-marital counseling
+            to help couples build strong, lasting relationships. We focus on
+            communication, trust-building, and resolving conflicts before
+            marriage to ensure a harmonious future together.
           </motion.p>
         </div>
       </section>
@@ -99,7 +99,9 @@ const AboutUsPage = () => {
               className="rounded-lg shadow-xl group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#2E5077]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
-              <p className="text-white font-medium p-6">Our expert counseling team</p>
+              <p className="text-white font-medium p-6">
+                Our expert counseling team
+              </p>
             </div>
           </div>
         </motion.div>
@@ -131,16 +133,19 @@ const AboutUsPage = () => {
           {[
             {
               title: "Communication",
-              description: "Learn effective communication techniques to express needs, desires, and concerns."
+              description:
+                "Learn effective communication techniques to express needs, desires, and concerns.",
             },
             {
               title: "Conflict Resolution",
-              description: "Master the art of resolving disagreements constructively and with mutual respect."
+              description:
+                "Master the art of resolving disagreements constructively and with mutual respect.",
             },
             {
               title: "Emotional Support",
-              description: "Develop skills to provide meaningful emotional support during challenging times."
-            }
+              description:
+                "Develop skills to provide meaningful emotional support during challenging times.",
+            },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -152,9 +157,13 @@ const AboutUsPage = () => {
               variants={fadeIn}
             >
               <div className="h-12 w-12 rounded-full bg-[#79D7BE] flex items-center justify-center mb-4">
-                <span className="text-white text-2xl font-bold">{index + 1}</span>
+                <span className="text-white text-2xl font-bold">
+                  {index + 1}
+                </span>
               </div>
-              <h3 className="text-xl font-semibold text-[#2E5077] mb-3">{item.title}</h3>
+              <h3 className="text-xl font-semibold text-[#2E5077] mb-3">
+                {item.title}
+              </h3>
               <p className="text-gray-600">{item.description}</p>
             </motion.div>
           ))}
@@ -186,15 +195,17 @@ const AboutUsPage = () => {
         <div className="grid md:grid-cols-2 gap-8">
           {[
             {
-              quote: "HarmonyHub's counseling helped us communicate better and prepared us for the challenges of marriage. We are now more confident in our relationship!",
+              quote:
+                "HarmonyHub's counseling helped us communicate better and prepared us for the challenges of marriage. We are now more confident in our relationship!",
               authors: "Sarah & John",
-              img: "👩‍❤️‍👨"
+              img: "👩‍❤️‍👨",
             },
             {
-              quote: "We learned so much about each other and the importance of emotional support. The tools we gained from our sessions have been invaluable.",
+              quote:
+                "We learned so much about each other and the importance of emotional support. The tools we gained from our sessions have been invaluable.",
               authors: "Emily & Mark",
-              img: "💑"
-            }
+              img: "💑",
+            },
           ].map((testimonial, index) => (
             <motion.div
               key={index}
@@ -209,7 +220,9 @@ const AboutUsPage = () => {
               <blockquote className="italic text-gray-700 text-lg mb-4">
                 "{testimonial.quote}"
               </blockquote>
-              <div className="font-medium text-[#4DA1A9]">– {testimonial.authors}</div>
+              <div className="font-medium text-[#4DA1A9]">
+                – {testimonial.authors}
+              </div>
             </motion.div>
           ))}
         </div>
@@ -223,9 +236,12 @@ const AboutUsPage = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
       >
-        <h2 className="text-3xl font-bold mb-6">Ready to Begin Your Journey?</h2>
+        <h2 className="text-3xl font-bold mb-6">
+          Ready to Begin Your Journey?
+        </h2>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
-          Take the first step toward a harmonious marriage by scheduling your consultation today.
+          Take the first step toward a harmonious marriage by scheduling your
+          consultation today.
         </p>
         <motion.button
           className="bg-[#79D7BE] hover:bg-[#4DA1A9] text-white font-bold py-3 px-8 rounded-full text-lg transition-colors"
@@ -233,7 +249,7 @@ const AboutUsPage = () => {
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate("/quizzes")}
         >
-          Take Quizz
+          Take Quiz
         </motion.button>
       </motion.section>
     </div>
