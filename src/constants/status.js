@@ -33,8 +33,7 @@ export const TransactionStatus = {
 };
 
 export const ReportStatus = {
-  Active: 1,
+  Resolved: 1,
   Pending: 2,
-  Resolved: 3,
-  Inactive: 0,
+  Dismissed: 0,
 };

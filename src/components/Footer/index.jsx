@@ -1,40 +1,16 @@
 const sections = [
   {
-    title: "Product",
+    title: "Platform",
     links: [
-      { name: "Overview", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Marketplace", href: "#" },
-      { name: "Features", href: "#" },
-      { name: "Integrations", href: "#" },
-      { name: "Pricing", href: "#" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { name: "About", href: "#" },
-      { name: "Team", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Careers", href: "#" },
-      { name: "Contact", href: "#" },
-      { name: "Privacy", href: "#" },
+      { name: "About", href: "/about" },
+      { name: "Therapists", href: "/therapists" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { name: "Help", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "Advertise", href: "#" },
-    ],
-  },
-  {
-    title: "Social",
-    links: [
-      { name: "Twitter", href: "#" },
-      { name: "Instagram", href: "#" },
-      { name: "LinkedIn", href: "#" },
+      { name: "Quizzes", href: "/quizzes" },
+      { name: "Blogs", href: "/blogs" },
     ],
   },
 ];
@@ -46,11 +22,6 @@ const Footer = () => {
         <footer>
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
             <div className="col-span-2 mb-8 lg:mb-0">
-              {/* <img */}
-              {/*   src="https://shadcnblocks.com/images/block/logos/shadcn-ui.svg" */}
-              {/*   alt="logo" */}
-              {/*   className="mb-4 h-7" */}
-              {/* /> */}
               <span className="mb-4 text-4xl text-black font-semibold">
                 Harmony Hub
               </span>
@@ -76,10 +47,7 @@ const Footer = () => {
             <p>© 2025 Harmony Hub. All rights reserved.</p>
             <ul className="flex gap-4">
               <li className="underline hover:text-primary">
-                <a href="#"> Terms and Conditions</a>
-              </li>
-              <li className="underline hover:text-primary">
-                <a href="#"> Privacy Policy</a>
+                <a href="#"> Terms & Conditions</a>
               </li>
             </ul>
           </div>

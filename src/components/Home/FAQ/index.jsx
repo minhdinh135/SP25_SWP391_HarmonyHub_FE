@@ -8,27 +8,51 @@ import {
 const FAQ = () => {
   const faqs = [
     {
-      question: "What is a FAQ?",
+      question: "What is this platform about?",
       answer:
-        "A FAQ is a list of frequently asked questions and answers on a particular topic.",
+        "Our platform connects couples with certified therapists for premarital counseling, helping them build a strong foundation for marriage.",
     },
     {
-      question: "What is the purpose of a FAQ?",
+      question: "How do I book a consultation?",
       answer:
-        "The purpose of a FAQ is to provide answers to common questions and help users find the information they need quickly and easily.",
+        "You can book a consultation by selecting a therapist, choosing an available time slot, waiting for request acceptance from the therapist and completing the payment process.",
     },
     {
-      question: "How do I create a FAQ?",
+      question: "Are the therapists qualified?",
       answer:
-        "To create a FAQ, you need to compile a list of common questions and answers on a particular topic and organize them in a clear and easy-to-navigate format.",
+        "Yes, all therapists on our platform are required to submit valid certificates and qualifications before offering their services.",
     },
     {
-      question: "What are the benefits of a FAQ?",
+      question: "What topics are covered in premarital counseling?",
       answer:
-        "The benefits of a FAQ include providing quick and easy access to information, reducing the number of support requests, and improving the overall user experience.",
+        "Premarital counseling covers topics such as communication, conflict resolution, financial planning, intimacy, and family dynamics.",
+    },
+    {
+      question: "Can I reschedule or cancel my booking?",
+      answer:
+        "Yes, you can reschedule or cancel your booking through your dashboard. However, you cannot cancel the booking after the booking has been paid. Please check our terms and conditions for details.",
+    },
+    {
+      question: "Is online counseling available?",
+      answer:
+        "Yes, we offer  online counseling sessions using Google Meet for meeting between members/customers and therapists.",
+    },
+    {
+      question: "How much does a session cost?",
+      answer:
+        "Session costs vary depending on the therapist you choose. You can view pricing details on the therapist's profile before booking.",
+    },
+    {
+      question: "Do both partners need to attend the session?",
+      answer:
+        "While it is recommended for both partners to attend, individual sessions are also available if one partner prefers to participate alone.",
+    },
+    {
+      question: "How do I contact customer support?",
+      answer:
+        "You can contact our support team through email or send report in your dashboard on our platform for any assistance.",
     },
   ];
-
   return (
     <section className="py-12 px-12">
       <div className="container">
