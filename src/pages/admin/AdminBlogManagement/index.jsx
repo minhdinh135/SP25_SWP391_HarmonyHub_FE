@@ -105,7 +105,6 @@ const AdminBlogManagement = () => {
                 <TableHead>Image</TableHead>
                 <TableHead className="w-1/4">Title</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Therapist ID</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -130,7 +129,6 @@ const AdminBlogManagement = () => {
                       {getBlogStatusText(blog.status)}
                     </Badge>
                   </TableCell>
-                  <TableCell>{blog.therapistId}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
 import { getTherapistDetails } from "@/api/accountApi";
 import { getFullName } from "@/utils/nameFormat";
+import { formatDateTime } from "@/utils/dateUtils";
 
 export function BlogPost() {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ export function BlogPost() {
             <div className="flex items-center gap-4 text-gray-300">
               <span className="flex items-center gap-1">
                 <Calendar size={16} />
-                {blog?.updatedAt}
+                {formatDateTime(blog?.updatedAt)}
               </span>
             </div>
           </div>
