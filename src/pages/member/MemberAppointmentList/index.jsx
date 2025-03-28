@@ -21,7 +21,10 @@ const MemberAppointmentList = () => {
   const fetchData = async () => {
     try {
       const data = await getMemberAppointments(user.accountId);
-      setAppointments(data);
+      const sortedData = data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+      );
+      setAppointments(sortedData);
     } catch (error) {
       console.log(error);
       toast.error(error);
