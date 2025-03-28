@@ -176,8 +176,8 @@ const AppointmentDetails = () => {
         appointmentId: appointmentDetails?.id
       };
 
-      const response = await axios.post(
-        "https://harmony-backend-tlgv.onrender.com/api/vnpay/pay",
+      const response = await api.post(
+        "/vnpay/pay",
         payload
       );
 
@@ -223,8 +223,8 @@ const AppointmentDetails = () => {
     }
     try {
       setIsUpdatingUrl(true);
-      const response = await axios.put(
-        `https://harmony-backend-tlgv.onrender.com/api/appointments/${id}/meet-url`,
+      const response = await api.put(
+        `/appointments/${id}/meet-url`,
         { meetingUrl }
       );
       if (response.data && response.data.statusCode === 200) {
