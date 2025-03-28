@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,10 +36,10 @@ const CreateReportDialog = ({
   const reportSchema = z.object({
     title: z
       .string()
-      .min(3, { message: "Title must be at least 3 characters" }),
+      .min(10, { message: "Title must be at least 10 characters" }),
     content: z
       .string()
-      .min(10, { message: "Content must be at least 10 characters" }),
+      .min(20, { message: "Content must be at least 20 characters" }),
   });
 
   const form = useForm({
@@ -89,10 +90,15 @@ const CreateReportDialog = ({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>
+                    Title <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter report title" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Title, at least 10 characters
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -103,13 +109,18 @@ const CreateReportDialog = ({
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Content</FormLabel>
+                  <FormLabel>
+                    Content <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Describe your report in detail"
                       {...field}
                     />
                   </FormControl>
+                  <FormDescription>
+                    Report details, at least 20 characters
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
