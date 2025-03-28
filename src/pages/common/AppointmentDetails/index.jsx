@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import api from "@/api/apiConfig"
+import { Input } from "@/components/ui/input";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
@@ -32,6 +33,10 @@ const AppointmentDetails = () => {
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [meetUrlDialogOpen, setMeetUrlDialogOpen] = useState(false);
+  const [meetingUrl, setMeetingUrl] = useState("");
+  const [isUpdatingUrl, setIsUpdatingUrl] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -78,6 +83,13 @@ const AppointmentDetails = () => {
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setUserRole(user.role);
+    }
+  }, []);
 
   const openFeedbackDialog = (edit = false) => {
     if (edit && appointmentDetails?.feedbackRating) {
@@ -202,6 +214,32 @@ const AppointmentDetails = () => {
         ))}
       </div>
     );
+  };
+
+  const handleUpdateMeetingUrl = async () => {
+    if (!meetingUrl.trim()) {
+      toast.error("Please enter a valid meeting URL");
+      return;
+    }
+    try {
+      setIsUpdatingUrl(true);
+      const response = await axios.put(
+        `https://harmony-backend-tlgv.onrender.com/api/appointments/${id}/meet-url`,
+        { meetingUrl }
+      );
+      if (response.data && response.data.statusCode === 200) {
+        toast.success("Meeting URL updated successfully");
+        setMeetUrlDialogOpen(false);
+        fetchData();
+      } else {
+        toast.error("Failed to update meeting URL");
+      }
+    } catch (error) {
+      console.error("Error updating meeting URL:", error);
+      toast.error("Failed to update meeting URL. Please try again.");
+    } finally {
+      setIsUpdatingUrl(false);
+    }
   };
 
   if (isLoading) return <Spinner />;
@@ -474,7 +512,7 @@ const AppointmentDetails = () => {
           )}
         </CardContent>
         <CardFooter className="border-t pt-6 flex flex-wrap gap-3 justify-center">
-          {appointmentDetails?.status === AppointmentStatus.Accepted && (
+          {appointmentDetails?.status === AppointmentStatus.Accepted && userRole === 1 && (
             <Button
               className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
               onClick={() => setPaymentDialogOpen(true)}
@@ -485,7 +523,7 @@ const AppointmentDetails = () => {
           )}
 
           {appointmentDetails?.status === AppointmentStatus.Completed &&
-            !appointmentDetails.feedbackRating && (
+            !appointmentDetails.feedbackRating && userRole === 1 && (
               <Button
                 className="bg-blue-600 hover:bg-blue-700"
                 onClick={() => setFeedbackOpen(true)}
@@ -493,6 +531,20 @@ const AppointmentDetails = () => {
                 Provide Feedback
               </Button>
             )}
+
+          {appointmentDetails?.status === AppointmentStatus.Accepted && userRole === 2 && (
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() => {
+                setMeetingUrl(appointmentDetails?.meetUrl || "");
+                setMeetUrlDialogOpen(true);
+              }}
+            >
+              <Video className="h-4 w-4" />
+              {appointmentDetails?.meetUrl ? "Update Meeting URL" : "Add Meeting URL"}
+            </Button>
+          )}
         </CardFooter>
       </Card>
 
@@ -644,6 +696,41 @@ const AppointmentDetails = () => {
               disabled={isSubmittingNote || !therapistNoteContent.trim()}
             >
               {isSubmittingNote ? "Saving..." : "Save Notes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Meeting URL Dialog */}
+      <Dialog open={meetUrlDialogOpen} onOpenChange={setMeetUrlDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Update Meeting URL</DialogTitle>
+            <DialogDescription>
+              Paste the meeting room URL for this session
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              placeholder="Enter meeting URL..."
+              value={meetingUrl}
+              onChange={(e) => setMeetingUrl(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setMeetUrlDialogOpen(false)}
+              disabled={isUpdatingUrl}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateMeetingUrl}
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={isUpdatingUrl || !meetingUrl.trim()}
+            >
+              {isUpdatingUrl ? "Updating..." : "Update URL"}
             </Button>
           </DialogFooter>
         </DialogContent>
