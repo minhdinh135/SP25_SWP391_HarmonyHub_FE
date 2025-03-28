@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-
 const CTA = () => {
+  const navigate = useNavigate();
   return (
     <section className="py-12 px-12 bg-[#F6F4F0]">
       <div className="container">
@@ -19,12 +19,6 @@ const CTA = () => {
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button
-              className="w-full sm:w-auto bg-[#2E5077] hover:bg-[#79D7BE]"
-              onClick={() => navigate("/sign-up")}
-            >
-              Learn More
-            </Button>
             <Button
               variant="outline"
               className="w-full sm:w-auto text-[#2E5077] border-2 border-[#2E5077]"

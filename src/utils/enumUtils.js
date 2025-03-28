@@ -66,16 +66,14 @@ export const getQuizStatusText = (statusEnum) => {
 
 export const getReportStatusText = (statusEnum) => {
   switch (statusEnum) {
-    case ReportStatus.Active:
-      return "Active";
-    case ReportStatus.Pending:
-      return "Pending";
     case ReportStatus.Resolved:
       return "Resolved";
-    case ReportStatus.Inactive:
-      return "Inactive";
+    case ReportStatus.Pending:
+      return "Pending";
+    case ReportStatus.Dismissed:
+      return "Dismissed";
     default:
-      return "Active";
+      return "Pending";
   }
 };
 
