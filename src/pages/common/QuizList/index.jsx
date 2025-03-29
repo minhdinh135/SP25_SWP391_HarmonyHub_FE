@@ -6,12 +6,15 @@ import { useNavigate } from "react-router-dom";
 import api from "@/api/apiConfig"
 import { getAllQuizzes } from "@/api/quizApi";
 
-
-
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentQuiz, setCurrentQuiz] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [quizResult, setQuizResult] = useState(null);
+  const [isQuizActive, setIsQuizActive] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +36,65 @@ const QuizList = () => {
 
     fetchQuizzes();
   }, []);
+
+  // Start the quiz
+  const handleStartQuiz = (quiz) => {
+    setCurrentQuiz(quiz);
+    setCurrentQuestion(0);
+    setUserAnswers([]);
+    setQuizResult(null);
+    setIsQuizActive(true);
+  };
+
+  // Handle user selecting an answer
+  const handleAnswerSelect = (optionType) => {
+    // Add the answer to userAnswers
+    const newAnswers = [...userAnswers, optionType];
+    setUserAnswers(newAnswers);
+    
+    // Move to next question or show result if quiz is complete
+    if (currentQuestion < currentQuiz.questionResponse.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // Quiz is complete, calculate result
+      calculateResult(newAnswers);
+    }
+  };
+
+  // Calculate the most common answer type and set result
+  const calculateResult = (answers) => {
+    // Count occurrences of each answer type
+    const typeCounts = answers.reduce((counts, type) => {
+      counts[type] = (counts[type] || 0) + 1;
+      return counts;
+    }, {});
+    
+    // Find the most common answer type
+    let mostCommonType = 0;
+    let highestCount = 0;
+    
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      if (count > highestCount) {
+        highestCount = count;
+        mostCommonType = parseInt(type, 10);
+      }
+    });
+    
+    // Find the result that matches the most common type
+    const matchingResult = currentQuiz.resultResponse.find(
+      result => result.type === mostCommonType
+    );
+    
+    setQuizResult(matchingResult || { content: "No result found for your answers." });
+  };
+
+  // Reset the quiz state to return to quiz list
+  const handleBackToList = () => {
+    setCurrentQuiz(null);
+    setIsQuizActive(false);
+    setUserAnswers([]);
+    setQuizResult(null);
+  };
 
   if (loading) {
     return (
@@ -64,6 +126,78 @@ const QuizList = () => {
     return quiz.questionResponse ? quiz.questionResponse.length : 0;
   };
 
+  // Render quiz questions and options
+  const renderQuizQuestion = () => {
+    if (!currentQuiz || !currentQuiz.questionResponse || currentQuiz.questionResponse.length === 0) {
+      return <p>No questions found for this quiz.</p>;
+    }
+
+    const question = currentQuiz.questionResponse[currentQuestion];
+
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-4">{currentQuiz.title}</h2>
+          <div className="bg-muted p-4 rounded-md mb-6">
+            <p className="text-lg font-medium">
+              Question {currentQuestion + 1} of {currentQuiz.questionResponse.length}
+            </p>
+            <p className="text-xl mt-2">{question.content}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {question.optionResponse.map((option, index) => (
+            <button
+              key={index}
+              className="w-full p-4 border rounded-md hover:bg-primary/10 text-left transition-colors"
+              onClick={() => handleAnswerSelect(option.type)}
+            >
+              {option.content}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Render quiz result
+  const renderQuizResult = () => {
+    if (!quizResult) {
+      return <p>Calculating your result...</p>;
+    }
+
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-4">{currentQuiz.title} - Your Result</h2>
+        </div>
+
+        <div className="bg-primary/10 p-6 rounded-md">
+          <h3 className="text-xl font-semibold mb-4">Your Relationship Analysis</h3>
+          <p className="text-lg mb-4">{quizResult.content}</p>
+        </div>
+
+        <button
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          onClick={handleBackToList}
+        >
+          Back to Quizzes
+        </button>
+      </div>
+    );
+  };
+
+  // If a quiz is active, show the quiz or result
+  if (isQuizActive) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        {quizResult ? renderQuizResult() : renderQuizQuestion()}
+      </div>
+    );
+  }
+
+  // Otherwise, show the quiz list
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="space-y-6">
@@ -84,7 +218,7 @@ const QuizList = () => {
               <Card
                 key={quiz.id}
                 className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => navigate(`/quizzes/${quiz.id}`)}
+                onClick={() => handleStartQuiz(quiz)}
               >
                 <img
                   src={quiz.imageUrl}
