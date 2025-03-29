@@ -1,4 +1,13 @@
-import { useEffect } from "react";
+import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 import {
   Pagination,
   PaginationContent,
@@ -9,12 +18,14 @@ import {
   PaginationPrevious,
 } from "../ui/pagination";
 import { useState } from "react";
+import { useEffect } from "react";
 
-const ItemList = ({
+const PaginatedTable = ({
   data,
+  columns,
   itemsPerPage = 4,
   initialPage = 1,
-  renderItem,
+  caption,
   emptyMessage = "No items found.",
   className,
 }) => {
@@ -82,15 +93,45 @@ const ItemList = ({
     return range;
   };
 
+  const currentPageData = getCurrentPageData();
+  const startIndex = (currentPage - 1) * itemsPerPage;
   return (
-    <>
-      {data.length > 0 ? (
-        <div className={className}>
-          {getCurrentPageData().map((item, index) => renderItem(item, index))}
-        </div>
-      ) : (
-        <div className="text-center text-gray-500 mt-8">{emptyMessage}</div>
-      )}
+    <div className={className}>
+      <Table>
+        {caption && <TableCaption>{caption}</TableCaption>}
+
+        <TableHeader>
+          <TableRow>
+            {columns.map((column, index) => (
+              <TableHead key={index} className={column.className}>
+                {column.header}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {currentPageData.length > 0 ? (
+            currentPageData.map((item, index) => (
+              <TableRow key={item.id || index}>
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} className={column.cellClassName}>
+                    {column.cell
+                      ? column.cell(item, startIndex + index)
+                      : item[column.accessor]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center py-4">
+                {emptyMessage}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
       {totalPages > 1 && (
         <Pagination className="my-4">
@@ -143,8 +184,8 @@ const ItemList = ({
           </PaginationContent>
         </Pagination>
       )}
-    </>
+    </div>
   );
 };
 
-export default ItemList;
+export default PaginatedTable;

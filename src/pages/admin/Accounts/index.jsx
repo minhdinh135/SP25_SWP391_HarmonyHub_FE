@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
-import { getAllAccounts } from "@/api/accountApi";
+import { getAllAccounts, updateAccountStatus } from "@/api/accountApi";
 import Spinner from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { toast } from "@/hooks/use-toast";
 import { getAccountStatusColor } from "@/utils/colorUtils";
 import { getAccountStatusText, getRoleText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
-import { Search, MoreVertical, Trash2, Edit2, RefreshCw } from "lucide-react";
+import {
+  Search,
+  MoreVertical,
+  RefreshCw,
+  Eye,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +40,8 @@ import {
 } from "@/components/ui/select";
 import { AccountStatus } from "@/constants/status";
 import { Roles } from "@/constants/role";
+import PaginatedTable from "@/components/PaginatedTable";
+import { toast } from "sonner";
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
@@ -51,8 +50,94 @@ const Accounts = () => {
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isDisapproveDialogOpen, setIsDisapproveDialogOpen] = useState(false);
+
+  const columns = [
+    {
+      header: "No.",
+      cell: (_, index) => index + 1,
+      className: "w-[50px]",
+    },
+    {
+      header: "Email",
+      accessor: "email",
+      cellClassName: "font-medium",
+    },
+    {
+      header: "Phone",
+      accessor: "phone",
+    },
+    {
+      header: "Name",
+      cell: (account) => getFullName(account.firstName, account.lastName),
+    },
+    {
+      header: "Role",
+      cell: (account) => getRoleText(account.role),
+    },
+    {
+      header: "Status",
+      cell: (account) => (
+        <Badge className={getAccountStatusColor(account.status)}>
+          {getAccountStatusText(account.status)}
+        </Badge>
+      ),
+    },
+    {
+      header: "Actions",
+      className: "w-[100px]",
+      cell: (account) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {/* View Details Action - available for all accounts */}
+            <DropdownMenuItem
+              onClick={() => {
+                setSelectedAccount(account);
+                setIsViewDialogOpen(true);
+              }}
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              View Details
+            </DropdownMenuItem>
+            {/* Special actions for Pending accounts */}
+            {account.status === AccountStatus.Pending && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-green-600"
+                  onClick={() => {
+                    setSelectedAccount(account);
+                    setIsDisapproveDialogOpen(true);
+                  }}
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Approve Account
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-amber-600"
+                  onClick={() => {
+                    setSelectedAccount(account);
+                    setIsDisapproveDialogOpen(true);
+                  }}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Disapprove Account
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
   const fetchAccounts = async () => {
     try {
@@ -61,11 +146,7 @@ const Accounts = () => {
       setAccounts(data.filter((x) => getRoleText(x.role) !== "System"));
     } catch (error) {
       console.log(error);
-      toast({
-        variant: "destructive",
-        title: "Error fetching accounts",
-        description: error.message,
-      });
+      toast.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -74,6 +155,34 @@ const Accounts = () => {
   useEffect(() => {
     fetchAccounts();
   }, []);
+
+  const handleViewDetails = (account) => {
+    setSelectedAccount(account);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleApproveAccount = (account) => {
+    setSelectedAccount(account);
+    setIsApproveDialogOpen(true);
+  };
+
+  const handleDisapproveAccount = (account) => {
+    setSelectedAccount(account);
+    setIsDisapproveDialogOpen(true);
+  };
+
+  const submitStatusChange = async (accountId, status) => {
+    try {
+      setIsLoading(true);
+      await updateAccountStatus(accountId, Number(status));
+      toast.success;
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredAccounts = accounts.filter((account) => {
     const matchesSearch =
@@ -88,49 +197,6 @@ const Accounts = () => {
 
     return matchesSearch && matchesRole && matchesStatus;
   });
-
-  const handleDelete = async () => {
-    if (!selectedAccount) return;
-
-    try {
-      toast({
-        title: "Account deleted",
-        description: `Account ${selectedAccount.email} has been deleted.`,
-      });
-      await fetchAccounts(); // Refresh the list
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
-    } finally {
-      setIsDeleteDialogOpen(false);
-      setSelectedAccount(null);
-    }
-  };
-
-  const handleEdit = async (formData) => {
-    if (!selectedAccount) return;
-
-    try {
-      // Implement edit API call here
-      toast({
-        title: "Account updated",
-        description: `Account ${selectedAccount.email} has been updated.`,
-      });
-      await fetchAccounts(); // Refresh the list
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
-    } finally {
-      setIsEditDialogOpen(false);
-      setSelectedAccount(null);
-    }
-  };
 
   if (isLoading) return <Spinner />;
 
@@ -179,124 +245,13 @@ const Accounts = () => {
         </Select>
       </div>
 
-      <Table>
-        <TableCaption>
-          Total {filteredAccounts.length} accounts found.
-        </TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[50px]">No.</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredAccounts.length > 0 ? (
-            filteredAccounts.map((account, index) => (
-              <TableRow key={account.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell className="font-medium">{account.email}</TableCell>
-                <TableCell>{account.phone}</TableCell>
-                <TableCell>
-                  {getFullName(account.firstName, account.lastName)}
-                </TableCell>
-                <TableCell>{getRoleText(account.role)}</TableCell>
-                <TableCell>
-                  <Badge className={getAccountStatusColor(account.status)}>
-                    {getAccountStatusText(account.status)}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedAccount(account);
-                          setIsEditDialogOpen(true);
-                        }}
-                      >
-                        <Edit2 className="h-4 w-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => {
-                          setSelectedAccount(account);
-                          setIsDeleteDialogOpen(true);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center">
-                No accounts found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Account</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete the account for{" "}
-              {selectedAccount?.email}? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Account</DialogTitle>
-            <DialogDescription>
-              Make changes to the account details below.
-            </DialogDescription>
-          </DialogHeader>
-          {/* Add your edit form here */}
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleEdit}>Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PaginatedTable
+        data={filteredAccounts}
+        columns={columns}
+        caption={`Total ${filteredAccounts.length} accounts found.`}
+        emptyMessage="No accounts found."
+        className="w-full"
+      />
     </div>
   );
 };
