@@ -2,10 +2,12 @@ import useAuth from "@/hooks/useAuth";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ allowedRoles }) => {
-  const { user } = useAuth();
+  const { user, isLoaded } = useAuth();
   const location = useLocation();
 
   console.log("User", user);
+
+  if (!isLoaded) return null;
 
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
 
