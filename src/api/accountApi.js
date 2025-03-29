@@ -122,3 +122,12 @@ export const updateAccountAvatar = async (id, file) => {
     throw new Error("Error updating account avatar");
   }
 };
+
+export const updateAccountStatus = async (accountId, status) => {
+  try {
+    await api.put(`/accounts/${accountId}/status?status=${status}`);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating account status");
+  }
+};
