@@ -80,6 +80,7 @@ const Header = () => {
               className={cn(
                 navigationMenuTriggerStyle,
                 buttonVariants({ variant: "ghost" }),
+                "cursor-pointer",
               )}
               onClick={() => navigate(path)}
             >
@@ -160,8 +161,8 @@ const Header = () => {
               {Object.entries(navLinks).map(([label, path]) => (
                 <a
                   key={label}
-                  href={path}
-                  className="block text-lg font-medium text-gray-900"
+                  className="block text-lg font-medium text-gray-900 cursor-pointer"
+                  onClick={() => navigate(path)}
                 >
                   {label}
                 </a>
