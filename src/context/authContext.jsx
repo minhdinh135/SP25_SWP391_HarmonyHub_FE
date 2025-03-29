@@ -5,7 +5,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(undefined);
   const [token, setToken] = useState(undefined);
-  const [isLoaded, setIsLoaded] = useState(false);
+  // const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("user")));
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchLocalData();
-    setIsLoaded(true);
+    // setIsLoaded(true);
   }, []);
 
   const login = (user) => {
@@ -42,7 +42,8 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, updateAvatar, token, login, logout }}>
-      {isLoaded ? children : null}
+      {/* {isLoaded ? children : null} */}
+      {children}
     </AuthContext.Provider>
   );
 };
