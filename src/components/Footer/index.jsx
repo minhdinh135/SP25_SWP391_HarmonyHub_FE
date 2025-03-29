@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 const sections = [
   {
     title: "Platform",
@@ -16,6 +18,8 @@ const sections = [
 ];
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="w-full border-t-2 py-12 px-12 bg-[#F6F4F0]">
       <div className="container">
@@ -36,7 +40,7 @@ const Footer = () => {
                       key={linkIdx}
                       className="font-medium hover:text-primary"
                     >
-                      <a href={link.href}>{link.name}</a>
+                      <a onClick={() => navigate(link.href)}>{link.name}</a>
                     </li>
                   ))}
                 </ul>
