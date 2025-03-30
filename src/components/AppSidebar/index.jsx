@@ -39,14 +39,8 @@ const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
                     <NavLink
                       to={item.path}
                       onClick={onCloseMobileMenu}
-                      className={({ isActive }) => `
-                        flex items-center justify-between px-3 py-2 rounded-md transition-colors duration-200
-                        ${
-                          isActive
-                            ? "bg-blue-500 text-white"
-                            : "hover:bg-gray-100 active:bg-gray-200"
-                        }
-                      `}
+                      className="
+                        flex items-center justify-between px-3 py-2 rounded-md transition-colors duration-200 hover:bg-green-600 active:bg-yellow-500"
                     >
                       <span className="flex items-center gap-3">
                         <item.icon className="h-4 w-4" />

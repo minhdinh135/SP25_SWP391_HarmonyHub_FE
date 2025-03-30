@@ -18,7 +18,7 @@ import useAuth from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { getRoleText } from "@/utils/enumUtils";
 import { ArrowLeftSquare, Menu, User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getFullName } from "@/utils/nameFormat";
 
@@ -38,6 +38,8 @@ const avatarItems = [
 const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const accountRole = getRoleText(user?.role);
 
@@ -81,6 +83,8 @@ const Header = () => {
                 navigationMenuTriggerStyle,
                 buttonVariants({ variant: "ghost" }),
                 "cursor-pointer",
+                currentPath === path &&
+                  "text-[#2E5077] font-bold border-l-4 border-[#2E5077] pl-2",
               )}
               onClick={() => navigate(path)}
             >
@@ -161,7 +165,11 @@ const Header = () => {
               {Object.entries(navLinks).map(([label, path]) => (
                 <a
                   key={label}
-                  className="block text-lg font-medium text-gray-900 cursor-pointer"
+                  className={cn(
+                    "block text-lg font-medium text-gray-900 cursor-pointer",
+                    currentPath === path &&
+                      "text-[#2E5077] font-bold border-l-4 border-[#2E5077] pl-2",
+                  )}
                   onClick={() => navigate(path)}
                 >
                   {label}

@@ -36,7 +36,11 @@ const AdminReportManagement = () => {
       try {
         setIsLoading(true);
         const data = await getAllReports();
-        setReports(data);
+        const sortedData = data.sort(
+          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+        );
+
+        setReports(sortedData);
       } catch (error) {
         console.error("Failed to fetch reports", error);
         toast.error("Failed to load reports");
