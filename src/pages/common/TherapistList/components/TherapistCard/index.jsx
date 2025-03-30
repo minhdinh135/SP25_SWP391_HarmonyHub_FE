@@ -111,12 +111,14 @@ const TherapistCard = ({ therapist }) => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-1 bg-yellow-50 px-3 py-2 rounded-full">
-            <Star className="h-5 w-5 text-yellow-400 fill-current" />
-            <span className="text-sm font-bold text-yellow-600">
-              {averageRating || "0.0"}
-            </span>
-            <span className="text-sm text-gray-500 ml-1">
+          <div className="flex flex-col flex-nowrap items-center gap-1 mt-2">
+            <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-full">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+              <span className="font-bold text-yellow-600">
+                {averageRating || 0.0}
+              </span>
+            </div>
+            <span className="text-sm text-gray-500 whitespace-nowrap">
               ({reviewCount || 0} reviews)
             </span>
           </div>
