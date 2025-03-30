@@ -1,9 +1,7 @@
 import { memo } from "react";
-import { LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -11,19 +9,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { NavLink, useNavigate } from "react-router-dom";
-import useAuth from "@/hooks/useAuth";
+import { NavLink } from "react-router-dom";
 
 const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    console.log("Logout clicked");
-    logout();
-    navigate("/");
-  };
-
   return (
     <Sidebar className="flex flex-col h-full">
       <SidebarContent className="flex-1 bg-blue-200 text-black">
@@ -54,16 +42,6 @@ const AppSidebar = ({ navigationItems, onCloseMobileMenu }) => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="bg-blue-200">
-        <button
-          className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-400 rounded-md transition-colors duration-200"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          <span>Logout</span>
-        </button>
-      </SidebarFooter>
     </Sidebar>
   );
 };
