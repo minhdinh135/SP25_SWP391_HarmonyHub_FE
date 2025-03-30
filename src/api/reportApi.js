@@ -36,6 +36,15 @@ export const updateReport = async (reportId, payload) => {
     return response.data.data;
   } catch (error) {
     console.log(error);
-    throw new Error("Error updating report");
+    throw new Error("Error updating report details");
+  }
+};
+
+export const updateReportStatus = async (reportId, status) => {
+  try {
+    await api.put(`/reports/${reportId}/status?status=${status}`);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating report status");
   }
 };

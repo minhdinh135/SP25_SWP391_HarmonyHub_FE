@@ -188,7 +188,11 @@ const TherapistProfile = () => {
         <QualificationSection therapistDetails={therapistDetails} />
 
         {/* Availability */}
-        <AvailabilitySection therapistDetails={therapistDetails} />
+        <AvailabilitySection
+          therapistDetails={therapistDetails}
+          setIsLoading={setIsLoading}
+          fetchData={fetchData}
+        />
 
         <AvatarDialog
           onDrop={onDrop}
