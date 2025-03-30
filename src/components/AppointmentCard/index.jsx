@@ -41,7 +41,10 @@ const AppointmentCard = ({
     >
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-semibold">
-          Marital Counseling Session
+          Marital counseling session with{" "}
+          {isMember
+            ? appointment.therapistFullName
+            : appointment.memberFullName}
         </CardTitle>
         <Badge className={getAppointmentStatusColor(appointment.status)}>
           {getAppointmentStatusText(appointment.status)}
@@ -78,12 +81,12 @@ const AppointmentCard = ({
           </div>
           <div className="space-y-2">
             <div className="text-sm">
-              <span className="font-medium">Client:</span>{" "}
-              {appointment.memberFullName}
-            </div>
-            <div className="text-sm">
-              <span className="font-medium">Therapist:</span>{" "}
-              {appointment.therapistFullName}
+              <span className="font-medium">
+                {isMember ? "Therapist:" : "Client:"}
+              </span>{" "}
+              {isMember
+                ? appointment.therapistFullName
+                : appointment.memberFullName}
             </div>
             <div className="text-sm">
               <span className="font-medium">Package:</span>{" "}

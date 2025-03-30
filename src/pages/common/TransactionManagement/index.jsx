@@ -44,10 +44,9 @@ const TransactionManagement = ({ role = "member" }) => {
             : null,
         }));
 
-        const filterdTransactions = formattedTransactions.filter(
-          (item) => item.senderId === user.accountId,
-        );
-
+        const filterdTransactions = formattedTransactions
+          .filter((item) => item.senderId === user.accountId)
+          .sort((a, b) => new Date(b) - new Date(a));
         console.log(filterdTransactions);
 
         setTransactions(filterdTransactions);

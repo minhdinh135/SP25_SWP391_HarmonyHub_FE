@@ -4,12 +4,9 @@ import {
   FileQuestion,
   Filter,
   Search,
-  CheckCircle,
-  Clock,
   AlertCircle,
   X,
   Eye,
-  Ban,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,8 +32,12 @@ const AdminQuizManagement = () => {
     try {
       setIsLoading(true);
       const data = await getAllQuizzes();
-      setQuizzes(data);
-      setFilteredQuizzes(data);
+      const sortedData = data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+      );
+
+      setQuizzes(sortedData);
+      setFilteredQuizzes(sortedData);
     } catch (error) {
       console.log(error);
       toast.error(error);

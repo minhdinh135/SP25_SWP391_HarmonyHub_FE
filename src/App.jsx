@@ -80,7 +80,9 @@ function App() {
             <ProtectedRoute allowedRoles={[Roles.Member, Roles.Therapist]} />
           }
         >
-          <Route path="appointments/:id" element={<AppointmentDetails />} />
+          <Route element={<CommonLayout />}>
+            <Route path="appointments/:id" element={<AppointmentDetails />} />
+          </Route>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={[Roles.Member]} />}>
@@ -91,7 +93,6 @@ function App() {
               element={<MemberTransactionManagement />}
             />
             <Route path="appointments" element={<MemberAppointmentList />} />
-            <Route path="appointments/:id" element={<AppointmentDetails />} />
             <Route path="schedule" element={<MemberSchedule />} />
             <Route
               path="reports"
@@ -108,7 +109,6 @@ function App() {
               element={<TherapistTransactionManagement />}
             />
             <Route path="appointments" element={<TherapistAppointmentList />} />
-            <Route path="appointments/:id" element={<AppointmentDetails />} />
             <Route path="schedule" element={<TherapistSchedule />} />
             <Route path="packages" element={<TherapistPackageManagement />} />
             <Route path="blogs" element={<TherapistBlogList />} />

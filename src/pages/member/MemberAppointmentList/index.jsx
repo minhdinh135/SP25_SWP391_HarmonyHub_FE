@@ -59,7 +59,7 @@ const MemberAppointmentList = () => {
   return (
     <DashboardLayout role="member">
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <h1 className="text-4xl font-bold mb-6">Appointment History</h1>
+        <h1 className="text-4xl font-bold mb-6">Your Appointments</h1>
         <ItemList
           className="p-4"
           data={appointments}

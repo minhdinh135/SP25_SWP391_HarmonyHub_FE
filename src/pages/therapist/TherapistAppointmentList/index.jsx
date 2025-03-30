@@ -75,17 +75,20 @@ const TherapistAppointmentList = () => {
 
   return (
     <DashboardLayout role="therapist">
-      <ItemList
-        className="p-4"
-        data={appointments}
-        renderItem={(appointment) => (
-          <AppointmentCard
-            onAccept={handleAccept}
-            onReject={handleReject}
-            appointment={appointment}
-          />
-        )}
-      />
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <h1 className="text-4xl font-bold mb-6">Your Appointments</h1>
+        <ItemList
+          className="p-4"
+          data={appointments}
+          renderItem={(appointment) => (
+            <AppointmentCard
+              onAccept={handleAccept}
+              onReject={handleReject}
+              appointment={appointment}
+            />
+          )}
+        />
+      </div>
     </DashboardLayout>
   );
 };

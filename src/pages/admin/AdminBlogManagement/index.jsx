@@ -36,7 +36,11 @@ const AdminBlogManagement = () => {
     try {
       setIsLoading(true);
       const data = await getAllBlogs();
-      setBlogs(data);
+      const sortedData = data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+      );
+
+      setBlogs(sortedData);
     } catch (error) {
       console.log(error);
       toast.error(error);
@@ -101,7 +105,7 @@ const AdminBlogManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
+                <TableHead>No.</TableHead>
                 <TableHead>Image</TableHead>
                 <TableHead className="w-1/4">Title</TableHead>
                 <TableHead>Status</TableHead>
@@ -173,7 +177,16 @@ const AdminBlogManagement = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <Card className="w-full max-w-4xl max-h-screen overflow-auto">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Blog Preview: {selectedBlog.title}</CardTitle>
+              <CardTitle>
+                <span className="mr-3">Blog Preview: {selectedBlog.title}</span>
+                <Badge
+                  className={
+                    getBlogStatusColor(selectedBlog.status) + " text-white"
+                  }
+                >
+                  {getBlogStatusText(selectedBlog.status)}
+                </Badge>
+              </CardTitle>
               <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>
                 Close
               </Button>
@@ -183,20 +196,9 @@ const AdminBlogManagement = () => {
                 <img
                   src={selectedBlog.imageUrl}
                   alt="Blog header"
-                  className="w-full rounded object-cover mb-4"
+                  className="w-full h-full rounded object-contain mb-4"
                 />
-                <div className="flex justify-between items-center mb-4">
-                  <Badge
-                    className={
-                      getBlogStatusColor(selectedBlog.status) + " text-white"
-                    }
-                  >
-                    {getBlogStatusText(selectedBlog.status)}
-                  </Badge>
-                  <span className="text-sm text-gray-500">
-                    Therapist ID: {selectedBlog.therapistId}
-                  </span>
-                </div>
+                <h2 className="text-xl font-semibold">Blog Content:</h2>
                 <div
                   className="prose max-w-none"
                   dangerouslySetInnerHTML={{ __html: selectedBlog.content }}
