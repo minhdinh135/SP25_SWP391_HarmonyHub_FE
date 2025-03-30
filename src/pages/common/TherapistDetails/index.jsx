@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, Mail, Phone, UserCheck } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -8,8 +7,6 @@ import { useEffect, useState } from "react";
 import { getTherapistDetails } from "@/api/accountApi";
 import { toast } from "sonner";
 import Spinner from "@/components/Spinner";
-import { hasPermission } from "@/constants/permission";
-import { getRoleKey } from "@/constants/role";
 import useAuth from "@/hooks/useAuth";
 import { getGenderText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
