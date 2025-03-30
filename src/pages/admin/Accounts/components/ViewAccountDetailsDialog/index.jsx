@@ -8,23 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AccountStatus } from "@/constants/status";
 import { getAccountStatusColor } from "@/utils/colorUtils";
 import { formatDateTime } from "@/utils/dateUtils";
 import { getAccountStatusText, getRoleText } from "@/utils/enumUtils";
 import { getFullName } from "@/utils/nameFormat";
-import { CheckCircle, XCircle } from "lucide-react";
 
-const ViewAccountDetailsDialog = ({
-  isOpen,
-  onClose,
-  account,
-  onApprove,
-  onDisapprove,
-}) => {
+const ViewAccountDetailsDialog = ({ isOpen, onClose, account }) => {
   if (!account) return null;
 
-  const isPending = account.status === AccountStatus.Pending;
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -103,25 +94,6 @@ const ViewAccountDetailsDialog = ({
         </div>
 
         <DialogFooter className="flex gap-2">
-          {isPending && (
-            <>
-              <Button
-                variant="outline"
-                className="border-amber-600 text-amber-600 hover:bg-amber-50"
-                onClick={() => onDisapprove(account.id)}
-              >
-                <XCircle className="h-4 w-4 mr-2" />
-                Disapprove
-              </Button>
-              <Button
-                className="bg-green-600 text-white hover:bg-green-700"
-                onClick={() => onApprove(account.id)}
-              >
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Approve
-              </Button>
-            </>
-          )}
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
