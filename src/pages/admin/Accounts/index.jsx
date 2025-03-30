@@ -12,6 +12,7 @@ import {
   Eye,
   CheckCircle,
   XCircle,
+  Hourglass,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -44,7 +45,6 @@ const Accounts = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [isDisapproveDialogOpen, setIsDisapproveDialogOpen] = useState(false);
 
   const columns = [
     {
@@ -100,32 +100,37 @@ const Accounts = () => {
               <Eye className="h-4 w-4 mr-2" />
               View Details
             </DropdownMenuItem>
-            {/* Special actions for Pending accounts */}
-            {account.status === AccountStatus.Pending && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-green-600"
-                  onClick={() => {
-                    setSelectedAccount(account);
-                    setIsDisapproveDialogOpen(true);
-                  }}
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Approve Account
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-amber-600"
-                  onClick={() => {
-                    setSelectedAccount(account);
-                    setIsDisapproveDialogOpen(true);
-                  }}
-                >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Disapprove Account
-                </DropdownMenuItem>
-              </>
-            )}
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-yellow-600"
+                onClick={() => {
+                  onSubmitStatusChange(account.id, AccountStatus.Pending);
+                }}
+              >
+                <Hourglass className="h-4 w-4 mr-2" />
+                Set Pending
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                className="text-green-600"
+                onClick={() => {
+                  onSubmitStatusChange(account.id, AccountStatus.Active);
+                }}
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Approve Account
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-amber-600"
+                onClick={() => {
+                  onSubmitStatusChange(account.id, AccountStatus.Inactive);
+                }}
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Disapprove Account
+              </DropdownMenuItem>
+            </>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -152,26 +157,12 @@ const Accounts = () => {
     fetchAccounts();
   }, []);
 
-  const handleViewDetails = (account) => {
-    setSelectedAccount(account);
-    setIsViewDialogOpen(true);
-  };
-
-  const handleApproveAccount = (account) => {
-    setSelectedAccount(account);
-    setIsApproveDialogOpen(true);
-  };
-
-  const handleDisapproveAccount = (account) => {
-    setSelectedAccount(account);
-    setIsDisapproveDialogOpen(true);
-  };
-
-  const submitStatusChange = async (accountId, status) => {
+  const onSubmitStatusChange = async (accountId, status) => {
     try {
       setIsLoading(true);
       await updateAccountStatus(accountId, Number(status));
-      toast.success;
+      fetchAccounts();
+      toast.success("Update account status successfully");
     } catch (error) {
       console.log(error);
       toast.error(error);
@@ -253,8 +244,6 @@ const Accounts = () => {
         isOpen={isViewDialogOpen}
         onClose={() => setIsViewDialogOpen(false)}
         account={selectedAccount}
-        onApprove={handleApproveAccount}
-        onDisapprove={handleDisapproveAccount}
       />
     </div>
   );
