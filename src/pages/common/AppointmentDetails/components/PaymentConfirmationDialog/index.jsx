@@ -31,10 +31,6 @@ const PaymentConfirmationDialog = ({
         <div className="py-4 space-y-4">
           <div className="border rounded-md p-4 space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-gray-500">Appointment ID:</span>
-              <span className="font-medium">{appointmentDetails?.id}</span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-sm text-gray-500">Package:</span>
               <span className="font-medium">
                 {appointmentDetails?.packageName}

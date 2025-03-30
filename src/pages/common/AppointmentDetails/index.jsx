@@ -13,14 +13,13 @@ import {
   Calendar,
   Clock,
   User,
-  UserCheck,
   Package,
   ChevronLeft,
   CreditCard,
   Video,
   Edit,
 } from "lucide-react";
-import { getAppointmentStatusText } from "@/utils/enumUtils";
+import { getAppointmentStatusText, getRoleText } from "@/utils/enumUtils";
 import { getAppointmentStatusColor } from "@/utils/colorUtils";
 import { useEffect, useState } from "react";
 import Spinner from "@/components/Spinner";
@@ -42,9 +41,12 @@ import FeedbackSection from "./components/FeedbackSection";
 import NoteSection from "./components/NoteSection";
 import PaymentConfirmationDialog from "./components/PaymentConfirmationDialog";
 import UpdateMeetUrlDialog from "./components/UpdateMeetUrlDialog";
+import useAuth from "@/hooks/useAuth";
+import DashboardLayout from "@/layouts/DashboardLayout";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [appointmentDetails, setAppointmentDetails] = useState(null);
   const [currentPackage, setCurrentPackage] = useState(null);
@@ -61,6 +63,9 @@ const AppointmentDetails = () => {
   const [meetUrlOpen, setMeetUrlOpen] = useState(false);
   const [meetUrlContent, setMeetUrlContent] = useState("");
   const [isSubmittingMeetUrl, setIsSubmittingMeetUrl] = useState(false);
+
+  const isMember = getRoleText(user.role) === "Member";
+  const isTherapist = getRoleText(user.role) === "Therapist";
 
   const fetchData = async () => {
     try {
@@ -230,207 +235,210 @@ const AppointmentDetails = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <div className="min-h-screen container mx-auto max-w-4xl py-8">
-      <Button
-        variant="ghost"
-        className="mb-6 flex items-center gap-2"
-        onClick={() => navigate(-1)}
-      >
-        <ChevronLeft className="h-4 w-4" /> Back to Appointments
-      </Button>
+    <DashboardLayout role={getRoleText(user.role).toLowerCase()}>
+      {" "}
+      <div className="min-h-screen container mx-auto max-w-4xl py-8">
+        <Button
+          variant="ghost"
+          className="mb-6 flex items-center gap-2"
+          onClick={() => navigate(-1)}
+        >
+          <ChevronLeft className="h-4 w-4" /> Back to Appointments
+        </Button>
 
-      <Card className="mb-6">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">
-              Appointment ID: {appointmentDetails?.id}
-            </p>
-            <CardTitle className="text-2xl font-bold">
-              Marital Counseling Session
-            </CardTitle>
-          </div>
-          <Badge
-            className={`${getAppointmentStatusColor(
-              appointmentDetails?.status,
-            )} px-3 py-1.5 text-base`}
-          >
-            {getAppointmentStatusText(appointmentDetails?.status)}
-          </Badge>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Session Details</h3>
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p>{formatDate(appointmentDetails?.startTime)}</p>
+        <Card className="mb-6">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-bold">
+                Marital Counseling Session{" "}
+                {isMember
+                  ? appointmentDetails?.therapistFullName
+                  : appointmentDetails?.memberFullName}
+              </CardTitle>
+            </div>
+            <Badge
+              className={`${getAppointmentStatusColor(
+                appointmentDetails?.status,
+              )} px-3 py-1.5 text-base`}
+            >
+              {getAppointmentStatusText(appointmentDetails?.status)}
+            </Badge>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Session Details</h3>
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Date</p>
+                    <p>{formatDate(appointmentDetails?.startTime)}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Time</p>
-                  <p>
-                    {formatTime(appointmentDetails?.startTime)} -{" "}
-                    {formatTime(appointmentDetails?.endTime)}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Time</p>
+                    <p>
+                      {formatTime(appointmentDetails?.startTime)} -{" "}
+                      {formatTime(appointmentDetails?.endTime)}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Video className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Meeting Link</p>
-                  {appointmentDetails?.meetUrl ? (
-                    <>
+                <div className="flex items-center gap-3">
+                  <Video className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Meeting Link
+                    </p>
+                    {appointmentDetails?.meetUrl ? (
+                      <>
+                        <Button
+                          variant="link"
+                          className="p-0 text-blue-600 h-auto"
+                          onClick={openGoogleMeetLink}
+                        >
+                          Join Meeting Session
+                        </Button>
+                        {isTherapist &&
+                          (appointmentDetails?.status ===
+                            AppointmentStatus.Accepted ||
+                            AppointmentStatus.Booked) && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={openMeetUrlDialog}
+                            >
+                              <Edit className="h-4 w-4 text-gray-500" />
+                            </Button>
+                          )}
+                      </>
+                    ) : (
                       <Button
-                        variant="link"
-                        className="p-0 text-blue-600 h-auto"
-                        onClick={openGoogleMeetLink}
-                      >
-                        Join Meeting Session
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
+                        variant="outline"
+                        className="ml-2"
                         onClick={openMeetUrlDialog}
                       >
-                        <Edit className="h-4 w-4 text-gray-500" />
+                        Add Meeting URL
                       </Button>
-                    </>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      className="ml-2"
-                      onClick={openMeetUrlDialog}
-                    >
-                      Add Meeting URL
-                    </Button>
-                  )}{" "}
+                    )}{" "}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Package className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Package</p>
+                    <p>{appointmentDetails?.packageName}</p>
+                    {currentPackage?.price && (
+                      <p className="text-sm font-medium text-blue-600">
+                        {"$" + currentPackage?.price || "N/A"}
+                        {currentPackage?.minutesPerAppointment && (
+                          <span className="text-blue-600 ml-2">
+                            ({currentPackage.minutesPerAppointment} min)
+                          </span>
+                        )}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                <Package className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Package</p>
-                  <p>{appointmentDetails?.packageName}</p>
-                  {currentPackage?.price && (
-                    <p className="text-sm font-medium text-blue-600">
-                      {"$" + currentPackage?.price || "N/A"}
-                      {currentPackage?.minutesPerAppointment && (
-                        <span className="text-blue-600 ml-2">
-                          ({currentPackage.minutesPerAppointment} min)
-                        </span>
-                      )}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">People</h3>
+                <div className="flex items-center gap-3">
+                  <User className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      {isMember ? "Therapist" : "Member"}
                     </p>
-                  )}
+                    <p>
+                      {isMember
+                        ? appointmentDetails?.therapistFullName
+                        : appointmentDetails?.memberFullName}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">People</h3>
-              <div className="flex items-center gap-3">
-                <User className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Client</p>
-                  <p>{appointmentDetails?.memberFullName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    ID: {appointmentDetails?.memberId}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <UserCheck className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Therapist</p>
-                  <p>{appointmentDetails?.therapistFullName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    ID: {appointmentDetails?.therapistId}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <Separator />
+            <Separator />
 
-          <NoteSection
-            appointmentDetails={appointmentDetails}
-            openTherapistNoteDialog={openTherapistNoteDialog}
-          />
-
-          {appointmentDetails?.feedbackRating && (
-            <FeedbackSection
+            <NoteSection
               appointmentDetails={appointmentDetails}
-              openFeedbackDialog={openFeedbackDialog}
+              openTherapistNoteDialog={openTherapistNoteDialog}
             />
-          )}
-        </CardContent>
-        <CardFooter className="border-t pt-6 flex flex-wrap gap-3 justify-center">
-          {appointmentDetails?.status === AppointmentStatus.Pending && (
-            <Button
-              className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
-              onClick={() => setPaymentDialogOpen(true)}
-            >
-              <CreditCard className="h-4 w-4" />
-              Pay for Appointment
-            </Button>
-          )}
 
-          {appointmentDetails?.status === AppointmentStatus.Completed &&
-            !appointmentDetails.feedbackRating && (
+            {appointmentDetails?.feedbackRating && (
+              <FeedbackSection
+                appointmentDetails={appointmentDetails}
+                openFeedbackDialog={openFeedbackDialog}
+              />
+            )}
+          </CardContent>
+          <CardFooter className="border-t pt-6 flex flex-wrap gap-3 justify-center">
+            {appointmentDetails?.status === AppointmentStatus.Accepted && (
               <Button
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={() => setFeedbackOpen(true)}
+                className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+                onClick={() => setPaymentDialogOpen(true)}
               >
-                Provide Feedback
+                <CreditCard className="h-4 w-4" />
+                Pay for Appointment
               </Button>
             )}
-        </CardFooter>
-      </Card>
 
-      <PaymentConfirmationDialog
-        appointmentDetails={appointmentDetails}
-        currentPackage={currentPackage}
-        paymentDialogOpen={paymentDialogOpen}
-        setPaymentDialogOpen={setPaymentDialogOpen}
-        isProcessingPayment={isProcessingPayment}
-        handlePayment={handlePayment}
-      />
+            {appointmentDetails?.status === AppointmentStatus.Completed &&
+              !appointmentDetails.feedbackRating && (
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => setFeedbackOpen(true)}
+                >
+                  Provide Feedback
+                </Button>
+              )}
+          </CardFooter>
+        </Card>
 
-      <UpdateMeetUrlDialog
-        meetUrlOpen={meetUrlOpen}
-        setMeetUrlOpen={setMeetUrlOpen}
-        meetUrlContent={meetUrlContent}
-        setMeetUrlContent={setMeetUrlContent}
-        handleMeetUrlSubmit={handleMeetUrlSubmit}
-        isSubmittingMeetUrl={isSubmittingMeetUrl}
-      />
+        <PaymentConfirmationDialog
+          appointmentDetails={appointmentDetails}
+          currentPackage={currentPackage}
+          paymentDialogOpen={paymentDialogOpen}
+          setPaymentDialogOpen={setPaymentDialogOpen}
+          isProcessingPayment={isProcessingPayment}
+          handlePayment={handlePayment}
+        />
 
-      <UpdateFeedbackDialog
-        appointmentDetails={appointmentDetails}
-        feedbackOpen={feedbackOpen}
-        setFeedbackOpen={setFeedbackOpen}
-        rating={rating}
-        setRating={setRating}
-        feedbackContent={feedbackContent}
-        setFeedbackContent={setFeedbackContent}
-        handleFeedbackSubmit={handleFeedbackSubmit}
-        isSubmitting={isSubmitting}
-      />
+        <UpdateMeetUrlDialog
+          meetUrlOpen={meetUrlOpen}
+          setMeetUrlOpen={setMeetUrlOpen}
+          meetUrlContent={meetUrlContent}
+          setMeetUrlContent={setMeetUrlContent}
+          handleMeetUrlSubmit={handleMeetUrlSubmit}
+          isSubmittingMeetUrl={isSubmittingMeetUrl}
+        />
 
-      <UpdateTherapistNoteDialog
-        appointmentDetails={appointmentDetails}
-        therapistNoteContent={therapistNoteContent}
-        setTherapistNoteContent={setTherapistNoteContent}
-        therapistNoteOpen={therapistNoteOpen}
-        setTherapistNoteOpen={setTherapistNoteOpen}
-        handleTherapistNoteSubmit={handleTherapistNoteSubmit}
-        isSubmittingNote={isSubmittingNote}
-      />
-    </div>
+        <UpdateFeedbackDialog
+          appointmentDetails={appointmentDetails}
+          feedbackOpen={feedbackOpen}
+          setFeedbackOpen={setFeedbackOpen}
+          rating={rating}
+          setRating={setRating}
+          feedbackContent={feedbackContent}
+          setFeedbackContent={setFeedbackContent}
+          handleFeedbackSubmit={handleFeedbackSubmit}
+          isSubmitting={isSubmitting}
+        />
+
+        <UpdateTherapistNoteDialog
+          appointmentDetails={appointmentDetails}
+          therapistNoteContent={therapistNoteContent}
+          setTherapistNoteContent={setTherapistNoteContent}
+          therapistNoteOpen={therapistNoteOpen}
+          setTherapistNoteOpen={setTherapistNoteOpen}
+          handleTherapistNoteSubmit={handleTherapistNoteSubmit}
+          isSubmittingNote={isSubmittingNote}
+        />
+      </div>
+    </DashboardLayout>
   );
 };
 

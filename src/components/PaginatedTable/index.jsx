@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableBody,
@@ -40,8 +39,8 @@ const PaginatedTable = ({
 
   // Calculate total pages based on data length and items per page
   const calculateTotalPages = () => {
-    const pages = Math.ceil(data.length / itemsPerPage);
-    setTotalPages(pages || 1); // Ensure at least 1 page even with empty data
+    const pages = Math.ceil(data.length / itemsPerPage) || 1;
+    setTotalPages(pages);
   };
 
   // Get current page's data
@@ -139,6 +138,7 @@ const PaginatedTable = ({
             {currentPage > 1 && (
               <PaginationItem>
                 <PaginationPrevious
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(currentPage - 1);
@@ -159,6 +159,7 @@ const PaginatedTable = ({
               return (
                 <PaginationItem key={page}>
                   <PaginationLink
+                    className="cursor-pointer"
                     isActive={page === currentPage}
                     onClick={(e) => {
                       e.preventDefault();
@@ -174,6 +175,7 @@ const PaginatedTable = ({
             {currentPage < totalPages && (
               <PaginationItem>
                 <PaginationNext
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(currentPage + 1);

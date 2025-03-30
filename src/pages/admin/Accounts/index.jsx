@@ -21,14 +21,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,6 +34,7 @@ import { AccountStatus } from "@/constants/status";
 import { Roles } from "@/constants/role";
 import PaginatedTable from "@/components/PaginatedTable";
 import { toast } from "sonner";
+import ViewAccountDetailsDialog from "./components/ViewAccountDetailsDialog";
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
@@ -143,7 +136,10 @@ const Accounts = () => {
     try {
       setIsLoading(true);
       const data = await getAllAccounts();
-      setAccounts(data.filter((x) => getRoleText(x.role) !== "System"));
+      const filteredData = data
+        .filter((x) => getRoleText(x.role) !== "System")
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      setAccounts(filteredData);
     } catch (error) {
       console.log(error);
       toast.error(error);
@@ -251,6 +247,14 @@ const Accounts = () => {
         caption={`Total ${filteredAccounts.length} accounts found.`}
         emptyMessage="No accounts found."
         className="w-full"
+      />
+
+      <ViewAccountDetailsDialog
+        isOpen={isViewDialogOpen}
+        onClose={() => setIsViewDialogOpen(false)}
+        account={selectedAccount}
+        onApprove={handleApproveAccount}
+        onDisapprove={handleDisapproveAccount}
       />
     </div>
   );

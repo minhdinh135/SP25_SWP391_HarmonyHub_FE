@@ -98,6 +98,7 @@ const ItemList = ({
             {currentPage > 1 && (
               <PaginationItem>
                 <PaginationPrevious
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(currentPage - 1);
@@ -118,6 +119,7 @@ const ItemList = ({
               return (
                 <PaginationItem key={page}>
                   <PaginationLink
+                    className="cursor-pointer"
                     isActive={page === currentPage}
                     onClick={(e) => {
                       e.preventDefault();
@@ -133,6 +135,7 @@ const ItemList = ({
             {currentPage < totalPages && (
               <PaginationItem>
                 <PaginationNext
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(currentPage + 1);
