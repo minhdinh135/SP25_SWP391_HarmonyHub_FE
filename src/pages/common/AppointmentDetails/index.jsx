@@ -263,11 +263,10 @@ const AppointmentDetails = () => {
 
       // Use the price from the therapist API if available, otherwise fallback to packagePrice
       const packagePrice = currentPackage?.price || "0";
-      const amountInVND = convertToVND(packagePrice);
 
       const payload = {
-        amount: amountInVND,
-        orderInfo: "purchase appointment",
+        amount: packagePrice,
+        orderInfo: "Pay for appointment",
         senderId: appointmentDetails?.memberId,
         receiverId: appointmentDetails?.therapistId,
         appointmentId: appointmentDetails?.id,
