@@ -39,6 +39,32 @@ export const createBlog = async (payload) => {
   }
 };
 
+export const updateBlogDetails = async (id, payload) => {
+  try {
+    await api.put(`/blogs/${id}`, payload);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating blog details");
+  }
+};
+
+export const updateBlogImage = async (id, file) => {
+  const formData = new FormData();
+  formData.append("avatarFile", file);
+
+  try {
+    const response = await api.put(`/blogs/${id}/avatar`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating blog image");
+  }
+};
+
 export const updateBlogStatus = async (id, status) => {
   try {
     await api.put(`/blogs/${id}/status?status=${status}`);

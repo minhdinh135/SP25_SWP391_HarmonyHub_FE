@@ -8,15 +8,16 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Search, Plus, Eye, Trash2 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import Spinner from "@/components/Spinner";
-import { getTherapistBlogs } from "@/api/blogApi";
+import { getTherapistBlogs, updateBlogStatus } from "@/api/blogApi";
 import useAuth from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { getBlogStatusText } from "@/utils/enumUtils";
 import { getBlogStatusColor } from "@/utils/colorUtils";
+import { BlogStatus } from "@/constants/status";
 
 const TherapistBlogList = () => {
   const { user } = useAuth();
@@ -25,22 +26,21 @@ const TherapistBlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const fetchBlogs = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getTherapistBlogs(user.accountId);
+      setBlogs(data);
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getTherapistBlogs(user.accountId);
-        setBlogs(data);
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-        toast.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchBlogs();
   }, [user.accountId]);
 
@@ -55,6 +55,20 @@ const TherapistBlogList = () => {
   const filteredBlogs = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const handleRemoveBlog = async (id) => {
+    try {
+      setIsLoading(true);
+      await updateBlogStatus(id, Number(BlogStatus.Inactive));
+      toast.success("Remove blog successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Remove blog failed");
+    } finally {
+      fetchBlogs();
+      setIsLoading(false);
+    }
+  };
 
   if (isLoading) return <Spinner />;
 
@@ -121,19 +135,13 @@ const TherapistBlogList = () => {
                   >
                     <Eye className="h-4 w-4 mr-1" /> View details
                   </Button>
-                  <div className="space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-500 border-red-500 hover:bg-red-50"
-                      onClick={() => setIsDialogOpen(true)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button
+                    className="bg-red-500 hover:bg-red-700"
+                    size="sm"
+                    onClick={() => handleRemoveBlog(blog.blogId)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />{" "}
+                  </Button>
                 </CardFooter>
               </Card>
             ))}
