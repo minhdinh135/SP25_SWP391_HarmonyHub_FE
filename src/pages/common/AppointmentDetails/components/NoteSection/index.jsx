@@ -11,27 +11,28 @@ const NoteSection = ({ appointmentDetails, openTherapistNoteDialog }) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Notes</h3>
-        {appointmentDetails?.status === AppointmentStatus.Accepted &&
-          isTherapist && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-1"
-              onClick={openTherapistNoteDialog}
-            >
-              {appointmentDetails?.therapistNote ? (
-                <>
-                  <Pencil className="h-3 w-3" />
-                  Edit Note
-                </>
-              ) : (
-                <>
-                  <Plus className="h-3 w-3" />
-                  Add Note
-                </>
-              )}
-            </Button>
-          )}
+        {appointmentDetails?.status === AppointmentStatus.Accepted ||
+          (appointmentDetails?.status === AppointmentStatus.Paid &&
+            isTherapist && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1"
+                onClick={openTherapistNoteDialog}
+              >
+                {appointmentDetails?.therapistNote ? (
+                  <>
+                    <Pencil className="h-3 w-3" />
+                    Edit Note
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-3 w-3" />
+                    Add Note
+                  </>
+                )}
+              </Button>
+            ))}
       </div>
       {appointmentDetails?.clientNote && (
         <div className="rounded-lg bg-slate-50 p-4">

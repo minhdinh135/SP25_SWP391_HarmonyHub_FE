@@ -365,7 +365,7 @@ const AppointmentDetails = () => {
                             {isTherapist &&
                               (appointmentDetails?.status ===
                                 AppointmentStatus.Accepted ||
-                                AppointmentStatus.Booked) && (
+                                AppointmentStatus.Paid) && (
                                 <Button
                                   variant="ghost"
                                   size="icon"

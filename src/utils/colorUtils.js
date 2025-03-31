@@ -22,6 +22,8 @@ export const getAccountStatusColor = (statusEnum) => {
 
 export const getAppointmentStatusColor = (statusEnum) => {
   switch (statusEnum) {
+    case AppointmentStatus.Paid:
+      return "bg-teal-500";
     case AppointmentStatus.Pending:
       return "bg-yellow-500";
     case AppointmentStatus.Accepted:
