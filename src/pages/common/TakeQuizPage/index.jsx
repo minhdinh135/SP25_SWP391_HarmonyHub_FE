@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getQuizDetails } from "@/api/quizApi";
+import { toast } from "sonner";
+import Spinner from "@/components/Spinner";
 
 const TakeQuiz = () => {
   const { id } = useParams();
@@ -10,36 +13,20 @@ const TakeQuiz = () => {
 
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
+
+  const letters = ["A", "B", "C", "D"];
 
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://sp25-swp391-harmonyhub-be.onrender.com/api/quizzes");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch quiz data");
-        }
-
-        const result = await response.json();
-        const selectedQuiz = result.data.find(q => q.id === parseInt(id));
-
-        if (!selectedQuiz) {
-          throw new Error("Quiz not found");
-        }
-
-        if (!selectedQuiz.questionResponse || selectedQuiz.questionResponse.length === 0) {
-          throw new Error("This quiz has no questions");
-        }
-
-        setQuiz(selectedQuiz);
-        setError(null);
+        const data = await getQuizDetails(id);
+        setQuiz(data);
       } catch (err) {
-        setError(err.message);
-        console.error("Error fetching quiz data:", err);
+        console.log(err);
+        toast.error("Error fetching quiz details");
       } finally {
         setLoading(false);
       }
@@ -48,10 +35,11 @@ const TakeQuiz = () => {
     fetchQuizData();
   }, [id]);
 
-  const handleOptionSelect = (questionId, selectedOption) => {
+  const handleOptionSelect = (questionId, option) => {
+    // Store the option's type instead of the letter index
     setAnswers((prev) => ({
       ...prev,
-      [questionId]: selectedOption,
+      [questionId]: option.type,
     }));
   };
 
@@ -68,76 +56,50 @@ const TakeQuiz = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Quiz submitted with answers:", answers);
-    // Here you would typically send the answers to your backend
-    // For now, we'll just navigate to a result page
+    // Count the number of each type selected
+    const counts = Object.values(answers).reduce((acc, type) => {
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Find the most frequently selected type
+    let maxCount = 0;
+    let mostFrequentType = null;
+
+    for (const [type, count] of Object.entries(counts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostFrequentType = Number(type); // Convert string to number
+      }
+    }
+
+    console.log("Quiz submitted with type counts:", counts);
+    console.log("Most frequent type:", mostFrequentType);
+
+    // Navigate to results page with type counts and most frequent type
     navigate(`/quizzes/${id}/result`, {
       state: {
         answers,
+        typeCounts: counts,
+        mostFrequentType,
         quizTitle: quiz.title,
-        quizId: quiz.id
-      }
+        quizId: quiz.id,
+        resultResponse: quiz.resultResponse,
+      },
     });
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 flex justify-center items-center h-64">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading quiz...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(`/quizzes/${id}`)}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Quiz Details
-          </Button>
-        </div>
-        <div className="bg-destructive/10 p-4 rounded-md flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-medium text-destructive">Error</h3>
-            <p className="text-sm text-muted-foreground">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!quiz) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/quizzes")}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Quizzes
-          </Button>
-        </div>
-        <Card className="p-8 text-center">
-          <p className="text-muted-foreground">Quiz not found</p>
-        </Card>
-      </div>
-    );
-  }
+  if (loading) return <Spinner />;
 
   const currentQuestionData = quiz.questionResponse[currentQuestion];
   const isLastQuestion = currentQuestion === quiz.questionResponse.length - 1;
   const isFirstQuestion = currentQuestion === 0;
+
+  // Find the letter that corresponds to each option based on type
+  const getLetterForType = (type) => {
+    const index = letters.findIndex((_, i) => i + 1 === type);
+    return index >= 0 ? letters[index] : "";
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
@@ -176,19 +138,28 @@ const TakeQuiz = () => {
             </h3>
 
             <div className="space-y-3">
-              {currentQuestionData.optionResponse.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleOptionSelect(currentQuestionData.id, option.content)}
-                  className={`w-full p-4 text-left rounded-lg border transition-all
-                    ${answers[currentQuestionData.id] === option.content
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-primary/50"
-                    }`}
-                >
-                  {option.content}
-                </button>
-              ))}
+              {currentQuestionData.optionResponse.map((option) => {
+                const letter = getLetterForType(option.type);
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() =>
+                      handleOptionSelect(currentQuestionData.id, option)
+                    }
+                    className={`w-full p-4 text-left rounded-lg border transition-all flex items-start gap-3
+                      ${
+                        answers[currentQuestionData.id] === option.type
+                          ? "border-primary bg-primary/10"
+                          : "border-gray-200 hover:border-primary/50"
+                      }`}
+                  >
+                    <span className="font-medium text-primary w-6">
+                      {letter}.
+                    </span>
+                    <span className="flex-1">{option.content}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
