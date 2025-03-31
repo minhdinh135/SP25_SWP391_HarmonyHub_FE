@@ -132,10 +132,9 @@ const PaymentResult = () => {
     }).format(amount);
   };
 
-  // Convert VND to USD (approximately 24,000 VND = 1 USD)
   const convertToUSD = (vndAmount) => {
     if (!vndAmount && vndAmount !== 0) return "N/A";
-    const usdAmount = vndAmount / 24000;
+    const usdAmount = vndAmount / 25000;
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
