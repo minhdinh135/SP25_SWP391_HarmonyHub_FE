@@ -14,8 +14,10 @@ import useAuth from "@/hooks/useAuth";
 import { formatCurrencyInVND } from "@/utils/currencyFormat";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { getAllTransactions } from "@/api/transactionApi";
+import { getTransactionStatusText } from "@/utils/enumUtils";
+import { getTransactionStatusColor } from "@/utils/colorUtils";
 
-const TransactionManagement = ({ role = "member" }) => {
+const TransactionManagement = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +36,7 @@ const TransactionManagement = ({ role = "member" }) => {
           description: transaction.description,
           senderId: transaction.senderId,
           receiverId: transaction.receiverId,
-          status: getStatusName(transaction.status),
+          status: getTransactionStatusText(transaction.status),
           date: new Date().toLocaleDateString(), // Using current date as API doesn't provide date
           type: determineTransactionType(transaction, user.accountId),
           senderFullName: transaction.senderFullName,
@@ -45,7 +47,11 @@ const TransactionManagement = ({ role = "member" }) => {
         }));
 
         const filterdTransactions = formattedTransactions
-          .filter((item) => item.senderId === user.accountId)
+          .filter(
+            (item) =>
+              item.senderId === user.accountId ||
+              item.receiverId === user.accountId,
+          )
           .sort((a, b) => new Date(b) - new Date(a));
         console.log(filterdTransactions);
 
@@ -76,27 +82,6 @@ const TransactionManagement = ({ role = "member" }) => {
       // Add more as needed
     };
     return methods[methodCode] || "Unknown";
-  };
-
-  // Convert status code to name
-  const getStatusName = (statusCode) => {
-    const statuses = {
-      1: "completed",
-      2: "pending",
-      3: "cancelled",
-      // Add more as needed
-    };
-    return statuses[statusCode] || "unknown";
-  };
-
-  const getStatusColor = (status) => {
-    const colors = {
-      completed: "bg-green-500",
-      pending: "bg-yellow-500",
-      cancelled: "bg-red-500",
-      unknown: "bg-gray-500",
-    };
-    return colors[status] || "bg-gray-500";
   };
 
   if (isLoading) return <Spinner />;
@@ -154,7 +139,11 @@ const TransactionManagement = ({ role = "member" }) => {
 
                       {/* Status */}
                       <TableCell>
-                        <Badge className={getStatusColor(transaction.status)}>
+                        <Badge
+                          className={getTransactionStatusColor(
+                            transaction.status,
+                          )}
+                        >
                           {transaction.status}
                         </Badge>
                       </TableCell>
@@ -189,7 +178,7 @@ const TransactionManagement = ({ role = "member" }) => {
                           }
                         >
                           {transaction.type === "credit" ? "+" : "-"}
-                          {formatCurrencyInVND(transaction.amount)}
+                          {formatCurrencyInVND(transaction.amount)} VND
                         </span>
                       </TableCell>
                     </TableRow>
