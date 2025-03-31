@@ -126,10 +126,6 @@ const QuizResult = () => {
             >
               Quiz Details
             </Button>
-            <Button className="w-full gap-2">
-              <Share2 className="w-4 h-4" />
-              Share Result
-            </Button>
           </div>
         </CardContent>
       </Card>
