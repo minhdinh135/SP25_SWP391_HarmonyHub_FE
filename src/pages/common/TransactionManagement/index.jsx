@@ -16,6 +16,7 @@ import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { getAllTransactions } from "@/api/transactionApi";
 import { getTransactionStatusText } from "@/utils/enumUtils";
 import { getTransactionStatusColor } from "@/utils/colorUtils";
+import { formatDate } from "@/utils/dateUtils";
 
 const TransactionManagement = () => {
   const { user } = useAuth();
@@ -134,7 +135,7 @@ const TransactionManagement = () => {
 
                       {/* Date */}
                       <TableCell className="text-gray-500">
-                        {transaction.date}
+                        {formatDate(transaction.updatedAt)}
                       </TableCell>
 
                       {/* Status */}
@@ -177,8 +178,8 @@ const TransactionManagement = () => {
                               : "text-red-500"
                           }
                         >
-                          {transaction.type === "credit" ? "+" : "-"}
-                          {formatCurrencyInVND(transaction.amount)} VND
+                          {transaction.type === "credit" ? "+" : "-"}$
+                          {transaction.amount}
                         </span>
                       </TableCell>
                     </TableRow>
