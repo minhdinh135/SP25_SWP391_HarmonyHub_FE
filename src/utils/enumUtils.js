@@ -23,8 +23,8 @@ export const getAppointmentStatusText = (statusEnum) => {
   switch (statusEnum) {
     case AppointmentStatus.Cancelled:
       return "Cancelled";
-    case AppointmentStatus.Booked:
-      return "Booked";
+    case AppointmentStatus.Paid:
+      return "Paid";
     case AppointmentStatus.Pending:
       return "Pending";
     case AppointmentStatus.Accepted:
