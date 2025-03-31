@@ -31,11 +31,10 @@ import {
   updateAppointmentNote,
   updateAppointmentStatus,
 } from "@/api/appointmentApi";
-import { AppointmentStatus } from "@/constants/status";
+import { AppointmentStatus, TransactionStatus } from "@/constants/status";
 import { getAccountById, getTherapistDetails } from "@/api/accountApi";
 import { createVnPayPaymentUrl } from "@/api/vnpayApi";
 import { formatDate, formatTime } from "@/utils/dateUtils";
-import { convertToVND } from "@/utils/currencyUtils";
 import UpdateFeedbackDialog from "./components/UpdateFeedbackDialog";
 import UpdateTherapistNoteDialog from "./components/UpdateTherapistNoteDialog";
 import FeedbackSection from "./components/FeedbackSection";
@@ -45,6 +44,7 @@ import UpdateMeetUrlDialog from "./components/UpdateMeetUrlDialog";
 import useAuth from "@/hooks/useAuth";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAllTransactions } from "@/api/transactionApi";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
@@ -67,6 +67,7 @@ const AppointmentDetails = () => {
   const [isSubmittingMeetUrl, setIsSubmittingMeetUrl] = useState(false);
   const [isMarkingCompleted, setIsMarkingCompleted] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [isPaid, setIsPaid] = useState(false);
 
   const isMember = getRoleText(user.role) === "Member";
   const isTherapist = getRoleText(user.role) === "Therapist";
@@ -103,6 +104,8 @@ const AppointmentDetails = () => {
         await fetchTherapistData(data.therapistId, data.packageName);
       }
 
+      await fetchAppointmentTransactionData();
+
       // Fetch avatar data
       const userId = isMember ? data.therapistId : data.memberId;
       const accountData = await getAccountById(userId);
@@ -115,6 +118,29 @@ const AppointmentDetails = () => {
     }
   };
 
+  const fetchAppointmentTransactionData = async () => {
+    try {
+      const data = await getAllTransactions();
+
+      // Convert id to string for consistent comparison
+      const appointmentIdString = String(id);
+
+      const matchedTransaction = data.find(
+        (item) =>
+          String(item.appointmentId) === appointmentIdString &&
+          item.status === TransactionStatus.Successful,
+      );
+
+      if (matchedTransaction) {
+        setIsPaid(true);
+      } else {
+        setIsPaid(false); // Explicitly set to false if no match found
+      }
+    } catch (error) {
+      console.error("Error fetching appointment transaction data:", error);
+      // Consider showing a toast error here if payment verification is critical
+    }
+  };
   const fetchTherapistData = async (therapistId, packageName) => {
     try {
       const data = await getTherapistDetails(therapistId);
@@ -363,9 +389,8 @@ const AppointmentDetails = () => {
                               Join Meeting Session
                             </Button>
                             {isTherapist &&
-                              (appointmentDetails?.status ===
-                                AppointmentStatus.Accepted ||
-                                AppointmentStatus.Paid) && (
+                              appointmentDetails?.status ===
+                                AppointmentStatus.Accepted && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -379,6 +404,7 @@ const AppointmentDetails = () => {
                         ) : (
                           <Button
                             variant="outline"
+                            disabled={!isTherapist}
                             className="mt-1"
                             onClick={openMeetUrlDialog}
                           >
@@ -425,6 +451,7 @@ const AppointmentDetails = () => {
 
           <CardFooter className="my-3 border-t pt-6 flex flex-wrap gap-3 justify-center">
             {isMember &&
+              !isPaid &&
               appointmentDetails?.status === AppointmentStatus.Accepted && (
                 <Button
                   className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
