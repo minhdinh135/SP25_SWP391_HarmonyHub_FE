@@ -135,7 +135,7 @@ const TransactionManagement = () => {
 
                       {/* Date */}
                       <TableCell className="text-gray-500">
-                        {formatDate(transaction.updatedAt)}
+                        {formatDate(transaction.date)}
                       </TableCell>
 
                       {/* Status */}
