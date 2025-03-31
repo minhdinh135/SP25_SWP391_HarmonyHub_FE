@@ -32,7 +32,10 @@ const navLinks = {
 
 const avatarItems = [
   { title: "Dashboard", icon: <User className="size-5 shrink-0" /> },
-  { title: "Logout", icon: <ArrowLeftSquare className="size-5 shrink-0" /> },
+  {
+    title: "Logout",
+    icon: <ArrowLeftSquare className="size-5 shrink-0" />,
+  },
 ];
 
 const Header = () => {
@@ -111,6 +114,11 @@ const Header = () => {
                       {avatarItems.map((item, idx) => (
                         <li
                           key={idx}
+                          className={
+                            item.title === "Logout"
+                              ? "text-red-500"
+                              : "bg-white"
+                          }
                           onClick={() => handleAvatarItemClick(item.title)}
                         >
                           <a className="flex items-center gap-4 p-3 hover:bg-gray-100 cursor-pointer">

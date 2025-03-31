@@ -39,6 +39,8 @@ import TherapistProfile from "./pages/therapist/TherapistProfile";
 import TherapistQuizManagement from "./pages/therapist/TherapistQuizManagement";
 import TherapistSchedule from "./pages/therapist/TherapistSchedule";
 import TherapistTransactionManagement from "./pages/therapist/TherapistTransactionManagement";
+import TherapistProfileDetails from "./pages/common/TherapistProfileDetails";
+import MemberProfileDetails from "./pages/common/MemberProfileDetails";
 
 function App() {
   return (
@@ -72,6 +74,12 @@ function App() {
             <Route path="quizzes" element={<AdminQuizManagement />} />
             <Route path="blogs" element={<AdminBlogManagement />} />
             <Route path="reports" element={<AdminReportManagement />} />
+            <Route
+              path="therapists/:id"
+              element={<TherapistProfileDetails />}
+            />
+
+            <Route path="members/:id" element={<MemberProfileDetails />} />
           </Route>
         </Route>
 

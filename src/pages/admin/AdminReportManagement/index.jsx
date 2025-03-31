@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAllReports } from "@/api/reportApi";
+import { getAllReports, updateReportStatus } from "@/api/reportApi";
 import Spinner from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,52 +31,38 @@ const AdminReportManagement = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchReports = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getAllReports();
+      const sortedData = data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+      );
+
+      setReports(sortedData);
+    } catch (error) {
+      console.error("Failed to fetch reports", error);
+      toast.error("Failed to load reports");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getAllReports();
-        const sortedData = data.sort(
-          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
-        );
-
-        setReports(sortedData);
-      } catch (error) {
-        console.error("Failed to fetch reports", error);
-        toast.error("Failed to load reports");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchReports();
   }, []);
 
   const handleStatusChange = async (reportId, newStatus) => {
     try {
-      const updatedReports = reports.map((report) =>
-        report.id === reportId
-          ? { ...report, status: parseInt(newStatus) }
-          : report,
-      );
-      setReports(updatedReports);
-
-      if (selectedReport && selectedReport.id === reportId) {
-        setSelectedReport((prev) => ({
-          ...prev,
-          status: parseInt(newStatus),
-        }));
-      }
-
-      toast.success(`Report #${reportId} status updated`);
+      setIsLoading(true);
+      await updateReportStatus(reportId, Number(newStatus));
+      toast.success("Update report status successfully");
     } catch (error) {
       console.error("Failed to update report status", error);
       toast.error("Failed to update report status");
-      if (selectedReport) {
-        setSelectedReport(
-          reports.find((r) => r.id === selectedReport.id) || null,
-        );
-      }
+    } finally {
+      fetchReports();
+      setIsLoading(false);
     }
   };
 
@@ -153,7 +139,6 @@ const AdminReportManagement = () => {
                             <SelectValue placeholder="Change Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="2">Pending</SelectItem>
                             <SelectItem value="1">Resolved</SelectItem>
                             <SelectItem value="0">Dismissed</SelectItem>
                           </SelectContent>
