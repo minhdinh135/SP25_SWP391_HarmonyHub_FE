@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatTime } from "@/utils/timeUtils";
 import useAuth from "@/hooks/useAuth";
@@ -9,7 +9,7 @@ const TherapistAvailability = ({ therapistDetails, appointments }) => {
   const { user } = useAuth();
   const [currentWeek, setCurrentWeek] = useState(0);
 
-  const isMember = getRoleText(user.role) === "Member";
+  const isMember = getRoleText(user?.role) === "Member";
 
   // Generate dates for the current week view
   const generateWeekDates = (weekOffset = 0) => {
@@ -129,6 +129,46 @@ const TherapistAvailability = ({ therapistDetails, appointments }) => {
     return date.toISOString().split("T")[0]; // YYYY-MM-DD
   };
 
+  // Render time slot based on user membership status
+  const renderTimeSlot = (slot, date, timeIndex) => {
+    const dateStr = formatDateForURL(date);
+
+    // If slot is booked, show as unavailable for all users
+    if (slot.isBooked) {
+      return (
+        <div
+          key={timeIndex}
+          className="text-center py-2 px-1 rounded bg-gray-100 border border-gray-200 text-gray-500 font-medium text-sm cursor-not-allowed"
+        >
+          {formatTime(slot.time)} - Booked
+        </div>
+      );
+    }
+
+    // For members, show clickable time slots
+    if (isMember) {
+      return (
+        <Link
+          key={timeIndex}
+          to={`appointment-booking?date=${dateStr}&time=${slot.time}`}
+          className="text-center py-2 px-1 rounded bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 transition-colors font-medium text-sm"
+        >
+          {formatTime(slot.time)}
+        </Link>
+      );
+    }
+
+    // For non-members, show non-clickable time slots with lock icon
+    return (
+      <div
+        key={timeIndex}
+        className="text-center py-2 px-1 rounded bg-white border border-gray-200 text-gray-600 flex items-center justify-center gap-1 text-sm"
+      >
+        <Lock className="h-3 w-3" />
+        {formatTime(slot.time)}
+      </div>
+    );
+  };
   return (
     <div className="w-full">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
@@ -174,12 +214,22 @@ const TherapistAvailability = ({ therapistDetails, appointments }) => {
         </div>
       </div>
 
+      {!isMember && (
+        <div className="bg-yellow-50 p-4 rounded-lg mb-6 flex items-center">
+          <Info className="h-5 w-5 text-yellow-600 mr-2" />
+          <p className="text-sm text-yellow-800">
+            You need to be a member to book appointments. Available time slots
+            are shown for reference only.
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-7 gap-4">
         {weekDates.map((date, index) => {
           const dayName = date.toLocaleString("default", { weekday: "short" });
           const dayNumber = date.getDate();
           const timeSlots = getTimeSlotsForDay(date);
-          const dateStr = formatDateForURL(date);
+          // const dateStr = formatDateForURL(date);
 
           return (
             <div key={index} className="flex flex-col">
@@ -192,22 +242,23 @@ const TherapistAvailability = ({ therapistDetails, appointments }) => {
 
               <div className="flex flex-col gap-2 mt-2">
                 {timeSlots.map((slot, timeIndex) =>
-                  slot.isBooked ? (
-                    <div
-                      key={timeIndex}
-                      className="text-center py-2 px-1 rounded bg-gray-100 border border-gray-200 text-gray-500 font-medium text-sm cursor-not-allowed"
-                    >
-                      {formatTime(slot.time)} - Booked
-                    </div>
-                  ) : (
-                    <Link
-                      key={timeIndex}
-                      to={`appointment-booking?date=${dateStr}&time=${slot.time}`}
-                      className="text-center py-2 px-1 rounded bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 transition-colors font-medium text-sm"
-                    >
-                      {formatTime(slot.time)}
-                    </Link>
-                  ),
+                  // slot.isBooked ? (
+                  //   <div
+                  //     key={timeIndex}
+                  //     className="text-center py-2 px-1 rounded bg-gray-100 border border-gray-200 text-gray-500 font-medium text-sm cursor-not-allowed"
+                  //   >
+                  //     {formatTime(slot.time)} - Booked
+                  //   </div>
+                  // ) : (
+                  //   <Link
+                  //     key={timeIndex}
+                  //     to={`appointment-booking?date=${dateStr}&time=${slot.time}`}
+                  //     className="text-center py-2 px-1 rounded bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 transition-colors font-medium text-sm"
+                  //   >
+                  //     {formatTime(slot.time)}
+                  //   </Link>
+                  // ),
+                  renderTimeSlot(slot, date, timeIndex),
                 )}
 
                 {timeSlots.length === 0 && (
