@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, Edit } from "lucide-react";
+import { ArrowLeft, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,10 +35,6 @@ const TherapistBlogDetails = () => {
     fetchBlogDetails();
   }, [id]);
 
-  const handleEdit = () => {
-    navigate(`/blogs/edit/${blog.blogId}`);
-  };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -68,18 +64,6 @@ const TherapistBlogDetails = () => {
         <Badge className={getBlogStatusColor(blog.status)}>
           {getBlogStatusText(blog.status)}
         </Badge>
-
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1"
-            onClick={handleEdit}
-          >
-            <Edit className="h-4 w-4" />
-            Edit
-          </Button>
-        </div>
       </div>
 
       {/* Blog Content Card */}

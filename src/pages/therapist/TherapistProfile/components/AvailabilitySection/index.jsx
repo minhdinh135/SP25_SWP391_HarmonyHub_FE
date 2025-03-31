@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatTime } from "@/utils/timeUtils";
-import { Plus } from "lucide-react";
+import { Info, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -116,6 +116,16 @@ const AvailabilitySection = ({ therapistDetails, setIsLoading, fetchData }) => {
         >
           <Plus className="h-4 w-4" /> Add Availability
         </Button>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start gap-3">
+        <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+        <p className="text-sm text-blue-700">
+          Please make sure to set your availability hours accurately. Having
+          updated availability allows members to book appointments more
+          effectively and increases your booking rate. You can add multiple time
+          slots for each day of the week.
+        </p>
       </div>
 
       {therapistDetails?.availabilities?.length > 0 ? (
