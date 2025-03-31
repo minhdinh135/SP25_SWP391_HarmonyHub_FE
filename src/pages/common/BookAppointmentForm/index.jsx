@@ -176,18 +176,18 @@ const BookAppointmentForm = () => {
       // Check if the appointment is within the therapist's working hours
       // This would require additional data about therapist's schedule
       // For now, let's assume working hours are 9 AM to 5 PM
-      const hour = selectedDate.getHours();
-      if (hour < 9 || hour >= 17) {
-        toast.error("Appointments are only available between 9 AM and 5 PM");
-        return false;
-      }
+      // const hour = selectedDate.getHours();
+      // if (hour < 9 || hour >= 17) {
+      //   toast.error("Appointments are only available between 9 AM and 5 PM");
+      //   return false;
+      // }
 
       // Check if the day is a weekend
-      const day = selectedDate.getDay();
-      if (day === 0 || day === 6) {
-        toast.error("Appointments are not available on weekends");
-        return false;
-      }
+      // const day = selectedDate.getDay();
+      // if (day === 0 || day === 6) {
+      //   toast.error("Appointments are not available on weekends");
+      //   return false;
+      // }
 
       return true;
     } catch (error) {
