@@ -33,6 +33,7 @@ const TherapistSchedule = () => {
   const acceptedAppointments = appointments.filter(
     (appointment) =>
       appointment.status === AppointmentStatus.Accepted ||
+      appointment.status === AppointmentStatus.Paid ||
       appointment.status === AppointmentStatus.Completed,
   );
 

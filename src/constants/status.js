@@ -6,7 +6,7 @@ export const AccountStatus = {
 
 export const AppointmentStatus = {
   Cancelled: 0,
-  Booked: 1,
+  Paid: 1,
   Pending: 2,
   Accepted: 3,
   Rejected: 4,
