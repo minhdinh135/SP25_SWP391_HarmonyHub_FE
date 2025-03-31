@@ -8,7 +8,6 @@ import { getFullName } from "@/utils/nameFormat";
 import {
   Search,
   MoreVertical,
-  RefreshCw,
   Eye,
   CheckCircle,
   XCircle,
@@ -91,12 +90,7 @@ const Accounts = () => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {/* View Details Action - available for all accounts */}
-            <DropdownMenuItem
-              onClick={() => {
-                setSelectedAccount(account);
-                setIsViewDialogOpen(true);
-              }}
-            >
+            <DropdownMenuItem onClick={() => handleClickViewDetails(account)}>
               <Eye className="h-4 w-4 mr-2" />
               View Details
             </DropdownMenuItem>
@@ -157,6 +151,14 @@ const Accounts = () => {
     fetchAccounts();
   }, []);
 
+  const handleClickViewDetails = (account) => {
+    if (getRoleText(account.role) === "Member") {
+      window.open(`/admin/members/${account.id}`, "_blank");
+    } else {
+      window.open(`/admin/therapists/${account.id}`, "_blank");
+    }
+  };
+
   const onSubmitStatusChange = async (accountId, status) => {
     try {
       setIsLoading(true);
@@ -165,7 +167,7 @@ const Accounts = () => {
       toast.success("Update account status successfully");
     } catch (error) {
       console.log(error);
-      toast.error(error);
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -191,12 +193,7 @@ const Accounts = () => {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-black">System Accounts</h1>
-        <div className="flex gap-2">
-          <Button onClick={fetchAccounts} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
-        </div>
+        <div className="flex gap-2"></div>
       </div>
 
       <div className="flex gap-4">

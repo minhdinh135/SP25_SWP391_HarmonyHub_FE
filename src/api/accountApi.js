@@ -128,6 +128,8 @@ export const updateAccountStatus = async (accountId, status) => {
     await api.put(`/accounts/${accountId}/status?status=${status}`);
   } catch (error) {
     console.log(error);
-    throw new Error("Error updating account status");
+    const errorMessage =
+      error.response?.data?.message || "Error updating account status";
+    throw new Error(errorMessage);
   }
 };
