@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import api from "@/api/apiConfig";
+
 const TherapistQuizManagement = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,12 +18,23 @@ const TherapistQuizManagement = () => {
     questions: [
       {
         content: "",
-        options: [{ content: "" }, { content: "" }],
+        options: [
+          { type: 1, content: "" },
+          { type: 2, content: "" },
+          { type: 3, content: "" },
+          { type: 4, content: "" },
+        ],
       },
     ],
-    results: [{ content: "" }], // Added results array
+    results: [
+      { type: 1, content: "" },
+      { type: 2, content: "" },
+      { type: 3, content: "" },
+      { type: 4, content: "" },
+    ],
   });
   const quizzesPerPage = 6;
+
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
@@ -37,20 +49,23 @@ const TherapistQuizManagement = () => {
     };
     fetchQuizzes();
   }, []);
+
   const handleAddQuiz = async () => {
     try {
       const formattedQuestions = newQuiz.questions.map((question) => ({
         content: question.content,
         options: question.options,
       }));
+
       const requestBody = {
         title: newQuiz.title,
         description: newQuiz.description,
-        imageUrl: newQuiz.imageUrl,
-        therapistId: 3, // Fixed therapist ID as specified
+        imageUrl: "string", // Default value as per requirements
+        therapistId: 7, // Updated therapist ID as per requirements
         questions: formattedQuestions,
         results: newQuiz.results,
       };
+
       await api.post("/quiz/create", requestBody);
       const response = await api.get("/quiz");
       setQuizzes(response.data.data);
@@ -62,46 +77,62 @@ const TherapistQuizManagement = () => {
         questions: [
           {
             content: "",
-            options: [{ content: "" }, { content: "" }],
+            options: [
+              { type: 1, content: "" },
+              { type: 2, content: "" },
+              { type: 3, content: "" },
+              { type: 4, content: "" },
+            ],
           },
         ],
-        results: [{ content: "" }], // Added results array
+        results: [
+          { type: 1, content: "" },
+          { type: 2, content: "" },
+          { type: 3, content: "" },
+          { type: 4, content: "" },
+        ],
       });
     } catch (error) {
       console.error("Error adding quiz", error);
     }
   };
+
   const handleQuestionChange = (questionIndex, field, value) => {
     const updatedQuestions = [...newQuiz.questions];
     updatedQuestions[questionIndex][field] = value;
     setNewQuiz({ ...newQuiz, questions: updatedQuestions });
   };
+
   const handleOptionChange = (questionIndex, optionIndex, value) => {
     const updatedQuestions = [...newQuiz.questions];
     updatedQuestions[questionIndex].options[optionIndex].content = value;
     setNewQuiz({ ...newQuiz, questions: updatedQuestions });
   };
-  const addOption = (questionIndex) => {
-    const updatedQuestions = [...newQuiz.questions];
-    updatedQuestions[questionIndex].options.push({ content: "" });
-    setNewQuiz({ ...newQuiz, questions: updatedQuestions });
+
+  const handleResultChange = (resultIndex, value) => {
+    const updatedResults = [...newQuiz.results];
+    updatedResults[resultIndex].content = value;
+    setNewQuiz({ ...newQuiz, results: updatedResults });
   };
-  const removeOption = (questionIndex, optionIndex) => {
-    const updatedQuestions = [...newQuiz.questions];
-    if (updatedQuestions[questionIndex].options.length > 2) {
-      updatedQuestions[questionIndex].options.splice(optionIndex, 1);
-      setNewQuiz({ ...newQuiz, questions: updatedQuestions });
-    }
-  };
+
   const addQuestion = () => {
     setNewQuiz({
       ...newQuiz,
       questions: [
         ...newQuiz.questions,
-        { content: "", options: [{ content: "" }, { content: "" }] },
+        {
+          content: "",
+          options: [
+            { type: 1, content: "" },
+            { type: 2, content: "" },
+            { type: 3, content: "" },
+            { type: 4, content: "" },
+          ],
+        },
       ],
     });
   };
+
   const removeQuestion = (questionIndex) => {
     if (newQuiz.questions.length > 1) {
       const updatedQuestions = [...newQuiz.questions];
@@ -109,6 +140,7 @@ const TherapistQuizManagement = () => {
       setNewQuiz({ ...newQuiz, questions: updatedQuestions });
     }
   };
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -116,32 +148,27 @@ const TherapistQuizManagement = () => {
       setUploadingImage(true);
       const quizId = selectedQuiz.id;
       const formData = new FormData();
-      formData.append("imgUrl", file); // Changed from 'image' to 'imgUrl'
+      formData.append("imgUrl", file);
       const response = await api.put(`/quiz/imgUrl/${quizId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("API Response:", response.data); // Log the response for debugging
-      // If successful, update the selected quiz's image URL with the returned data
+      console.log("API Response:", response.data);
       if (response.data && response.data.data && response.data.data.imageUrl) {
-        // Update the selected quiz state with the new image URL
         const updatedQuiz = {
           ...selectedQuiz,
           imageUrl: response.data.data.imageUrl,
         };
         setSelectedQuiz(updatedQuiz);
-        // Also update the quiz in the quizzes array
         const updatedQuizzes = quizzes.map((quiz) =>
           quiz.id === quizId
             ? { ...quiz, imageUrl: response.data.data.imageUrl }
             : quiz,
         );
         setQuizzes(updatedQuizzes);
-        // Show success message
         alert(`Image for Quiz ID: ${quizId} uploaded successfully!`);
       } else if (response.data && response.data.imageUrl) {
-        // Alternative response format
         const updatedQuiz = {
           ...selectedQuiz,
           imageUrl: response.data.imageUrl,
@@ -169,23 +196,28 @@ const TherapistQuizManagement = () => {
       setUploadingImage(false);
     }
   };
+
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
+
   const indexOfLastQuiz = currentPage * quizzesPerPage;
   const indexOfFirstQuiz = indexOfLastQuiz - quizzesPerPage;
   const currentQuizzes = quizzes.slice(indexOfFirstQuiz, indexOfLastQuiz);
   const totalPages = Math.ceil(quizzes.length / quizzesPerPage);
+
   if (loading)
     return (
       <div className="text-center text-lg font-semibold text-gray-700">
         Loading quizzes...
       </div>
     );
+
   if (error)
     return (
       <div className="text-center text-red-500 font-semibold">{error}</div>
     );
+
   return (
     <DashboardLayout role="therapist">
       <div className="p-6 bg-gray-100 min-h-screen">
@@ -227,16 +259,8 @@ const TherapistQuizManagement = () => {
                   }
                   className="w-full p-2 mb-2 border border-gray-300 rounded"
                 ></textarea>
-                <input
-                  type="text"
-                  placeholder="Image URL"
-                  value={newQuiz.imageUrl}
-                  onChange={(e) =>
-                    setNewQuiz({ ...newQuiz, imageUrl: e.target.value })
-                  }
-                  className="w-full p-2 mb-2 border border-gray-300 rounded"
-                />
               </div>
+              
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-medium text-gray-700">Questions</h4>
@@ -273,42 +297,50 @@ const TherapistQuizManagement = () => {
                       className="w-full p-2 mb-3 border border-gray-300 rounded"
                     />
                     <div className="ml-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <h6 className="font-medium text-sm text-gray-600">
-                          Answer Options
-                        </h6>
-                        <button
-                          className="bg-blue-500 text-white text-xs px-2 py-1 rounded"
-                          onClick={() => addOption(qIndex)}
-                        >
-                          Add Option
-                        </button>
-                      </div>
+                      <h6 className="font-medium text-sm text-gray-600 mb-2">
+                        Answer Options
+                      </h6>
                       {question.options.map((option, oIndex) => (
                         <div key={oIndex} className="flex items-center mb-2">
+                          <span className="mr-2 text-gray-600">
+                            Option {String.fromCharCode(65 + oIndex)}:
+                          </span>
                           <input
                             type="text"
-                            placeholder={`Option ${oIndex + 1}`}
+                            placeholder={`Option ${String.fromCharCode(65 + oIndex)}`}
                             value={option.content}
                             onChange={(e) =>
                               handleOptionChange(qIndex, oIndex, e.target.value)
                             }
                             className="flex-grow p-2 border border-gray-300 rounded"
                           />
-                          {question.options.length > 2 && (
-                            <button
-                              className="ml-2 text-red-500 text-sm"
-                              onClick={() => removeOption(qIndex, oIndex)}
-                            >
-                              ×
-                            </button>
-                          )}
                         </div>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
+
+              <div className="mb-6">
+                <h4 className="font-medium mb-2 text-gray-700">
+                  Results for Each Answer Type
+                </h4>
+                {newQuiz.results.map((result, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <span className="mr-2 text-gray-600 w-24">
+                      Result for {String.fromCharCode(64 + result.type)}:
+                    </span>
+                    <textarea
+                      placeholder={`Result for option ${String.fromCharCode(64 + result.type)}`}
+                      value={result.content}
+                      onChange={(e) => handleResultChange(index, e.target.value)}
+                      className="flex-grow p-2 border border-gray-300 rounded"
+                      rows="2"
+                    ></textarea>
+                  </div>
+                ))}
+              </div>
+
               <div className="flex justify-end mt-4">
                 <button
                   className="bg-gray-400 text-white px-4 py-2 rounded-lg mr-2"
@@ -444,7 +476,7 @@ const TherapistQuizManagement = () => {
                           {question.optionResponse &&
                             question.optionResponse.map((option, oIndex) => (
                               <li key={oIndex} className="text-gray-700">
-                                {option.content}
+                                {String.fromCharCode(65 + oIndex)}: {option.content}
                               </li>
                             ))}
                         </ul>
@@ -464,4 +496,5 @@ const TherapistQuizManagement = () => {
     </DashboardLayout>
   );
 };
+
 export default TherapistQuizManagement;
