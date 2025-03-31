@@ -2,9 +2,14 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatTime } from "@/utils/timeUtils";
+import useAuth from "@/hooks/useAuth";
+import { getRoleText } from "@/utils/enumUtils";
 
 const TherapistAvailability = ({ therapistDetails, appointments }) => {
+  const { user } = useAuth();
   const [currentWeek, setCurrentWeek] = useState(0);
+
+  const isMember = getRoleText(user.role) === "Member";
 
   // Generate dates for the current week view
   const generateWeekDates = (weekOffset = 0) => {
@@ -126,7 +131,9 @@ const TherapistAvailability = ({ therapistDetails, appointments }) => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Schedule</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+        Available Schedule
+      </h2>
 
       <div className="bg-blue-50 p-4 rounded-lg mb-6 flex items-center">
         <Info className="h-5 w-5 text-blue-600 mr-2" />
