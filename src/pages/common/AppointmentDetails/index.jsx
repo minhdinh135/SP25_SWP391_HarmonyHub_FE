@@ -451,7 +451,6 @@ const AppointmentDetails = () => {
 
           <CardFooter className="my-3 border-t pt-6 flex flex-wrap gap-3 justify-center">
             {isMember &&
-              !isPaid &&
               appointmentDetails?.status === AppointmentStatus.Accepted && (
                 <Button
                   className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
