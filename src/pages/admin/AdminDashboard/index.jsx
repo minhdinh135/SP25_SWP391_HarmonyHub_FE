@@ -170,7 +170,7 @@ const AdminDashboard = () => {
                         {transaction.receiverFullName}
                       </td>
                       <td className="py-3 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
-                        {formatCurrencyInVND(transaction.amount)} VND
+                        ${transaction.amount}
                       </td>
                       <td className="py-3 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
                         <span
