@@ -29,7 +29,7 @@ Built with **React (JavaScript)**, styled using **Tailwind CSS** and **shadcn/ui
 
 
 - 🧪 **Psychological Quiz**  
-  ![Q![quiz](https://github.com/user-attachments/assets/5f0e1ab3-4f20-467b-823b-c08749813cc5)
+  ![quiz](https://github.com/user-attachments/assets/5f0e1ab3-4f20-467b-823b-c08749813cc5)
 
 
 - 🧑‍⚕️ **Expert Recommendation**  
