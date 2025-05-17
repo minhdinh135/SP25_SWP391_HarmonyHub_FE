@@ -1,6 +1,6 @@
 # 💞 HarmonyHub - Frontend for Pre-marital Counseling Platform
 
-![Harmon![swp-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/52644485-1304-46ea-97cb-125e073695b6)
+![swp-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/52644485-1304-46ea-97cb-125e073695b6)
 
 [Live Demo](https://harmony-frontend-ktwp.onrender.com/)
 
