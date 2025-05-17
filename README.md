@@ -25,7 +25,7 @@ Built with **React (JavaScript)**, styled using **Tailwind CSS** and **shadcn/ui
 - 📆 **Appointment Booking**  
   
   ![Book](https://github.com/user-attachments/assets/7ba19ca2-2e00-474d-9056-828c468ec457)
-oking-demo.gif)![Book2](https://github.com/user-attachments/assets/b896e015-0f07-4fa3-b44e-501113759d59)
+![Book2](https://github.com/user-attachments/assets/b896e015-0f07-4fa3-b44e-501113759d59)
 
 
 - 🧪 **Psychological Quiz**  
@@ -33,16 +33,12 @@ oking-demo.gif)![Book2](https://github.com/user-attachments/assets/b896e015-0f07
 
 
 - 🧑‍⚕️ **Expert Recommendation**  
-  _Chèn GIF mô tả expert matching tại đây_  
-  ![Expert Match Demo](/docs/gifs/expert-match-demo.gif)
 
 - 💬 **Virtual Counseling Sessions**  
-  _Chèn GIF mô tả Google Meet tích hợp tại đây_  
-  ![Session Demo](/docs/gifs/session-demo.gif)
 
 - 💳 **Secure Payment Integration**  
-  _Chèn GIF mô tả thanh toán VNPay tại đây_  
-  ![Payment Demo](/docs/gifs/payment-demo.gif)
+ 
+![Pay-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/0c3140d0-05d0-4bbf-9371-15968b063585)
 
 ---
 
