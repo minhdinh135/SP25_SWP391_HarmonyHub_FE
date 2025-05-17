@@ -1,6 +1,7 @@
 # 💞 HarmonyHub - Frontend for Pre-marital Counseling Platform
 
-![HarmonyHub Frontend Banner - illustration placeholder](/docs/images/harmonyhub-frontend-banner.png)  
+![Harmon![swp-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/52644485-1304-46ea-97cb-125e073695b6)
+
 [Live Demo](https://harmony-frontend-ktwp.onrender.com/)
 
 ---
@@ -22,12 +23,14 @@ Built with **React (JavaScript)**, styled using **Tailwind CSS** and **shadcn/ui
 ## 🧩 Features
 
 - 📆 **Appointment Booking**  
-  _Chèn GIF mô tả chức năng booking tại đây_  
-  ![Booking Demo](/docs/gifs/booking-demo.gif)
+  
+  ![Book](https://github.com/user-attachments/assets/7ba19ca2-2e00-474d-9056-828c468ec457)
+oking-demo.gif)![Book2](https://github.com/user-attachments/assets/b896e015-0f07-4fa3-b44e-501113759d59)
+
 
 - 🧪 **Psychological Quiz**  
-  _Chèn GIF mô tả quiz tại đây_  
-  ![Quiz Demo](/docs/gifs/quiz-demo.gif)
+  ![Q![quiz](https://github.com/user-attachments/assets/5f0e1ab3-4f20-467b-823b-c08749813cc5)
+
 
 - 🧑‍⚕️ **Expert Recommendation**  
   _Chèn GIF mô tả expert matching tại đây_  
